@@ -1,0 +1,53 @@
+# ── Secrets & environment ─────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets/
+credentials*.json
+
+# ── Real data (never commit customer or researched data) ──
+# Only templates and docs live in data/; real datasets stay local.
+data/**
+!data/
+!data/eval/
+data/eval/**
+!data/eval/README.md
+!data/eval/ground_truth_template.csv
+*.dump
+*.sql.gz
+exports/
+
+# ── Python ────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# ── Node / frontend ───────────────────────────────────
+node_modules/
+frontend/dist/
+.vite/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# ── Logs & local tooling ──────────────────────────────
+*.log
+logs/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
