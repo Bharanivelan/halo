@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Page UI lives in `src/pages/*Page.tsx`; files in `src/routes` are thin wrappers (head + component) because the user edits via GitHub with a conventional layout.
+- Signed-in screens render under the pathless `_shell` layout (sidebar + top bar); `/login` sits outside it.
+- Halo brand components live in `src/components/halo` and use only tokens from `src/styles.css` (dark is the default `.dark` class on <html>).
+- No backend in this app: all data comes from the external Halo API via `src/lib/halo-api.ts` (never edited).
