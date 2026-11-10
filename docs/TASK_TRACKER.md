@@ -19,10 +19,32 @@
 - [~] T-0.12 **Owner: research & verify 30–50 OMR-area companies** (incl. ~10 negatives; fixed pin + 15 km, D-20) — in parallel with Phase 1
 - [x] T-0.13 Initialise git repository, `.gitignore`, first commit of docs
 
+## Real build (D-24) — status 2026-11-09
+
+Backend (FastAPI · Postgres/PostGIS · Postgres queue · worker)
+- [x] Infra: Docker Compose DB, app DB role, Alembic migration, **RLS on 27 tenant tables** (tested)
+- [x] Auth: Argon2id, DB sessions, HttpOnly cookie, CSRF, login rate limit, audit log
+- [x] Properties, offerings, target profile, geocoding (Nominatim), overview, CSV import
+- [x] Workflow engine: tasks/leases/retries/idempotency/cancel/resume/retry-failed, budget guard, job events
+- [x] Providers: Overpass (rotating, backoff), Nominatim, safe fetcher (SSRF, robots.txt, per-domain throttle), GDELT, Tavily (optional)
+- [x] Steps: plan → discover (OSM, CSV) → resolve → classify → research agent → signals → score (+ role recommendations)
+- [x] Evidence: claims with grounding validator + DB constraint; signals grounded
+- [x] Scoring v1 (versioned model in DB), explainable breakdown
+- [x] Accounts API (filters, sort, cursor, bulk, export CSV, map), account detail + next action
+- [x] Contacts (+ do-not-contact), copilot (LLM + template fallback, claim-ref validation), opportunities, activities
+- [x] Activity: jobs, usage by step/model/job, LLM call log
+- [x] Tests: 20 passing (grounding, scoring, normalisation, rules, RLS isolation)
+- [~] End-to-end run with an OpenAI key (needs key in `.env`)
+- [x] Eval runner: `python -m app.eval --property "<name>" --csv ../data/eval/ground_truth_omr_v1.csv` (needs owner dataset to produce numbers)
+- [x] Wall-clock job limit enforcement (DD-16)
+
+Frontend (React · CSS Modules · tokens)
+- [~] Full app against the real API (in progress)
+
 ## Phase 1 — Design system & clickable prototype
 
 - [ ] T-1.1 Scaffold `frontend/` (Vite, React, TS strict, ESLint, Prettier, Vitest, Playwright)
-- [~] T-1.2 Visual identity proposal (palette, type, spacing, motion; light/dark) → owner review — UX-1
+- [~] T-1.2 Visual identity proposal (palette, type, spacing, motion; light/dark) → owner review — UX-1 · proposal v0.1 in `docs/DESIGN_SYSTEM.md` + preview artifact, awaiting review
 - [ ] T-1.3 `design/tokens.css` + CSS Modules conventions + finalise `docs/DESIGN_SYSTEM.md`
 - [ ] T-1.4 Primitives (Radix-based): Button … Kbd
 - [ ] T-1.5 Domain components: DataTable, Inspector, EvidenceChip, ScoreBar, FreshnessTag, RunTimeline, CostMeter, StatusPill, TierBadge, DataOriginBadge, MapPanel, Funnel, KanbanBoard, ActivityTimeline, EmptyState, ErrorState, CommandPalette — UX-3…UX-8

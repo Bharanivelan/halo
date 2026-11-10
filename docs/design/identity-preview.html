@@ -1,0 +1,1026 @@
+<title>Inhabitr Visual Identity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap">
+<style>
+/* Layout: a specimen book. Sticky section index on the left; specimen sheets on the right; the last sheet composes real screens from the same tokens. */
+:root, .force-light {
+  /* Neutrals: "linen" with a slight lagoon bias */
+  --canvas:#F6F7F5; --surface:#FFFFFF; --surface-2:#F1F3F0; --surface-3:#E7EBE6;
+  --border:#E0E4DF; --border-strong:#C7CEC8;
+  --ink:#141917; --ink-2:#4A534F; --ink-3:#67706B; --ink-4:#A3ABA6;
+  /* Accent: Lagoon (brand, Fit, primary actions) */
+  --accent:#0F6A62; --accent-hover:#0C554F; --accent-fg:#FFFFFF; --accent-soft:#E3F2EF; --accent-text:#0C554F; --accent-line:#A6D6CD;
+  --fit-1:#0C554F; --fit-2:#1A7F74; --fit-3:#4FA597; --fit-4:#8CC9BE;
+  /* Marigold: Intent, signals, time */
+  --intent:#C88C10; --intent-soft:#FCF1D8; --intent-text:#8A600A; --intent-line:#F0CF85;
+  /* Iris: inference only */
+  --inference:#7357C2; --inference-soft:#F1EDFA; --inference-text:#553E9C;
+  /* Semantic */
+  --success:#2F8A55; --success-soft:#E7F4EC; --success-text:#24653D;
+  --danger:#C23B2A; --danger-soft:#FBECE9; --danger-text:#A3301F;
+  --info:#2F5C99; --info-soft:#E9EFF8; --info-text:#2A5189;
+  --row-hover:#F3F5F2; --row-selected:#EAF5F2; --hatch:rgba(20,25,23,.09);
+  --shadow-1:0 1px 2px rgba(20,25,23,.06),0 4px 12px rgba(20,25,23,.06);
+  --shadow-2:0 2px 6px rgba(20,25,23,.06),0 12px 32px rgba(20,25,23,.12);
+  --toast-bg:#141917; --toast-fg:#E7ECE9;
+  color-scheme:light;
+
+  /* Type */
+  --font-display:"Newsreader","Iowan Old Style",Georgia,serif;
+  --font-ui:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  /* Space (4px base) */
+  --s-0-5:2px; --s-1:4px; --s-1-5:6px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:20px; --s-6:24px; --s-8:32px; --s-10:40px; --s-12:48px; --s-16:64px;
+  /* Radius */
+  --r-xs:3px; --r-sm:5px; --r-md:8px; --r-lg:12px; --r-pill:999px;
+  /* Motion */
+  --dur-1:100ms; --dur-2:160ms; --dur-3:240ms; --ease-out:cubic-bezier(.2,0,0,1); --ease-in-out:cubic-bezier(.4,0,.2,1);
+  /* Sizes */
+  --control-sm:28px; --control-md:32px; --control-lg:40px; --row-compact:32px; --row-default:40px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas:#0E1211; --surface:#141917; --surface-2:#1A201E; --surface-3:#222926;
+    --border:#252D2A; --border-strong:#36403C;
+    --ink:#E7ECE9; --ink-2:#AAB4AF; --ink-3:#7F8984; --ink-4:#56605B;
+    --accent:#3FB3A4; --accent-hover:#5CC4B6; --accent-fg:#04201D; --accent-soft:#12302C; --accent-text:#7FD3C6; --accent-line:#1F5A52;
+    --fit-1:#8FDCCF; --fit-2:#4FB8AA; --fit-3:#2E8A7F; --fit-4:#1F5F57;
+    --intent:#E2A93B; --intent-soft:#2E2410; --intent-text:#EDBE5E; --intent-line:#6B5220;
+    --inference:#9D86E6; --inference-soft:#231D38; --inference-text:#B9A8EF;
+    --success:#4FB57A; --success-soft:#132A1C; --success-text:#74CB97;
+    --danger:#E5685A; --danger-soft:#3A1915; --danger-text:#F2928A;
+    --info:#6E9BE0; --info-soft:#15223A; --info-text:#9DBDF0;
+    --row-hover:#181E1C; --row-selected:#12302C; --hatch:rgba(231,236,233,.10);
+    --shadow-1:0 1px 2px rgba(0,0,0,.4),0 4px 12px rgba(0,0,0,.3);
+    --shadow-2:0 2px 6px rgba(0,0,0,.4),0 16px 40px rgba(0,0,0,.5);
+    --toast-bg:#E7ECE9; --toast-fg:#141917;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"], .force-dark {
+  --canvas:#0E1211; --surface:#141917; --surface-2:#1A201E; --surface-3:#222926;
+  --border:#252D2A; --border-strong:#36403C;
+  --ink:#E7ECE9; --ink-2:#AAB4AF; --ink-3:#7F8984; --ink-4:#56605B;
+  --accent:#3FB3A4; --accent-hover:#5CC4B6; --accent-fg:#04201D; --accent-soft:#12302C; --accent-text:#7FD3C6; --accent-line:#1F5A52;
+  --fit-1:#8FDCCF; --fit-2:#4FB8AA; --fit-3:#2E8A7F; --fit-4:#1F5F57;
+  --intent:#E2A93B; --intent-soft:#2E2410; --intent-text:#EDBE5E; --intent-line:#6B5220;
+  --inference:#9D86E6; --inference-soft:#231D38; --inference-text:#B9A8EF;
+  --success:#4FB57A; --success-soft:#132A1C; --success-text:#74CB97;
+  --danger:#E5685A; --danger-soft:#3A1915; --danger-text:#F2928A;
+  --info:#6E9BE0; --info-soft:#15223A; --info-text:#9DBDF0;
+  --row-hover:#181E1C; --row-selected:#12302C; --hatch:rgba(231,236,233,.10);
+  --shadow-1:0 1px 2px rgba(0,0,0,.4),0 4px 12px rgba(0,0,0,.3);
+  --shadow-2:0 2px 6px rgba(0,0,0,.4),0 16px 40px rgba(0,0,0,.5);
+  --toast-bg:#E7ECE9; --toast-fg:#141917;
+  color-scheme:dark;
+}
+.force-light, .force-dark { background:var(--canvas); color:var(--ink); }
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--canvas);color:var(--ink);font:400 13px/20px var(--font-ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3,h4,p,ul,ol,dl,dd,figure{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:var(--accent-text);text-decoration:none}
+a:hover{text-decoration:underline}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-xs)}
+.num,.tnum{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--font-mono);font-size:12px}
+svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+svg.i.sm{width:14px;height:14px}
+
+/* ── Page frame ── */
+.frame{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:var(--s-6) var(--s-16);max-width:1440px;margin:0 auto}
+.masthead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s-4);padding-bottom:var(--s-6);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:var(--s-3)}
+.wordmark{font-family:var(--font-display);font-size:26px;line-height:1;font-weight:500;letter-spacing:-.01em}
+.brand-meta{display:flex;flex-direction:column;gap:2px}
+.brand-meta small{font-size:12px;color:var(--ink-3)}
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:var(--s-10);margin-top:var(--s-8)}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;display:flex;flex-direction:column;gap:2px}
+.toc a{display:flex;gap:var(--s-2);padding:6px 10px;border-radius:var(--r-sm);color:var(--ink-2);font-weight:500}
+.toc a:hover{background:var(--surface-2);text-decoration:none;color:var(--ink)}
+.toc a span{color:var(--ink-4);font-family:var(--font-mono);font-size:12px;width:14px}
+.toc .note{margin-top:var(--s-4);padding:10px;font-size:12px;line-height:18px;color:var(--ink-3);border-top:1px solid var(--border)}
+main{min-width:0;display:flex;flex-direction:column;gap:var(--s-16)}
+@media (max-width:960px){.layout{grid-template-columns:minmax(0,1fr)}.toc{position:static;flex-direction:row;overflow-x:auto;padding-bottom:4px}.toc a{white-space:nowrap}.toc .note{display:none}}
+
+.sheet{display:flex;flex-direction:column;gap:var(--s-6);scroll-margin-top:24px}
+.sheet-head{display:flex;flex-direction:column;gap:var(--s-2);max-width:72ch}
+.eyebrow{font-size:11px;line-height:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.display-lg{font-family:var(--font-display);font-size:44px;line-height:48px;font-weight:400;letter-spacing:-.015em;text-wrap:balance}
+.display-md{font-family:var(--font-display);font-size:32px;line-height:38px;font-weight:400;letter-spacing:-.01em;text-wrap:balance}
+.display-sm{font-family:var(--font-display);font-size:24px;line-height:30px;font-weight:500;letter-spacing:-.005em;text-wrap:balance}
+.lede{font-size:14px;line-height:22px;color:var(--ink-2);max-width:68ch}
+.h3{font-size:14px;line-height:20px;font-weight:600}
+.sub{font-size:12px;line-height:16px;color:var(--ink-3)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
+.panel-pad{padding:var(--s-5)}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s-4)}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-4)}
+@media (max-width:900px){.grid-2,.grid-3{grid-template-columns:minmax(0,1fr)}}
+.mock-flag{display:flex;flex-wrap:wrap;gap:var(--s-2);align-items:center;font-size:12px;color:var(--ink-3)}
+.scroll-x{overflow-x:auto;min-width:0}
+
+/* ── Theme switch ── */
+.seg{display:inline-flex;padding:2px;gap:2px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-sm)}
+.seg button{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border:0;background:transparent;border-radius:3px;color:var(--ink-2);font-weight:500;cursor:pointer;transition:background var(--dur-1) var(--ease-out),color var(--dur-1)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--border),0 1px 2px rgba(0,0,0,.05)}
+
+/* ── Identity sheet ── */
+.thesis{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:var(--s-10);align-items:start}
+@media (max-width:900px){.thesis{grid-template-columns:minmax(0,1fr)}}
+.principles{display:flex;flex-direction:column}
+.principles div{display:grid;grid-template-columns:170px minmax(0,1fr);gap:var(--s-4);padding:var(--s-3) 0;border-top:1px solid var(--border)}
+.principles dt{font-weight:600}
+.principles dd{color:var(--ink-2)}
+@media (max-width:560px){.principles div{grid-template-columns:minmax(0,1fr);gap:2px}}
+.markbox{display:flex;flex-direction:column;gap:var(--s-4)}
+.mark-row{display:flex;gap:var(--s-4);flex-wrap:wrap}
+.mark-tile{display:flex;align-items:center;justify-content:center;width:96px;height:96px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--surface)}
+.mark-tile.dark{background:#0E1211;border-color:#252D2A}
+.avoid{display:flex;flex-wrap:wrap;gap:6px}
+.avoid li{font-size:12px;padding:2px 8px;border-radius:var(--r-pill);border:1px solid var(--border);color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--ink-4)}
+
+/* ── Colour sheet ── */
+.theme-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+@media (max-width:900px){.theme-pair{grid-template-columns:minmax(0,1fr)}}
+.theme-pane{padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-4)}
+.theme-pane .label{display:flex;justify-content:space-between;align-items:center}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:var(--s-2)}
+.sw{display:flex;flex-direction:column;gap:6px}
+.sw i{display:block;height:40px;border-radius:var(--r-sm);border:1px solid var(--border)}
+.sw b{font-weight:500;font-size:12px;line-height:14px}
+.sw code{font-family:var(--font-mono);font-size:11px;color:var(--ink-3)}
+.ramp{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--border)}
+.ramp span{height:44px;display:flex;align-items:flex-end;padding:4px;font-family:var(--font-mono);font-size:10px}
+.ramps{display:flex;flex-direction:column;gap:var(--s-3)}
+.ramp-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:var(--s-3);align-items:center}
+@media (max-width:560px){.ramp-row{grid-template-columns:minmax(0,1fr)}}
+.meaning{width:100%;border-collapse:collapse}
+.meaning th,.meaning td{text-align:left;padding:10px 12px;border-top:1px solid var(--border);vertical-align:middle}
+.meaning th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600;border-top:0}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:6px}
+
+/* ── Type sheet ── */
+.type-rows{display:flex;flex-direction:column}
+.type-row{display:grid;grid-template-columns:150px minmax(0,1fr) 190px;gap:var(--s-4);align-items:baseline;padding:var(--s-4) 0;border-top:1px solid var(--border)}
+.type-row .meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);line-height:16px}
+@media (max-width:760px){.type-row{grid-template-columns:minmax(0,1fr)}}
+.families{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-4)}
+@media (max-width:900px){.families{grid-template-columns:minmax(0,1fr)}}
+.family{padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3)}
+.family .glyphs{font-size:40px;line-height:44px}
+.numdemo{border-collapse:collapse;width:100%}
+.numdemo td{padding:4px 10px;border-top:1px solid var(--border);text-align:right;font-variant-numeric:tabular-nums}
+.numdemo td:first-child{text-align:left;color:var(--ink-2)}
+
+/* ── Space sheet ── */
+.space-scale{display:flex;flex-direction:column;gap:6px}
+.space-scale div{display:grid;grid-template-columns:70px 44px minmax(0,1fr);gap:var(--s-3);align-items:center;font-family:var(--font-mono);font-size:11px;color:var(--ink-3)}
+.space-scale i{display:block;height:10px;background:var(--accent-line);border-radius:2px}
+.radii{display:flex;flex-wrap:wrap;gap:var(--s-4)}
+.radii div{display:flex;flex-direction:column;gap:6px;align-items:center;font-family:var(--font-mono);font-size:11px;color:var(--ink-3)}
+.radii i{display:block;width:64px;height:48px;border:1px solid var(--border-strong);background:var(--surface-2)}
+.elev{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-5);padding:var(--s-6);background:var(--surface-2);border-radius:var(--r-md)}
+@media (max-width:640px){.elev{grid-template-columns:minmax(0,1fr)}}
+.elev div{height:84px;background:var(--surface);border-radius:var(--r-md);padding:var(--s-3);display:flex;flex-direction:column;justify-content:space-between}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px var(--s-4)}
+.kv dt{color:var(--ink-3)}
+.kv dd{font-variant-numeric:tabular-nums}
+
+/* ── Components ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--control-md);padding:0 12px;border-radius:var(--r-sm);border:1px solid transparent;font-weight:500;font-size:13px;cursor:pointer;white-space:nowrap;transition:background var(--dur-1) var(--ease-out),border-color var(--dur-1),box-shadow var(--dur-1),transform var(--dur-1)}
+.btn:active{transform:translateY(.5px)}
+.btn-primary{background:var(--accent);color:var(--accent-fg)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--surface);border-color:var(--border-strong);color:var(--ink)}
+.btn-secondary:hover{background:var(--surface-2)}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--surface-2);color:var(--ink)}
+.btn-danger{background:var(--surface);border-color:var(--border-strong);color:var(--danger-text)}
+.btn-danger:hover{background:var(--danger-soft);border-color:var(--danger)}
+.btn-sm{height:var(--control-sm);padding:0 10px;font-size:12px}
+.btn-lg{height:var(--control-lg);padding:0 16px;font-size:14px}
+.btn-icon{width:var(--control-md);padding:0}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:var(--s-2);align-items:center}
+.stack{display:flex;flex-direction:column;gap:var(--s-3)}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label{font-size:12px;font-weight:500;color:var(--ink-2)}
+.field .hint{font-size:12px;color:var(--ink-3)}
+.field .err{font-size:12px;color:var(--danger-text)}
+.input{display:flex;align-items:center;gap:8px;height:var(--control-md);padding:0 10px;background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--r-sm);color:var(--ink-3);transition:border-color var(--dur-1),box-shadow var(--dur-1)}
+.input input{all:unset;flex:1;min-width:0;color:var(--ink);font-size:13px}
+.input input::placeholder{color:var(--ink-4)}
+.input:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.input.invalid{border-color:var(--danger)}
+.kbd{display:inline-flex;align-items:center;height:18px;padding:0 5px;font-family:var(--font-mono);font-size:11px;color:var(--ink-3);background:var(--surface-2);border:1px solid var(--border);border-bottom-width:2px;border-radius:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 6px 0 10px;border:1px solid var(--border-strong);border-radius:var(--r-pill);font-size:12px;background:var(--surface)}
+.chip b{font-weight:500;color:var(--ink-3)}
+.chip button{display:inline-flex;border:0;background:transparent;padding:2px;border-radius:50%;color:var(--ink-3);cursor:pointer}
+.chip button:hover{background:var(--surface-3);color:var(--ink)}
+.chip.add{border-style:dashed;color:var(--ink-2);padding:0 10px;cursor:pointer}
+.tabs{display:flex;gap:var(--s-5);border-bottom:1px solid var(--border);overflow-x:auto}
+.tabs button{border:0;background:none;padding:8px 0;margin-bottom:-1px;color:var(--ink-3);font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.tabs .count{font-size:11px;color:var(--ink-4);font-variant-numeric:tabular-nums}
+
+/* Badges */
+.tier{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:4px;font-weight:600;font-size:12px}
+.tier-A{background:var(--accent);color:var(--accent-fg)}
+.tier-B{background:var(--accent-soft);color:var(--accent-text);box-shadow:inset 0 0 0 1px var(--accent-line)}
+.tier-C{background:var(--surface-3);color:var(--ink-2)}
+.status{display:inline-flex;align-items:center;gap:8px;font-size:12px;white-space:nowrap;color:var(--ink-2)}
+.pips{display:inline-flex;gap:2px}
+.pips i{display:block;width:4px;height:10px;border-radius:1px;background:var(--surface-3)}
+.pips i.on{background:var(--ink-2)}
+.status.engaged .pips i.on,.status.won .pips i.on{background:var(--success)}
+.status.qualified .pips i.on{background:var(--accent)}
+.status.dismissed,.status.lost{color:var(--ink-3)}
+.status.dismissed .pips i,.status.lost .pips i{background:transparent;box-shadow:inset 0 0 0 1px var(--border-strong)}
+.status.lost .pips i.on{background:var(--danger)}
+.origin{display:inline-flex;align-items:center;gap:4px;height:18px;padding:0 6px;border-radius:var(--r-xs);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);white-space:nowrap}
+.origin.mock{background:repeating-linear-gradient(135deg,var(--hatch) 0 4px,transparent 4px 8px);box-shadow:inset 0 0 0 1px var(--border-strong)}
+.origin.hypo{border:1px dashed var(--ink-3)}
+.origin.manual{box-shadow:inset 0 0 0 1px var(--border-strong);color:var(--ink-3)}
+.tag{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 7px;border-radius:var(--r-xs);font-size:12px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+
+/* Evidence chips: shape encodes certainty (filled / half / empty) */
+.ev-wrap{position:relative;display:inline-flex}
+.ev{display:inline-flex;align-items:center;gap:5px;height:20px;padding:0 7px 0 5px;border-radius:var(--r-pill);font-size:11px;font-weight:600;letter-spacing:.02em;cursor:pointer;border:1px solid transparent;background:none;white-space:nowrap}
+.ev .glyph{width:10px;height:10px;border-radius:50%;flex:none}
+.ev-fact{background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent-line)}
+.ev-fact .glyph{background:var(--accent)}
+.ev-inf{color:var(--inference-text);border:1px dashed var(--inference);background:var(--inference-soft)}
+.ev-inf .glyph{background:linear-gradient(90deg,var(--inference) 50%,transparent 50%);box-shadow:inset 0 0 0 1.5px var(--inference)}
+.ev-unk{color:var(--ink-3);border:1px dotted var(--ink-4)}
+.ev-unk .glyph{box-shadow:inset 0 0 0 1.5px var(--ink-4)}
+.ev .n{font-weight:500;opacity:.8}
+.pop{position:absolute;z-index:20;top:calc(100% + 6px);left:0;width:min(320px,80vw);padding:var(--s-3);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-2);display:none;flex-direction:column;gap:8px;font-size:12px;line-height:18px;color:var(--ink-2);cursor:default;text-align:left}
+.ev-wrap:hover .pop,.ev-wrap:focus-within .pop{display:flex}
+.pop blockquote{margin:0;padding:6px 10px;border-left:2px solid var(--accent-line);color:var(--ink);font-family:var(--font-display);font-size:14px;line-height:20px;font-style:italic}
+.pop .src{display:flex;gap:6px;align-items:center;color:var(--ink)}
+.pop .meta{display:flex;flex-wrap:wrap;gap:4px 12px;color:var(--ink-3);font-size:11px}
+.pop .ok{color:var(--success-text);display:flex;gap:4px;align-items:center}
+
+/* Freshness */
+.fresh{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 6px;border-radius:var(--r-xs);font-size:11px;font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fresh.hot{background:var(--intent-soft);color:var(--intent-text)}
+.fresh.warm{background:var(--surface-2);color:var(--ink-2)}
+.fresh.old{color:var(--ink-4);font-style:italic;box-shadow:inset 0 0 0 1px var(--border)}
+
+/* Score bars */
+.score{display:flex;flex-direction:column;gap:6px}
+.score-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.score-head .name{font-weight:600;display:flex;gap:6px;align-items:center}
+.score-head .val{font-size:20px;line-height:24px;font-weight:500;font-variant-numeric:tabular-nums}
+.score-head .val small{font-size:12px;color:var(--ink-4);font-weight:400}
+.bar{display:flex;gap:2px;height:8px;background:var(--surface-3);border-radius:2px;overflow:hidden}
+.bar span{display:block;height:100%;transition:filter var(--dur-1)}
+.bar span:hover{filter:brightness(1.12)}
+.legend{display:flex;flex-direction:column;gap:2px;font-size:12px}
+.legend li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:8px;align-items:center;padding:3px 0;color:var(--ink-2)}
+.legend li i{width:8px;height:8px;border-radius:2px}
+.legend li b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.legend li em{font-style:normal;color:var(--ink-3)}
+.conf{display:flex;align-items:center;gap:8px}
+.conf .steps{display:inline-flex;gap:3px}
+.conf .steps i{width:14px;height:6px;border-radius:1px;background:var(--surface-3)}
+.conf .steps i.on{background:var(--ink-2)}
+.mini{display:inline-flex;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
+.mini .track{width:40px;height:4px;border-radius:2px;background:var(--surface-3);overflow:hidden}
+.mini .track i{display:block;height:100%}
+
+/* Run timeline */
+.run{display:flex;flex-direction:column}
+.stage{display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:var(--s-3);position:relative;padding:8px 0}
+.stage::before{content:"";position:absolute;left:11px;top:30px;bottom:-8px;width:1px;background:var(--border)}
+.stage:last-child::before{display:none}
+.stage .ic{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;background:var(--surface)}
+.stage.done .ic{background:var(--accent);color:var(--accent-fg)}
+.stage.fail .ic{background:var(--danger);color:#fff}
+.stage.pending .ic{box-shadow:inset 0 0 0 1.5px var(--ink-4);background:var(--surface)}
+.stage.running .ic{box-shadow:inset 0 0 0 2px var(--accent-line)}
+.stage.running .ic::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:var(--accent);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stage .t{font-weight:500}
+.stage.pending .t{color:var(--ink-3)}
+.stage .d{font-size:12px;color:var(--ink-3)}
+.stage .c{font-family:var(--font-mono);font-size:12px;color:var(--ink-2);text-align:right;white-space:nowrap}
+.progress{display:flex;height:6px;border-radius:2px;overflow:hidden;background:var(--surface-3);margin-top:6px;gap:1px}
+.progress .ok{background:var(--accent)}
+.progress .run{background:var(--accent-line)}
+.progress .bad{background:var(--danger)}
+.cost{display:flex;flex-direction:column;gap:6px}
+.cost .track{display:flex;height:6px;border-radius:2px;overflow:hidden;background:var(--surface-3)}
+.cost .spent{background:var(--ink-2)}
+.cost .resv{background:repeating-linear-gradient(135deg,var(--ink-3) 0 2px,transparent 2px 4px)}
+.cost .line{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.cost .line b{color:var(--ink);font-weight:500}
+
+/* States */
+.empty{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-3);padding:var(--s-8)}
+.empty p{color:var(--ink-2);max-width:46ch}
+.banner{display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:var(--s-3);align-items:start;padding:var(--s-3) var(--s-4);border-radius:var(--r-md);border:1px solid}
+.banner.error{background:var(--danger-soft);border-color:var(--danger);color:var(--danger-text)}
+.banner.warn{background:var(--intent-soft);border-color:var(--intent-line);color:var(--intent-text)}
+.banner p{color:var(--ink-2);font-size:12px}
+.banner .h3{color:inherit}
+@media (max-width:560px){.banner{grid-template-columns:20px minmax(0,1fr)}.banner .row{grid-column:2}}
+.toast{display:inline-flex;align-items:center;gap:var(--s-3);padding:10px 12px 10px 14px;background:var(--toast-bg);color:var(--toast-fg);border-radius:var(--r-md);box-shadow:var(--shadow-2);font-weight:500}
+.toast button{border:0;background:none;color:inherit;opacity:.7;font-weight:600;cursor:pointer;padding:2px 6px;border-radius:4px}
+.skel{display:block;height:10px;border-radius:3px;background:linear-gradient(90deg,var(--surface-3),var(--surface-2),var(--surface-3));background-size:200% 100%;animation:shimmer 1.6s var(--ease-in-out) infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+
+/* ── App shell mock ── */
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);min-width:760px;height:440px;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;background:var(--canvas)}
+.side{display:flex;flex-direction:column;gap:var(--s-4);padding:var(--s-3);border-right:1px solid var(--border);background:var(--surface-2)}
+.ws{font-size:11px;color:var(--ink-3);padding:0 6px;display:flex;justify-content:space-between}
+.prop{display:flex;align-items:center;gap:10px;padding:8px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.prop .av{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--ink);color:var(--canvas);font-family:var(--font-display);font-size:14px}
+.prop .nm{display:flex;flex-direction:column;min-width:0;flex:1}
+.prop .nm b{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav{display:flex;flex-direction:column;gap:1px}
+.nav .grp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);font-weight:600;padding:8px 8px 4px}
+.nav a{display:flex;align-items:center;gap:10px;height:30px;padding:0 8px;border-radius:var(--r-sm);color:var(--ink-2);font-weight:500}
+.nav a:hover{background:var(--surface-3);text-decoration:none;color:var(--ink)}
+.nav a.on{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--border)}
+.nav a.on svg{color:var(--accent)}
+.nav a .ct{margin-left:auto;font-size:11px;color:var(--ink-4);font-variant-numeric:tabular-nums}
+.side .me{margin-top:auto;display:flex;align-items:center;gap:8px;padding:6px;font-size:12px;color:var(--ink-2)}
+.avatar{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent-text);font-size:11px;font-weight:600;flex:none}
+.top{display:flex;align-items:center;gap:var(--s-3);height:48px;padding:0 var(--s-4);border-bottom:1px solid var(--border);background:var(--surface)}
+.crumbs{display:flex;align-items:center;gap:6px;color:var(--ink-3);font-weight:500;min-width:0}
+.crumbs b{color:var(--ink);font-weight:500}
+.search{margin-left:auto;display:flex;align-items:center;gap:8px;height:30px;width:240px;padding:0 8px;border-radius:var(--r-sm);border:1px solid var(--border);color:var(--ink-4);background:var(--surface-2)}
+.search span{flex:1}
+.jobpill{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 10px;border-radius:var(--r-pill);border:1px solid var(--border);font-size:12px;color:var(--ink-2);white-space:nowrap}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent-line);animation:pulse 1.8s var(--ease-out) infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--accent-line)}70%{box-shadow:0 0 0 6px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.shell-body{padding:var(--s-6);display:flex;flex-direction:column;gap:var(--s-3)}
+.ia{font-family:var(--font-mono);font-size:12px;line-height:20px;color:var(--ink-2);white-space:pre;margin:0}
+.ia b{color:var(--ink);font-weight:500}
+.ia em{color:var(--ink-4);font-style:normal}
+
+/* ── Screens ── */
+.screen{border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;background:var(--canvas)}
+.screen-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:var(--s-4);padding:var(--s-6) var(--s-6) var(--s-4)}
+.screen-top .sub{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:6px;font-size:13px;color:var(--ink-3)}
+.ov{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:var(--s-4);padding:0 var(--s-6) var(--s-6)}
+@media (max-width:1000px){.ov{grid-template-columns:minmax(0,1fr)}}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:var(--s-3);padding:var(--s-4) var(--s-5);border-bottom:1px solid var(--border)}
+.funnel{display:flex;flex-direction:column;gap:2px;padding:var(--s-4) var(--s-5) var(--s-5)}
+.funnel .fr{display:grid;grid-template-columns:150px minmax(0,1fr) 48px;gap:var(--s-3);align-items:center;height:28px}
+.funnel .fr span{color:var(--ink-2)}
+.funnel .fr .b{height:16px;border-radius:2px;background:var(--fit-2)}
+.funnel .fr.opp .b{background:var(--success)}
+.funnel .fr b{text-align:right;font-weight:500;font-variant-numeric:tabular-nums}
+.funnel .split{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-4);font-weight:600;padding:10px 0 4px}
+@media (max-width:560px){.funnel .fr{grid-template-columns:110px minmax(0,1fr) 40px}}
+.list{display:flex;flex-direction:column}
+.list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px var(--s-3);padding:10px var(--s-5);border-top:1px solid var(--border)}
+.list li:first-child{border-top:0}
+.list .t{font-weight:500}
+.list .d{grid-column:1/-1;font-size:12px;color:var(--ink-3)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 var(--s-6) var(--s-4);background:var(--surface);border-radius:var(--r-md);border:1px solid var(--border)}
+.kpis div{padding:var(--s-4) var(--s-5);border-left:1px solid var(--border);display:flex;flex-direction:column;gap:2px}
+.kpis div:first-child{border-left:0}
+.kpis b{font-size:28px;line-height:32px;font-weight:500;font-variant-numeric:tabular-nums}
+.kpis span{font-size:12px;color:var(--ink-3)}
+@media (max-width:760px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis div:nth-child(3){border-left:0}.kpis div:nth-child(n+3){border-top:1px solid var(--border)}}
+
+.explorer{display:grid;grid-template-columns:minmax(0,1fr) 400px;min-height:620px;border-top:1px solid var(--border)}
+@media (max-width:1180px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.ex-main{display:flex;flex-direction:column;min-width:0}
+.toolbar{display:flex;flex-wrap:wrap;gap:var(--s-2);align-items:center;padding:var(--s-3) var(--s-4);border-bottom:1px solid var(--border);background:var(--surface)}
+.toolbar .spacer{flex:1}
+.bulk{display:flex;flex-wrap:wrap;gap:var(--s-2);align-items:center;padding:6px var(--s-4);background:var(--accent-soft);border-bottom:1px solid var(--accent-line);color:var(--accent-text);font-weight:500}
+.tbl-wrap{overflow-x:auto;min-width:0;background:var(--surface);flex:1}
+table.data{width:100%;border-collapse:separate;border-spacing:0;min-width:980px}
+.data th{position:sticky;top:0;z-index:1;height:34px;padding:0 10px;text-align:left;font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;color:var(--ink-3);background:var(--surface-2);border-bottom:1px solid var(--border);white-space:nowrap}
+.data th.r,.data td.r{text-align:right}
+.data th .sort{display:inline-flex;align-items:center;gap:3px;color:var(--ink)}
+.data td{height:var(--row-default);padding:0 10px;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:middle}
+.compact .data td{height:var(--row-compact)}
+.data tbody tr{cursor:pointer;transition:background var(--dur-1)}
+.data tbody tr:hover{background:var(--row-hover)}
+.data tbody tr[aria-selected="true"]{background:var(--row-selected)}
+.data tbody tr[aria-selected="true"] td:first-child{box-shadow:inset 2px 0 0 var(--accent)}
+.data tbody tr:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.co{display:flex;flex-direction:column;line-height:16px}
+.co b{font-weight:500}
+.co small{font-family:var(--font-mono);font-size:11px;color:var(--ink-3)}
+.cb{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;vertical-align:middle}
+.sig{display:flex;align-items:center;gap:8px;max-width:260px}
+.sig span{overflow:hidden;text-overflow:ellipsis;color:var(--ink-2)}
+.muted{color:var(--ink-4)}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:var(--s-3);padding:8px var(--s-4);font-size:12px;color:var(--ink-3);background:var(--surface);border-top:1px solid var(--border)}
+.inspector{border-left:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;min-width:0}
+@media (max-width:1180px){.inspector{border-left:0;border-top:1px solid var(--border)}}
+.insp-h{padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-2);border-bottom:1px solid var(--border)}
+.insp-h .top-row{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.insp-sec{padding:var(--s-4) var(--s-5);display:flex;flex-direction:column;gap:var(--s-3);border-bottom:1px solid var(--border)}
+.insp-sec:last-child{border-bottom:0}
+.facts{display:flex;flex-direction:column}
+.facts li{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--border)}
+.facts li:first-child{border-top:0}
+.facts .k{color:var(--ink-3);font-size:12px}
+.facts .v{min-width:0}
+.facts .v.unk{color:var(--ink-4);font-style:italic}
+.next{display:flex;flex-direction:column;gap:var(--s-3);padding:var(--s-4);border-radius:var(--r-md);background:var(--surface-2)}
+.new-row{animation:wash 1.6s var(--ease-out)}
+@keyframes wash{from{background:var(--intent-soft)}to{background:transparent}}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:0s!important;animation-iteration-count:1!important;transition-duration:0s!important}}
+</style>
+
+<div class="frame">
+  <header class="masthead">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" style="fill:none;stroke:var(--accent)" stroke-width="1.5" stroke-dasharray="2.5 3"/><circle cx="17" cy="17" r="8.5" style="fill:none;stroke:var(--accent)" stroke-width="1.5"/><circle cx="17" cy="17" r="3" style="fill:var(--ink)"/><circle cx="25.5" cy="10.5" r="2.2" style="fill:var(--intent)"/></svg>
+      <div class="brand-meta"><span class="wordmark">Inhabitr</span><small>Visual identity &amp; design system · proposal v0.1 · for review</small></div>
+    </div>
+    <div class="row">
+      <span class="sub">Theme</span>
+      <div class="seg" role="group" aria-label="Theme">
+        <button type="button" data-theme-set="light" aria-pressed="false"><i data-i="sun"></i>Light</button>
+        <button type="button" data-theme-set="dark" aria-pressed="false"><i data-i="moon"></i>Dark</button>
+        <button type="button" data-theme-set="system" aria-pressed="true"><i data-i="monitor"></i>System</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Sections">
+      <a href="#identity"><span>1</span>Identity</a>
+      <a href="#colour"><span>2</span>Colour</a>
+      <a href="#type"><span>3</span>Typography</a>
+      <a href="#space"><span>4</span>Space &amp; form</a>
+      <a href="#navigation"><span>5</span>Navigation</a>
+      <a href="#components"><span>6</span>Components</a>
+      <a href="#screens"><span>7</span>Screens</a>
+      <p class="note">Every company, person and number on this page is mock data. Company domains use the reserved <span class="mono">.example</span> domain.</p>
+    </nav>
+
+    <main>
+      <!-- 1 IDENTITY -->
+      <section class="sheet" id="identity">
+        <div class="sheet-head">
+          <span class="eyebrow">1 · Identity &amp; philosophy</span>
+          <h1 class="display-lg">Account intelligence for hotel sales, with the evidence attached.</h1>
+          <p class="lede">Inhabitr should feel like a well-run sales office: calm, exact and quietly confident. The interface is dense where people work (tables, panels) and generous where they decide (scores, evidence, next actions). One colour means "this is ours"; every other colour means something specific.</p>
+        </div>
+        <div class="thesis">
+          <dl class="principles">
+            <div><dt>Evidence before opinion</dt><dd>Every claim shows how we know it. The Fact / Inference / Unknown marks are the most important visual element in the product.</dd></div>
+            <div><dt>Calm density</dt><dd>Hairline borders instead of boxes and shadows. Tables at 13px with tabular numerals. Whitespace is used to group things, not to decorate.</dd></div>
+            <div><dt>Colour carries meaning</dt><dd>Lagoon is the brand and <em>Fit</em>. Marigold is <em>Intent</em> and anything time-sensitive. Iris is reserved for AI <em>Inference</em>. Nothing is coloured just to look nice.</dd></div>
+            <div><dt>Show the work</dt><dd>Long jobs show their stages, counts, failures and spend while they run. Never a bare spinner.</dd></div>
+            <div><dt>Warm, not decorative</dt><dd>A serif for page titles and quoted evidence brings a hospitality feel. Everything else is plain and functional.</dd></div>
+          </dl>
+          <div class="markbox">
+            <span class="h3">Mark</span>
+            <div class="mark-row">
+              <div class="mark-tile"><svg width="56" height="56" viewBox="0 0 34 34" aria-label="Inhabitr mark on light"><circle cx="17" cy="17" r="15" fill="none" stroke="#0F6A62" stroke-width="1.5" stroke-dasharray="2.5 3"/><circle cx="17" cy="17" r="8.5" fill="none" stroke="#0F6A62" stroke-width="1.5"/><circle cx="17" cy="17" r="3" fill="#141917"/><circle cx="25.5" cy="10.5" r="2.2" fill="#C88C10"/></svg></div>
+              <div class="mark-tile dark"><svg width="56" height="56" viewBox="0 0 34 34" aria-label="Inhabitr mark on dark"><circle cx="17" cy="17" r="15" fill="none" stroke="#3FB3A4" stroke-width="1.5" stroke-dasharray="2.5 3"/><circle cx="17" cy="17" r="8.5" fill="none" stroke="#3FB3A4" stroke-width="1.5"/><circle cx="17" cy="17" r="3" fill="#E7ECE9"/><circle cx="25.5" cy="10.5" r="2.2" fill="#E2A93B"/></svg></div>
+            </div>
+            <p class="sub" style="max-width:40ch">A property (centre) inside its target radius. The dashed outer ring is the discovery boundary; the marigold point is a company showing a live signal. This is a working mark until the name is cleared (A-10).</p>
+            <span class="h3" style="margin-top:8px">What we avoid</span>
+            <ul class="avoid"><li>gradients</li><li>glow &amp; sparkles</li><li>chat-first UI</li><li>giant KPI cards</li><li>traffic-light scores</li><li>decorative illustration</li><li>shadow on everything</li></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 COLOUR -->
+      <section class="sheet" id="colour">
+        <div class="sheet-head">
+          <span class="eyebrow">2 · Colour</span>
+          <h2 class="display-md">Linen neutrals, one lagoon accent, and colours that each carry one meaning.</h2>
+          <p class="lede">The neutrals lean slightly toward the accent so the product doesn't look like a default grey. Both themes are designed separately: dark mode lightens the accents rather than inverting them.</p>
+        </div>
+
+        <div class="theme-pair">
+          <div class="theme-pane force-light">
+            <div class="label"><span class="h3">Light</span><span class="sub">canvas #F6F7F5</span></div>
+            <div class="swatches" data-swatches></div>
+          </div>
+          <div class="theme-pane force-dark">
+            <div class="label"><span class="h3">Dark</span><span class="sub">canvas #0E1211</span></div>
+            <div class="swatches" data-swatches></div>
+          </div>
+        </div>
+
+        <div class="panel panel-pad ramps">
+          <span class="h3">Ramps</span>
+          <div class="ramp-row"><span class="sub">Lagoon · accent, Fit</span><div class="ramp" data-ramp="#ECF6F4,#D3EBE6,#A6D6CD,#6FB9AD,#3A9A8D,#1A7F74,#0F6A62,#0C554F,#0A433F,#08332F"></div></div>
+          <div class="ramp-row"><span class="sub">Marigold · Intent, time</span><div class="ramp" data-ramp="#FFF8EA,#FCF1D8,#F8DFA6,#F0CF85,#E2A93B,#C88C10,#B07C0C,#8A600A,#6B4A08,#4D3506"></div></div>
+          <div class="ramp-row"><span class="sub">Iris · inference only</span><div class="ramp" data-ramp="#F7F5FD,#F1EDFA,#DFD7F4,#C5B7EC,#9D86E6,#7357C2,#5F46AE,#553E9C,#43307C,#30235A"></div></div>
+          <div class="ramp-row"><span class="sub">Linen · neutrals</span><div class="ramp" data-ramp="#F6F7F5,#F1F3F0,#E7EBE6,#E0E4DF,#C7CEC8,#A3ABA6,#67706B,#4A534F,#252D2A,#141917"></div></div>
+        </div>
+
+        <div class="panel scroll-x">
+          <table class="meaning">
+            <thead><tr><th>Colour</th><th>Means</th><th>Used for</th><th>Never used for</th></tr></thead>
+            <tbody>
+              <tr><td><span class="dot" style="background:var(--accent)"></span>Lagoon</td><td>Ours · Fit</td><td>Primary actions, selection, focus, Fit bars, Tier A, Fact marks</td><td>Warnings or status</td></tr>
+              <tr><td><span class="dot" style="background:var(--intent)"></span>Marigold</td><td>Intent · now</td><td>Signals, freshness, Intent bars, newly arrived rows, budget warnings</td><td>Primary buttons</td></tr>
+              <tr><td><span class="dot" style="background:var(--inference)"></span>Iris</td><td>Inference</td><td>AI interpretation that isn't directly stated by a source</td><td>Anything else, so it stays recognisable</td></tr>
+              <tr><td><span class="dot" style="background:var(--ink-2)"></span>Ink</td><td>Confidence · meta</td><td>Confidence meter, costs, counts, pipeline pips</td><td>Opportunity value</td></tr>
+              <tr><td><span class="dot" style="background:var(--success)"></span><span class="dot" style="background:var(--danger)"></span><span class="dot" style="background:var(--info)"></span>Semantic</td><td>Outcome</td><td>Won / engaged, failed / lost, informational notices</td><td>Scores (scores are never red/amber/green)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="sub">Contrast (approximate, WCAG 2.1): body ink on surface ≈ 17:1 · secondary ink ≈ 7.9:1 · tertiary ink ≈ 5:1 · accent on white ≈ 6.4:1 · marigold text ≈ 5.6:1 · iris text ≈ 8:1. All text pairs meet AA. Final values are verified with a checker when tokens move into code.</p>
+      </section>
+
+      <!-- 3 TYPE -->
+      <section class="sheet" id="type">
+        <div class="sheet-head">
+          <span class="eyebrow">3 · Typography</span>
+          <h2 class="display-md">A sans for working, a serif for naming and quoting, a mono for machine text.</h2>
+          <p class="lede">The serif is used only for page titles, company names in headers and quoted evidence: the places where the product speaks about the world, not about itself. All numbers use tabular figures so columns line up.</p>
+        </div>
+        <div class="families">
+          <div class="panel family"><span class="eyebrow">Display · Newsreader</span><span class="glyphs" style="font-family:var(--font-display)">Aa Rg 173</span><p class="sub">Page titles, account names, evidence quotes, empty states. Weights 400–600.</p></div>
+          <div class="panel family"><span class="eyebrow">Interface · IBM Plex Sans</span><span class="glyphs">Aa Rg 173</span><p class="sub">Everything people read and operate. Engineered, legible at 12–13px, strong tabular numerals. Weights 400, 500, 600.</p></div>
+          <div class="panel family"><span class="eyebrow">Data · IBM Plex Mono</span><span class="glyphs" style="font-family:var(--font-mono)">Aa Rg 173</span><p class="sub">Domains, IDs, logs, costs in run details. Never for body text.</p></div>
+        </div>
+        <div class="panel panel-pad type-rows">
+          <div class="type-row" style="border-top:0"><span class="meta">display-lg<br>44/48 · 400</span><span class="display-lg">Hypothetical Upscale Hotel</span><span class="meta">Onboarding, large empty states</span></div>
+          <div class="type-row"><span class="meta">display-md<br>32/38 · 400</span><span class="display-md">Arcturus Data Labs</span><span class="meta">Account header</span></div>
+          <div class="type-row"><span class="meta">display-sm<br>24/30 · 500</span><span class="display-sm">Accounts</span><span class="meta">Page titles</span></div>
+          <div class="type-row"><span class="meta">title<br>20/28 · 600</span><span style="font-size:20px;line-height:28px;font-weight:600">Score breakdown</span><span class="meta">Panel and dialog titles</span></div>
+          <div class="type-row"><span class="meta">heading<br>16/24 · 600</span><span style="font-size:16px;line-height:24px;font-weight:600">Recommended roles</span><span class="meta">Section headings</span></div>
+          <div class="type-row"><span class="meta">body-md<br>14/22 · 400</span><span style="font-size:14px;line-height:22px">Headquartered in Bengaluru with a 300-person delivery centre in Perungudi.</span><span class="meta">Reading text, inputs</span></div>
+          <div class="type-row"><span class="meta">body<br>13/20 · 400</span><span>Default interface text: table cells, menus, buttons.</span><span class="meta">UI default</span></div>
+          <div class="type-row"><span class="meta">small<br>12/16 · 400</span><span style="font-size:12px;line-height:16px;color:var(--ink-2)">Retrieved 8 Nov 2026 · arcturus-data.example/about</span><span class="meta">Meta, hints, captions</span></div>
+          <div class="type-row"><span class="meta">label<br>11/14 · 600 · caps</span><span class="eyebrow">Signal window · 365 days</span><span class="meta">Column headers, group labels</span></div>
+        </div>
+        <div class="grid-2">
+          <div class="panel panel-pad stack">
+            <span class="h3">Tabular numerals</span>
+            <table class="numdemo"><tbody>
+              <tr><td>Arcturus Data Labs</td><td>4.2 km</td><td>74</td><td>₹ 18,40,000</td></tr>
+              <tr><td>Kestrel Engineering</td><td>9.8 km</td><td>71</td><td>₹ 6,75,000</td></tr>
+              <tr><td>Ostrava Consulting</td><td>3.1 km</td><td>66</td><td>₹ 11,20,000</td></tr>
+            </tbody></table>
+            <p class="sub">Indian digit grouping (lakh/crore) is a workspace locale setting (DD-15).</p>
+          </div>
+          <div class="panel panel-pad stack">
+            <span class="h3">Quoted evidence</span>
+            <blockquote style="margin:0;padding:4px 0 4px 14px;border-left:2px solid var(--accent-line);font-family:var(--font-display);font-size:18px;line-height:26px;font-style:italic">"our 300+ strong Chennai delivery team works from Perungudi"</blockquote>
+            <p class="sub">Quotes are shown exactly as found in the source, in the display serif, so they read as the source's words rather than ours.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 SPACE -->
+      <section class="sheet" id="space">
+        <div class="sheet-head">
+          <span class="eyebrow">4 · Space, size, radius, elevation, motion</span>
+          <h2 class="display-md">A 4px grid, small radii, and shadows only on things that float.</h2>
+          <p class="lede">Surfaces are separated by 1px hairlines. Shadows appear only on layers above the page: menus, popovers, dialogs, drawers and toasts. Radii stay small so dense screens stay crisp.</p>
+        </div>
+        <div class="grid-2">
+          <div class="panel panel-pad stack">
+            <span class="h3">Spacing scale</span>
+            <div class="space-scale" data-space></div>
+          </div>
+          <div class="panel panel-pad stack">
+            <span class="h3">Sizes</span>
+            <dl class="kv">
+              <dt>Controls</dt><dd>28 / 32 / 40 px (sm / md / lg); 32 is default</dd>
+              <dt>Table rows</dt><dd>40 px comfortable · 32 px compact (user toggle)</dd>
+              <dt>Top bar</dt><dd>48 px</dd>
+              <dt>Sidebar</dt><dd>232 px · 56 px collapsed</dd>
+              <dt>Inspector</dt><dd>400 px (resizable 360–560)</dd>
+              <dt>Content</dt><dd>max 1440 px · forms max 720 px</dd>
+              <dt>Icons</dt><dd>Lucide · 16 px in UI, 14 px in chips · 1.75 stroke</dd>
+            </dl>
+            <div class="row" style="margin-top:8px"><button class="btn btn-secondary btn-sm">28 · sm</button><button class="btn btn-secondary">32 · md</button><button class="btn btn-secondary btn-lg">40 · lg</button></div>
+          </div>
+          <div class="panel panel-pad stack">
+            <span class="h3">Radius</span>
+            <div class="radii">
+              <div><i style="border-radius:var(--r-xs)"></i>xs · 3<br>chips, tags</div>
+              <div><i style="border-radius:var(--r-sm)"></i>sm · 5<br>buttons, inputs</div>
+              <div><i style="border-radius:var(--r-md)"></i>md · 8<br>panels, menus</div>
+              <div><i style="border-radius:var(--r-lg)"></i>lg · 12<br>dialogs</div>
+              <div><i style="border-radius:var(--r-pill);width:64px"></i>pill<br>filters, avatars</div>
+            </div>
+          </div>
+          <div class="panel panel-pad stack">
+            <span class="h3">Motion</span>
+            <dl class="kv">
+              <dt>100 ms</dt><dd>Hover, press, colour changes</dd>
+              <dt>160 ms</dt><dd>Popovers, menus, inspector content swap</dd>
+              <dt>240 ms</dt><dd>Drawers, dialogs, page-level transitions</dd>
+              <dt>1.6 s</dt><dd>Marigold wash on a newly arrived result row</dd>
+              <dt>Easing</dt><dd><span class="mono">cubic-bezier(.2,0,0,1)</span> out · <span class="mono">(.4,0,.2,1)</span> in-out</dd>
+              <dt>Reduced</dt><dd>All motion disabled when the OS asks for it</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="elev">
+          <div style="box-shadow:0 0 0 1px var(--border)"><span class="h3">Level 0</span><span class="sub">Page surfaces · hairline only</span></div>
+          <div style="box-shadow:0 0 0 1px var(--border),var(--shadow-1)"><span class="h3">Level 1</span><span class="sub">Menus, popovers, tooltips</span></div>
+          <div style="box-shadow:0 0 0 1px var(--border),var(--shadow-2)"><span class="h3">Level 2</span><span class="sub">Dialogs, drawers, ⌘K, toasts</span></div>
+        </div>
+      </section>
+
+      <!-- 5 NAVIGATION -->
+      <section class="sheet" id="navigation">
+        <div class="sheet-head">
+          <span class="eyebrow">5 · Navigation &amp; information architecture</span>
+          <h2 class="display-md">Everything happens inside a property.</h2>
+          <p class="lede">The property switcher sits at the top of the sidebar because almost every screen is about one hotel. Five working areas sit below it, then system pages. Search and commands live in ⌘K, and a running job is always visible in the top bar.</p>
+        </div>
+        <div class="scroll-x">
+          <div class="shell">
+            <aside class="side">
+              <div class="ws"><span>Demo Workspace</span><span class="origin hypo" style="height:16px">Demo</span></div>
+              <div class="prop"><span class="av">H</span><span class="nm"><b>Hypothetical Upscale Hotel</b><span class="sub">OMR · pre-opening</span></span><i data-i="chev"></i></div>
+              <nav class="nav">
+                <a href="#navigation"><i data-i="dash"></i>Overview</a>
+                <a href="#navigation" class="on"><i data-i="building"></i>Accounts<span class="ct">186</span></a>
+                <a href="#navigation"><i data-i="compass"></i>Discovery<span class="ct">1 running</span></a>
+                <a href="#navigation"><i data-i="users"></i>Contacts<span class="ct">22</span></a>
+                <a href="#navigation"><i data-i="kanban"></i>Pipeline<span class="ct">9</span></a>
+                <span class="grp">System</span>
+                <a href="#navigation"><i data-i="bed"></i>Properties</a>
+                <a href="#navigation"><i data-i="activity"></i>Activity</a>
+                <a href="#navigation"><i data-i="sliders"></i>Settings</a>
+              </nav>
+              <div class="me"><span class="avatar">PR</span>Priya R · Rep</div>
+            </aside>
+            <div style="display:flex;flex-direction:column;min-width:0">
+              <div class="top">
+                <div class="crumbs">Accounts <i data-i="chevr"></i><b>Tier A this week</b></div>
+                <div class="search"><i data-i="search"></i><span>Search or run a command</span><span class="kbd">⌘K</span></div>
+                <span class="jobpill"><span class="pulse"></span>Discovery · 44%</span>
+              </div>
+              <div class="shell-body">
+                <span class="eyebrow">Sitemap</span>
+<pre class="ia"><b>Workspace</b> <em>(switch in user menu)</em>
+└─ <b>Property</b> <em>/p/:propertyId</em>
+   ├─ Overview      <em>/overview</em>
+   ├─ Accounts      <em>/accounts · /accounts/:accountId</em>
+   ├─ Discovery     <em>/discovery · /new · /:jobId</em>
+   ├─ Contacts      <em>/contacts</em>
+   └─ Pipeline      <em>/pipeline</em>
+<b>System</b>
+   ├─ Properties    <em>/properties · /new · /:id/edit</em>
+   ├─ Activity      <em>/activity · /jobs/:jobId · /usage</em>
+   └─ Settings      <em>/settings/{workspace,members,providers,scoring,audit}</em>
+<b>Everywhere</b>  ⌘K commands · running-job pill · Inspector on any account row</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 COMPONENTS -->
+      <section class="sheet" id="components">
+        <div class="sheet-head">
+          <span class="eyebrow">6 · Core components</span>
+          <h2 class="display-md">A small set of parts, each with a precise job.</h2>
+          <p class="lede">Each of these becomes one React component with a CSS Module that reads only design tokens. Screens arrange components and add layout; they don't restyle them. Hover or focus the evidence marks to see their source popovers.</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel panel-pad stack">
+            <span class="h3">Buttons</span>
+            <div class="row"><button class="btn btn-primary"><i data-i="plus"></i>Start discovery</button><button class="btn btn-secondary"><i data-i="download"></i>Export</button><button class="btn btn-ghost">Cancel</button><button class="btn btn-danger">Dismiss</button><button class="btn btn-secondary btn-icon" aria-label="More"><i data-i="more"></i></button><button class="btn btn-primary" disabled>Disabled</button></div>
+            <p class="sub">One primary button per view. Labels say exactly what happens ("Start discovery", not "Submit").</p>
+          </div>
+          <div class="panel panel-pad stack">
+            <span class="h3">Inputs</span>
+            <div class="grid-2">
+              <div class="field"><label for="f1">Radius</label><div class="input"><input id="f1" value="15"><span class="sub">km</span></div><span class="hint">1–50 km from the property pin</span></div>
+              <div class="field"><label for="f2">Budget cap</label><div class="input invalid"><span class="sub">$</span><input id="f2" value="0"></div><span class="err">Enter a budget above $0 to start the job</span></div>
+            </div>
+            <div class="input"><i data-i="search"></i><input id="f3" placeholder="Search accounts by name or domain"><span class="kbd">/</span></div>
+          </div>
+
+          <div class="panel panel-pad stack">
+            <span class="h3">Filters &amp; views</span>
+            <div class="tabs" role="tablist"><button role="tab" aria-selected="true">All accounts <span class="count">186</span></button><button role="tab" aria-selected="false">Tier A this week <span class="count">14</span></button><button role="tab" aria-selected="false">Unassigned <span class="count">97</span></button><button role="tab" aria-selected="false">Dismissed <span class="count">31</span></button></div>
+            <div class="row"><span class="chip"><b>Tier</b> A, B<button aria-label="Remove filter"><i data-i="x" class="sm"></i></button></span><span class="chip"><b>Distance</b> ≤ 10 km<button aria-label="Remove filter"><i data-i="x"></i></button></span><span class="chip"><b>Signal</b> &lt; 90 days<button aria-label="Remove filter"><i data-i="x"></i></button></span><span class="chip add"><i data-i="plus"></i>Filter</span></div>
+            <div class="row"><div class="seg" role="group" aria-label="View"><button aria-pressed="true">Table</button><button aria-pressed="false">Map</button></div><div class="seg" role="group" aria-label="Density"><button aria-pressed="true">Comfortable</button><button aria-pressed="false">Compact</button></div></div>
+          </div>
+
+          <div class="panel panel-pad stack">
+            <span class="h3">Status, tier &amp; origin</span>
+            <div class="stack" style="gap:8px" data-statuses></div>
+            <div class="row"><span class="tier tier-A">A</span><span class="tier tier-B">B</span><span class="tier tier-C">C</span><span class="sub">Tier is a single lagoon ramp, never traffic lights.</span></div>
+            <div class="row"><span class="origin mock">Mock</span><span class="origin hypo"><i data-i="pin" class="sm"></i>Hypothetical</span><span class="origin manual">Manual</span><span class="sub">Real data carries no badge.</span></div>
+          </div>
+
+          <div class="panel panel-pad stack">
+            <span class="h3">Evidence marks</span>
+            <p class="sub">Shape encodes certainty, so it works without colour: filled = Fact, half = Inference, empty = Unknown.</p>
+            <div class="row">
+              <span class="ev-wrap"><button class="ev ev-fact" type="button"><span class="glyph"></span>Fact<span class="n">2</span></button>
+                <span class="pop" role="tooltip"><span class="src"><i data-i="globe" class="sm"></i>About us · arcturus-data.example</span><blockquote>"headquartered in Bengaluru, with delivery centres in Chennai and Pune"</blockquote><span class="meta"><span>Retrieved 8 Nov 2026</span><span>Website</span><span>+1 more source</span></span><span class="ok"><i data-i="check" class="sm"></i>Quote matched in source text</span></span></span>
+              <span class="ev-wrap"><button class="ev ev-inf" type="button"><span class="glyph"></span>Inference</button>
+                <span class="pop" role="tooltip"><span class="src">Client visits likely</span><span>Based on 2 facts: client-facing consulting services; HQ outside Chennai.</span><span class="meta"><span>Generated by research step · prompt v3</span></span></span></span>
+              <span class="ev-wrap"><button class="ev ev-unk" type="button"><span class="glyph"></span>Unknown</button>
+                <span class="pop" role="tooltip"><span class="src">Employee range not verified</span><span>No source states a headcount. We don't estimate it.</span><span class="meta"><span>Add it manually with a source to raise confidence</span></span></span></span>
+            </div>
+          </div>
+
+          <div class="panel panel-pad stack">
+            <span class="h3">Freshness</span>
+            <div class="row"><span class="fresh hot"><i data-i="clock" class="sm"></i>12 d</span><span class="fresh hot"><i data-i="clock" class="sm"></i>41 d</span><span class="fresh warm"><i data-i="clock" class="sm"></i>96 d</span><span class="fresh warm"><i data-i="clock" class="sm"></i>210 d</span><span class="fresh old">Historical · 410 d</span></div>
+            <p class="sub">Under 90 days is marigold. Beyond the signal window it is labelled Historical and contributes nothing to Intent.</p>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="panel panel-pad stack">
+            <span class="h3">Fit breakdown</span>
+            <div data-score="fit"></div>
+          </div>
+          <div class="panel panel-pad stack">
+            <span class="h3">Intent breakdown</span>
+            <div data-score="intent"></div>
+          </div>
+          <div class="panel panel-pad stack">
+            <span class="h3">Confidence &amp; table cells</span>
+            <div class="conf"><span class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><b class="tnum">63</b><span class="sub">Medium · 3 of 4 key fields verified</span></div>
+            <p class="sub">Confidence is shown next to scores but never blended into Priority. It uses ink, not a brand colour, because it describes the data rather than the company.</p>
+            <div class="stack" style="gap:6px">
+              <span class="mini"><span class="track"><i style="width:74%;background:var(--fit-2)"></i></span>74 <span class="sub">Fit cell</span></span>
+              <span class="mini"><span class="track"><i style="width:59%;background:var(--intent)"></i></span>59 <span class="sub">Intent cell</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel panel-pad stack">
+            <div class="row" style="justify-content:space-between"><span class="h3">Run timeline</span><span class="origin mock">Mock</span></div>
+            <ol class="run" data-run></ol>
+            <div class="cost"><div class="line"><span>Spend</span><span><b>$1.42</b> spent · $0.31 reserved · $5.00 cap</span></div><div class="track"><span class="spent" style="width:28.4%"></span><span class="resv" style="width:6.2%"></span></div></div>
+          </div>
+          <div class="stack">
+            <div class="panel"><div class="empty">
+              <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><circle cx="28" cy="28" r="26" style="fill:none;stroke:var(--border-strong)" stroke-dasharray="3 4"/><circle cx="28" cy="28" r="15" style="fill:none;stroke:var(--border-strong)"/><circle cx="28" cy="28" r="4" style="fill:var(--ink-3)"/></svg>
+              <h3 class="display-sm">No accounts yet</h3>
+              <p>Run a discovery job to find companies within 15 km of this property, or import a list your team already has.</p>
+              <div class="row"><button class="btn btn-primary"><i data-i="compass"></i>Start discovery</button><button class="btn btn-secondary">Import CSV</button></div>
+            </div></div>
+            <div class="banner error"><i data-i="alert"></i><div><span class="h3">Research failed for 2 companies</span><p>halden-pc.example blocked automated access (robots.txt). quillon.example timed out twice.</p></div><div class="row"><button class="btn btn-secondary btn-sm"><i data-i="refresh"></i>Retry failed</button><button class="btn btn-ghost btn-sm">View log</button></div></div>
+            <div class="banner warn"><i data-i="clock"></i><div><span class="h3">Paused at budget cap</span><p>$5.00 of $5.00 spent. 21 companies still to research (about $1.90).</p></div><div class="row"><button class="btn btn-secondary btn-sm">Raise cap</button><button class="btn btn-ghost btn-sm">Finish with partial results</button></div></div>
+            <div class="row"><span class="toast"><i data-i="check"></i>Outreach marked as sent<button>Undo</button></span></div>
+            <div class="panel panel-pad stack" style="gap:10px"><span class="sub">Loading skeleton</span><span class="skel" style="width:60%"></span><span class="skel" style="width:85%"></span><span class="skel" style="width:40%"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 SCREENS -->
+      <section class="sheet" id="screens">
+        <div class="sheet-head">
+          <span class="eyebrow">7 · Dashboard &amp; account explorer direction</span>
+          <h2 class="display-md">Summary first, then the table where the work happens.</h2>
+          <p class="lede">The Overview answers "where do we stand and what needs me today". The Accounts explorer is the main working screen: a dense table on the left and an inspector on the right that explains the selected account without leaving the list. Click any row, or focus the table and press <span class="kbd">J</span> / <span class="kbd">K</span>.</p>
+          <div class="mock-flag"><span class="origin mock">Mock</span>Fictional companies and numbers, for layout review only.</div>
+        </div>
+
+        <!-- Overview -->
+        <div class="screen">
+          <div class="screen-top">
+            <div>
+              <h3 class="display-sm">Overview</h3>
+              <div class="sub"><span>Hypothetical Upscale Hotel · Sholinganallur, OMR</span><span class="origin hypo"><i data-i="pin" class="sm"></i>Hypothetical</span><span>Opens 1 May 2027 · <b class="tnum" style="color:var(--ink)">173</b> days to opening</span></div>
+            </div>
+            <div class="row"><button class="btn btn-secondary"><i data-i="download"></i>Export</button><button class="btn btn-primary"><i data-i="compass"></i>New discovery</button></div>
+          </div>
+          <div class="kpis">
+            <div><b>186</b><span>Accounts in radius</span></div>
+            <div><b>14</b><span>Tier A</span></div>
+            <div><b>14</b><span>Outreach sent</span></div>
+            <div><b>₹ 24.6 L</b><span>Open pipeline value</span></div>
+          </div>
+          <div class="ov">
+            <div class="panel">
+              <div class="card-h"><span class="h3">Account funnel</span><span class="sub">All time · this property</span></div>
+              <div class="funnel" data-funnel></div>
+            </div>
+            <div class="stack" style="gap:var(--s-4)">
+              <div class="panel">
+                <div class="card-h"><span class="h3">Needs you today</span><span class="sub">3</span></div>
+                <ul class="list">
+                  <li><span class="t">Kestrel Engineering Services</span><span class="fresh hot">18 d</span><span class="d">New Tier A account, unassigned. Hiring drive of 120 design engineers.</span></li>
+                  <li><span class="t">Tessaro Cloud Ops</span><span class="tag">Draft ready</span><span class="d">Outreach prepared 3 days ago and not sent.</span></li>
+                  <li><span class="t">Brightwell Learning</span><span class="tag">Follow-up</span><span class="d">Contact identified, no activity for 14 days.</span></li>
+                </ul>
+              </div>
+              <div class="panel">
+                <div class="card-h"><span class="h3">Discovery · 15 km · IT, consulting, mfg</span><span class="jobpill"><span class="pulse"></span>44%</span></div>
+                <div class="panel-pad" style="padding-top:12px"><div class="progress" style="height:8px"><span class="ok" style="width:44%"></span><span class="run" style="width:10%"></span><span class="bad" style="width:4%"></span></div><div class="row" style="justify-content:space-between;margin-top:8px"><span class="sub">22 researched · 5 running · 2 failed · 21 waiting</span><a href="#components" class="sub">Open run</a></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accounts explorer -->
+        <div class="screen" id="explorer">
+          <div class="screen-top" style="padding-bottom:var(--s-3)">
+            <div><h3 class="display-sm">Accounts</h3><div class="sub"><span>Hypothetical Upscale Hotel · 186 accounts within 15 km</span></div></div>
+            <div class="row"><button class="btn btn-secondary"><i data-i="download"></i>Export</button><button class="btn btn-primary"><i data-i="plus"></i>Import CSV</button></div>
+          </div>
+          <div style="padding:0 var(--s-6)"><div class="tabs" role="tablist"><button role="tab" aria-selected="true">All accounts <span class="count">186</span></button><button role="tab" aria-selected="false">Tier A this week <span class="count">14</span></button><button role="tab" aria-selected="false">My accounts <span class="count">23</span></button><button role="tab" aria-selected="false">Unassigned <span class="count">97</span></button><button role="tab" aria-selected="false">Dismissed <span class="count">31</span></button></div></div>
+          <div class="explorer" id="ex">
+            <div class="ex-main">
+              <div class="toolbar">
+                <div class="input" style="width:240px"><i data-i="search"></i><input id="exq" placeholder="Search accounts"></div>
+                <span class="chip"><b>Status</b> not dismissed<button aria-label="Remove filter"><i data-i="x"></i></button></span>
+                <span class="chip add"><i data-i="plus"></i>Filter</span>
+                <span class="spacer"></span>
+                <div class="seg" role="group" aria-label="Density"><button type="button" data-density="comfortable" aria-pressed="true">Comfortable</button><button type="button" data-density="compact" aria-pressed="false">Compact</button></div>
+                <button class="btn btn-ghost btn-sm"><i data-i="columns"></i>Columns</button>
+                <div class="seg" role="group" aria-label="View"><button aria-pressed="true">Table</button><button aria-pressed="false"><i data-i="pin" class="sm"></i>Map</button></div>
+              </div>
+              <div class="bulk" id="bulk" hidden><span id="bulkn">0 selected</span><button class="btn btn-secondary btn-sm">Assign</button><button class="btn btn-secondary btn-sm">Mark qualified</button><button class="btn btn-secondary btn-sm">Dismiss…</button><button class="btn btn-ghost btn-sm">Export</button></div>
+              <div class="tbl-wrap">
+                <table class="data" id="tbl" aria-label="Accounts">
+                  <thead><tr>
+                    <th style="width:36px"><input type="checkbox" class="cb" id="all" aria-label="Select all"></th>
+                    <th>Company</th><th>Industry</th><th class="r">Distance</th><th>Scale</th><th>Tier</th>
+                    <th><span class="sort">Fit<i data-i="chev" class="sm"></i></span></th><th>Intent</th><th class="r">Conf.</th><th>Top signal</th><th>Status</th><th>Owner</th>
+                  </tr></thead>
+                  <tbody id="rows"></tbody>
+                </table>
+              </div>
+              <div class="foot"><span>Showing 8 of 186 · sorted by Priority</span><span class="row"><span class="kbd">J</span><span class="kbd">K</span> move · <span class="kbd">↵</span> open · <span class="kbd">X</span> select</span></div>
+            </div>
+            <aside class="inspector" id="insp" aria-live="polite"></aside>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var P={sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',monitor:'<rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8M12 17v4"/>',
+  search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',plus:'<path d="M5 12h14M12 5v14"/>',
+  download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/>',chev:'<path d="m6 9 6 6 6-6"/>',chevr:'<path d="m9 18 6-6-6-6"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  dash:'<rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>',
+  building:'<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2M10 6h4M10 10h4M10 14h4M10 18h4"/>',
+  compass:'<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.8 5.41a2 2 0 0 1-1.27 1.27L7.76 16.24l1.8-5.41a2 2 0 0 1 1.27-1.27z"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  kanban:'<path d="M6 5v11M12 5v6M18 5v14"/>',bed:'<path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>',
+  activity:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',sliders:'<path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/>',
+  pin:'<path d="M20 10c0 5-5.54 10.19-7.4 11.8a1 1 0 0 1-1.2 0C9.54 20.19 4 15 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>',
+  columns:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M12 3v18"/>',more:'<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+  refresh:'<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>',
+  mail:'<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+  userplus:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
+  ext:'<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>'};
+  function icon(n,cls){return '<svg class="i'+(cls?' '+cls:'')+'" viewBox="0 0 24 24" aria-hidden="true">'+(P[n]||'')+'</svg>';}
+  function hydrate(root){(root||document).querySelectorAll('i[data-i]').forEach(function(el){el.outerHTML=icon(el.getAttribute('data-i'),el.className);});}
+
+  /* theme */
+  var btns=document.querySelectorAll('[data-theme-set]');
+  function setTheme(t){var r=document.documentElement;if(t==='system'){r.removeAttribute('data-theme');}else{r.setAttribute('data-theme',t);}btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-theme-set')===t));});try{localStorage.setItem('inhabitr-theme',t);}catch(e){}}
+  btns.forEach(function(b){b.addEventListener('click',function(){setTheme(b.getAttribute('data-theme-set'));});});
+  try{var saved=localStorage.getItem('inhabitr-theme');if(saved){setTheme(saved);}}catch(e){}
+
+  /* swatches */
+  var SW=[['canvas','Canvas'],['surface','Surface'],['surface-2','Surface 2'],['surface-3','Surface 3'],['border','Border'],['border-strong','Border strong'],['ink','Ink'],['ink-2','Ink 2'],['ink-3','Ink 3'],['ink-4','Ink 4'],['accent','Accent'],['accent-soft','Accent soft'],['accent-text','Accent text'],['intent','Intent'],['intent-soft','Intent soft'],['intent-text','Intent text'],['inference','Inference'],['inference-soft','Inference soft'],['success','Success'],['danger','Danger'],['info','Info']];
+  document.querySelectorAll('[data-swatches]').forEach(function(box){
+    box.innerHTML=SW.map(function(s){return '<div class="sw"><i style="background:var(--'+s[0]+')"></i><b>'+s[1]+'</b><code>--'+s[0]+'</code></div>';}).join('');
+  });
+  document.querySelectorAll('[data-ramp]').forEach(function(r){
+    var c=r.getAttribute('data-ramp').split(',');r.innerHTML=c.map(function(h,i){return '<span style="background:'+h+';color:'+(i<5?'#141917':'#F6F7F5')+'">'+(i+1)*100+'</span>';}).join('');
+  });
+  var SP=[['s-0-5',2],['s-1',4],['s-1-5',6],['s-2',8],['s-3',12],['s-4',16],['s-5',20],['s-6',24],['s-8',32],['s-10',40],['s-12',48],['s-16',64]];
+  document.querySelector('[data-space]').innerHTML=SP.map(function(s){return '<div><span>--'+s[0]+'</span><span>'+s[1]+'px</span><i style="width:'+(s[1]*4)+'px;max-width:100%"></i></div>';}).join('');
+
+  /* statuses */
+  var ST=[['discovered','Discovered',1],['qualified','Qualified',2],['contact','Contact identified',3],['prepared','Outreach prepared',4],['sent','Outreach sent',5],['engaged','Engaged',6],['dismissed','Dismissed',0]];
+  function status(key,label,n,total){total=total||6;var p='';for(var i=1;i<=total;i++){p+='<i'+(i<=n?' class="on"':'')+'></i>';}return '<span class="status '+key+'"><span class="pips">'+p+'</span>'+label+'</span>';}
+  document.querySelector('[data-statuses]').innerHTML='<div class="row" style="gap:6px 16px">'+ST.map(function(s){return status(s[0],s[1],s[2]);}).join('')+'</div><span class="sub">Pips show position in the prospecting lifecycle (P-04). Opportunities use the same pattern with 4 pips.</span>';
+
+  /* data */
+  var A=[
+   {id:1,n:'Arcturus Data Labs',d:'arcturus-data.example',ind:'IT services',loc:'Perungudi',km:4.2,sc:'201–500',t:'A',pr:68,fit:74,int:59,conf:63,sig:'New delivery centre floor in Perungudi',age:41,st:['qualified','Qualified',2],own:'Priya R',
+    ff:[['Industry relevance',27,30,'IT services · high relevance to corporate rate'],['Inbound travel',21,30,'HQ in Bengaluru; client-facing delivery'],['Proximity',15,20,'4.2 km from the property'],['Scale',11,20,'Range not verified (Unknown)']],
+    sigs:[['New delivery centre floor in Perungudi',41,0.52],['Hiring 60 analysts in Chennai',58,0.37]],
+    facts:[['HQ','Bengaluru','fact',2],['Local presence','Delivery centre, Perungudi','fact',1],['Employees','Not verified','unk',0],['Client visits','Likely: client-facing services','inf',0]],
+    roles:['Admin / Facilities Manager','Travel desk','HR (onboarding)']},
+   {id:2,n:'Kestrel Engineering Services',d:'kestrel-eng.example',ind:'Engineering R&D',loc:'Siruseri',km:9.8,sc:'501–1000',t:'A',pr:66,fit:71,int:58,conf:58,sig:'Hiring drive: 120 design engineers',age:18,st:['discovered','Discovered',1],own:'',
+    ff:[['Industry relevance',24,30,'Engineering R&D · high'],['Inbound travel',22,30,'HQ in Pune; global clients'],['Proximity',11,20,'9.8 km'],['Scale',14,20,'501–1000']],
+    sigs:[['Hiring drive: 120 design engineers',18,0.58]],
+    facts:[['HQ','Pune','fact',1],['Local presence','Engineering centre, Siruseri','fact',1],['Employees','501–1000','fact',1],['Training','Likely: bulk onboarding','inf',0]],
+    roles:['HR / Talent Acquisition','Admin / Facilities','Travel desk']},
+   {id:3,n:'Ostrava Consulting Partners',d:'ostrava-cp.example',ind:'Consulting',loc:'Thoraipakkam',km:3.1,sc:'51–200',t:'B',pr:48,fit:66,int:22,conf:71,sig:'Leadership visit from Singapore office',age:63,st:['contact','Contact identified',3],own:'Priya R',
+    ff:[['Industry relevance',24,30,'Consulting · high'],['Inbound travel',20,30,'Client-facing; HQ in Singapore'],['Proximity',17,20,'3.1 km'],['Scale',5,20,'51–200']],
+    sigs:[['Leadership visit from Singapore office',63,0.33]],
+    facts:[['HQ','Singapore','fact',2],['Local presence','Branch office, Thoraipakkam','fact',1],['Employees','51–200','fact',1],['Events','Not verified','unk',0]],
+    roles:['Founder / Country head','Operations Head','Admin Manager']},
+   {id:4,n:'Tessaro Cloud Ops',d:'tessaro.example',ind:'ITES / BPO',loc:'Karapakkam',km:5.6,sc:'1001–5000',t:'B',pr:51,fit:58,int:41,conf:66,sig:'Onboarding batch of 300 graduates',age:27,st:['prepared','Outreach prepared',4],own:'Arjun M',
+    ff:[['Industry relevance',18,30,'ITES · medium'],['Inbound travel',14,30,'HQ in Chennai'],['Proximity',15,20,'5.6 km'],['Scale',11,20,'Very large: RFP buying likely']],
+    sigs:[['Onboarding batch of 300 graduates',27,0.61]],
+    facts:[['HQ','Chennai','fact',1],['Local presence','Operations centre, Karapakkam','fact',2],['Employees','1001–5000','fact',1],['Training','Graduate onboarding programme','fact',1]],
+    roles:['HR / Talent Acquisition','Admin / Facilities','Procurement']},
+   {id:5,n:'Brightwell Learning',d:'brightwell.example',ind:'Education',loc:'Sholinganallur',km:1.2,sc:'51–200',t:'B',pr:45,fit:55,int:30,conf:48,sig:'Annual faculty conference announced',age:52,st:['contact','Contact identified',3],own:'Priya R',
+    ff:[['Industry relevance',12,30,'Education · medium for MICE'],['Inbound travel',14,30,'Visiting faculty'],['Proximity',20,20,'1.2 km'],['Scale',9,20,'51–200']],
+    sigs:[['Annual faculty conference announced',52,0.45]],
+    facts:[['HQ','Chennai','fact',1],['Local presence','Campus, Sholinganallur','fact',1],['Employees','Not verified','unk',0],['Events','Hosts annual conference','fact',1]],
+    roles:['Events / Marketing','Admin Manager','Principal / Director']},
+   {id:6,n:'Halden Precision Components',d:'halden-pc.example',ind:'Manufacturing · auto',loc:'Kelambakkam',km:14.1,sc:'201–500',t:'B',pr:45,fit:62,int:35,conf:44,sig:'Plant expansion announced',age:96,st:['discovered','Discovered',1],own:'',
+    ff:[['Industry relevance',20,30,'Auto components · medium-high'],['Inbound travel',18,30,'Vendor & auditor visits likely'],['Proximity',9,20,'14.1 km, near radius edge'],['Scale',15,20,'201–500']],
+    sigs:[['Plant expansion announced',96,0.35]],
+    facts:[['HQ','Coimbatore','fact',1],['Local presence','Plant, Kelambakkam','fact',1],['Employees','201–500','fact',1],['Vendor visits','Likely: supplier audits','inf',0]],
+    roles:['Plant / Operations Head','Admin / Facilities','Procurement']},
+   {id:7,n:'Quillon Analytics',d:'quillon.example',ind:'IT product / SaaS',loc:'Navalur',km:8.0,sc:'11–50',t:'C',pr:28,fit:38,int:12,conf:35,sig:'',age:null,st:['discovered','Discovered',1],own:'',
+    ff:[['Industry relevance',18,30,'SaaS · medium'],['Inbound travel',6,30,'No indicators found'],['Proximity',12,20,'8.0 km'],['Scale',2,20,'11–50']],
+    sigs:[],facts:[['HQ','Not verified','unk',0],['Local presence','Office, Navalur','fact',1],['Employees','11–50','fact',1],['Client visits','Not verified','unk',0]],
+    roles:['Founder / CEO']},
+   {id:8,n:'Mirelle Health Systems',d:'mirelle.example',ind:'Healthcare',loc:'Perungudi',km:4.9,sc:'201–500',t:'C',pr:25,fit:41,int:0,conf:52,sig:'Opened Chennai office',age:410,st:['dismissed','Dismissed',0],own:'Arjun M',
+    ff:[['Industry relevance',8,30,'Healthcare IT · low'],['Inbound travel',10,30,'HQ in Hyderabad'],['Proximity',15,20,'4.9 km'],['Scale',8,20,'201–500']],
+    sigs:[],facts:[['HQ','Hyderabad','fact',1],['Local presence','Office, Perungudi','fact',1],['Employees','201–500','fact',1],['Travel','Not verified','unk',0]],
+    roles:['Admin Manager']}
+  ];
+  var FIT=['var(--fit-1)','var(--fit-2)','var(--fit-3)','var(--fit-4)'];
+
+  function fresh(age){if(age===null||age===undefined)return '<span class="muted">—</span>';if(age>365)return '<span class="fresh old">Historical</span>';return '<span class="fresh '+(age<90?'hot':'warm')+'">'+icon('clock','sm')+age+' d</span>';}
+  function ev(kind,n){var m={fact:['ev-fact','Fact'],inf:['ev-inf','Inference'],unk:['ev-unk','Unknown']}[kind];return '<span class="ev '+m[0]+'"><span class="glyph"></span>'+m[1]+(n>1?'<span class="n">'+n+'</span>':'')+'</span>';}
+  function fitBlock(a){
+    var bar=a.ff.map(function(f,i){return '<span title="'+f[0]+': '+f[1]+' of '+f[2]+'" style="width:'+f[1]+'%;background:'+FIT[i]+'"></span>';}).join('');
+    var lg=a.ff.map(function(f,i){return '<li><i style="background:'+FIT[i]+'"></i><span>'+f[0]+' <em>· '+f[3]+'</em></span><b>'+f[1]+'<span class="muted">/'+f[2]+'</span></b></li>';}).join('');
+    return '<div class="score"><div class="score-head"><span class="name"><span class="dot" style="background:var(--fit-2);margin:0"></span>Fit</span><span class="val">'+a.fit+'<small> /100</small></span></div><div class="bar">'+bar+'</div><ul class="legend">'+lg+'</ul></div>';
+  }
+  function intentBlock(a){
+    if(!a.sigs.length){return '<div class="score"><div class="score-head"><span class="name"><span class="dot" style="background:var(--intent);margin:0"></span>Intent</span><span class="val">'+a.int+'<small> /100</small></span></div><div class="bar"></div><p class="sub">No current signals inside the 365-day window.</p></div>';}
+    var tot=a.sigs.reduce(function(s,x){return s+x[2];},0)||1;
+    var bar=a.sigs.map(function(s,i){return '<span style="width:'+(a.int*s[2]/tot)+'%;background:var(--intent);opacity:'+(1-i*0.3)+'"></span>';}).join('');
+    var lg=a.sigs.map(function(s,i){return '<li><i style="background:var(--intent);opacity:'+(1-i*0.3)+'"></i><span>'+s[0]+'</span>'+fresh(s[1])+'</li>';}).join('');
+    return '<div class="score"><div class="score-head"><span class="name"><span class="dot" style="background:var(--intent);margin:0"></span>Intent</span><span class="val">'+a.int+'<small> /100</small></span></div><div class="bar">'+bar+'</div><ul class="legend">'+lg+'</ul></div>';
+  }
+  function confBlock(c){var n=Math.round(c/20);var s='';for(var i=0;i<5;i++){s+='<i'+(i<n?' class="on"':'')+'></i>';}var lbl=c>=70?'High':c>=45?'Medium':'Low';return '<div class="conf"><span class="steps">'+s+'</span><b class="tnum">'+c+'</b><span class="sub">'+lbl+' confidence</span></div>';}
+
+  document.querySelector('[data-score="fit"]').innerHTML=fitBlock(A[0]);
+  document.querySelector('[data-score="intent"]').innerHTML=intentBlock(A[0]);
+
+  /* run timeline */
+  var RUN=[['done','Understanding request &amp; geography','15 km around the property pin · 7 localities','—'],['done','Discovering companies','OpenStreetMap, web search, CSV','124 found'],['done','Removing duplicates','17 merged by domain or name + location','107'],['done','Filtering for relevance','57 filtered out, each with a reason','50 kept'],['running','Researching companies','<div class="progress"><span class="ok" style="width:44%"></span><span class="run" style="width:10%"></span><span class="bad" style="width:4%"></span></div>','22 / 50'],['fail','Identifying business signals','2 companies failed: see the error above','20 ok · 2 failed'],['pending','Scoring &amp; validating evidence','Starts as each company finishes research','—']];
+  var ICO={done:icon('check','sm'),fail:icon('x','sm'),running:'',pending:''};
+  document.querySelector('[data-run]').innerHTML=RUN.map(function(r){return '<li class="stage '+r[0]+'"><span class="ic">'+ICO[r[0]]+'</span><span><span class="t">'+r[1]+'</span><div class="d">'+r[2]+'</div></span><span class="c">'+r[3]+'</span></li>';}).join('');
+
+  /* funnel */
+  var F=[['Discovered',186,''],['Qualified',64,''],['Contact identified',22,''],['Outreach sent',14,''],['Engaged',5,''],['split','Opportunities'],['Meeting scheduled',3,'opp'],['Negotiation',1,'opp'],['Won',1,'opp']];
+  document.querySelector('[data-funnel]').innerHTML=F.map(function(f){if(f[0]==='split')return '<div class="split">'+f[1]+'</div>';return '<div class="fr '+f[2]+'"><span>'+f[0]+'</span><span><span class="b" style="display:block;width:'+Math.max(1,f[1]/186*100)+'%"></span></span><b>'+f[1]+'</b></div>';}).join('');
+
+  /* explorer */
+  var rows=document.getElementById('rows'),insp=document.getElementById('insp'),sel=1,checked={};
+  function rowHtml(a){
+    var mini=function(v,c){return '<span class="mini"><span class="track"><i style="width:'+v+'%;background:'+c+'"></i></span>'+v+'</span>';};
+    return '<tr tabindex="-1" data-id="'+a.id+'" aria-selected="'+(a.id===sel)+'">'+
+      '<td><input type="checkbox" class="cb" data-check="'+a.id+'" aria-label="Select '+a.n+'"'+(checked[a.id]?' checked':'')+'></td>'+
+      '<td><span class="co"><b>'+a.n+'</b><small>'+a.d+'</small></span></td>'+
+      '<td>'+a.ind+'</td><td class="r tnum">'+a.km.toFixed(1)+' km</td><td class="tnum">'+a.sc+'</td>'+
+      '<td><span class="tier tier-'+a.t+'">'+a.t+'</span></td>'+
+      '<td>'+mini(a.fit,'var(--fit-2)')+'</td><td>'+mini(a.int,'var(--intent)')+'</td><td class="r tnum">'+a.conf+'</td>'+
+      '<td><span class="sig">'+(a.sig?fresh(a.age)+'<span>'+a.sig+'</span>':'<span class="muted">No current signal</span>')+'</span></td>'+
+      '<td>'+status(a.st[0],a.st[1],a.st[2])+'</td>'+
+      '<td>'+(a.own?'<span class="row" style="gap:6px;flex-wrap:nowrap"><span class="avatar">'+a.own.split(' ').map(function(w){return w[0];}).join('')+'</span>'+a.own+'</span>':'<span class="muted">Unassigned</span>')+'</td></tr>';
+  }
+  function renderRows(){rows.innerHTML=A.map(rowHtml).join('');}
+  function renderInsp(){
+    var a=A.filter(function(x){return x.id===sel;})[0];
+    var facts=a.facts.map(function(f){return '<li><span class="k">'+f[0]+'</span><span class="v'+(f[2]==='unk'?' unk':'')+'">'+f[1]+'</span>'+ev(f[2],f[3])+'</li>';}).join('');
+    var next=a.st[0]==='dismissed'?'<div class="next"><span class="h3">Dismissed · Not relevant industry</span><span class="sub">Dismissed by Arjun M. Reasons feed score calibration.</span><div class="row"><button class="btn btn-secondary btn-sm">Restore</button></div></div>'
+      :'<div class="next"><span class="h3">Next: find an Admin or Travel desk contact</span><span class="sub">Roles are identified but no contact is on record. Add one you know, then prepare outreach.</span><div class="row"><button class="btn btn-primary btn-sm">'+icon('userplus','sm')+'Add contact</button><button class="btn btn-secondary btn-sm">'+icon('mail','sm')+'Prepare outreach</button></div></div>';
+    insp.innerHTML='<div class="insp-h"><div class="top-row"><span class="row" style="gap:6px"><span class="tier tier-'+a.t+'">'+a.t+'</span><span class="sub">Priority '+a.pr+'</span><span class="origin mock">Mock</span></span><button class="btn btn-ghost btn-icon btn-sm" aria-label="Open full page">'+icon('ext','sm')+'</button></div>'+
+      '<h4 class="display-sm">'+a.n+'</h4><span class="row sub" style="gap:6px 10px"><a href="#explorer" class="mono">'+a.d+'</a><span>'+a.ind+'</span><span>'+a.loc+' · '+a.km.toFixed(1)+' km</span></span>'+
+      '<div class="row" style="margin-top:4px">'+status(a.st[0],a.st[1],a.st[2])+'</div></div>'+
+      '<div class="insp-sec">'+next+'</div>'+
+      '<div class="insp-sec">'+fitBlock(a)+'</div>'+
+      '<div class="insp-sec">'+intentBlock(a)+confBlock(a.conf)+'</div>'+
+      '<div class="insp-sec"><span class="h3">Key facts</span><ul class="facts">'+facts+'</ul></div>'+
+      '<div class="insp-sec"><span class="h3">Who to approach</span><div class="row">'+a.roles.map(function(r){return '<span class="tag">'+r+'</span>';}).join('')+'</div></div>';
+  }
+  function select(id,focus){sel=id;rows.querySelectorAll('tr').forEach(function(tr){tr.setAttribute('aria-selected',String(+tr.getAttribute('data-id')===id));if(focus&&+tr.getAttribute('data-id')===id){tr.focus();}});renderInsp();}
+  function updBulk(){var n=Object.keys(checked).filter(function(k){return checked[k];}).length;var b=document.getElementById('bulk');b.hidden=n===0;document.getElementById('bulkn').textContent=n+' selected';}
+  rows.addEventListener('click',function(e){var cb=e.target.closest('[data-check]');if(cb){checked[cb.getAttribute('data-check')]=cb.checked;updBulk();return;}var tr=e.target.closest('tr');if(tr){select(+tr.getAttribute('data-id'),true);}});
+  document.getElementById('tbl').addEventListener('keydown',function(e){var i=A.findIndex(function(x){return x.id===sel;});if(e.key==='j'||e.key==='ArrowDown'){e.preventDefault();select(A[Math.min(A.length-1,i+1)].id,true);}else if(e.key==='k'||e.key==='ArrowUp'){e.preventDefault();select(A[Math.max(0,i-1)].id,true);}else if(e.key==='x'){var id=sel;checked[id]=!checked[id];var c=rows.querySelector('[data-check="'+id+'"]');if(c)c.checked=checked[id];updBulk();}});
+  document.getElementById('all').addEventListener('change',function(e){A.forEach(function(a){checked[a.id]=e.target.checked;});rows.querySelectorAll('[data-check]').forEach(function(c){c.checked=e.target.checked;});updBulk();});
+  document.querySelectorAll('[data-density]').forEach(function(b){b.addEventListener('click',function(){var c=b.getAttribute('data-density')==='compact';document.getElementById('ex').classList.toggle('compact',c);document.querySelectorAll('[data-density]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});});});
+  renderRows();renderInsp();
+  var first=rows.querySelector('tr');if(first){first.setAttribute('tabindex','0');}
+  /* newly arrived row demo */
+  var last=rows.querySelector('tr[data-id="2"]');if(last)last.classList.add('new-row');
+  hydrate();
+})();
+</script>

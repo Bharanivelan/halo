@@ -1,0 +1,49 @@
+# Local development stack.
+#   docker compose up -d db          → Postgres 16 + PostGIS on localhost:5433
+#   docker compose --profile app up  → also runs API (:8000) and worker in containers
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: inhabitr
+      POSTGRES_USER: inhabitr_owner
+      POSTGRES_PASSWORD: ${DB_OWNER_PASSWORD:-inhabitr_owner_dev}
+      APP_DB_PASSWORD: ${DB_APP_PASSWORD:-inhabitr_app_dev}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inhabitr_owner -d inhabitr"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    profiles: ["app"]
+    build: ./backend
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://inhabitr_app:${DB_APP_PASSWORD:-inhabitr_app_dev}@db:5432/inhabitr
+      DATABASE_OWNER_URL: postgresql+psycopg://inhabitr_owner:${DB_OWNER_PASSWORD:-inhabitr_owner_dev}@db:5432/inhabitr
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    profiles: ["app"]
+    build: ./backend
+    command: python -m app.worker
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://inhabitr_app:${DB_APP_PASSWORD:-inhabitr_app_dev}@db:5432/inhabitr
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
