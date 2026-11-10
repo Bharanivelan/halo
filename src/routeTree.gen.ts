@@ -9,50 +9,252 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShellRouteImport } from './routes/_shell'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ShellIndexRouteImport } from './routes/_shell.index'
+import { Route as ShellSettingsRouteImport } from './routes/_shell.settings'
+import { Route as ShellPPropertyIdIndexRouteImport } from './routes/_shell.p.$propertyId.index'
+import { Route as ShellPPropertyIdPipelineRouteImport } from './routes/_shell.p.$propertyId.pipeline'
+import { Route as ShellPPropertyIdAccountsIndexRouteImport } from './routes/_shell.p.$propertyId.accounts.index'
+import { Route as ShellPPropertyIdAccountsAccountIdRouteImport } from './routes/_shell.p.$propertyId.accounts.$accountId'
+import { Route as ShellPPropertyIdAgentJobIdRouteImport } from './routes/_shell.p.$propertyId.agent.$jobId'
+import { Route as ShellPPropertyIdAgentNewRouteImport } from './routes/_shell.p.$propertyId.agent.new'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ShellRoute = ShellRouteImport.update({
+  id: '/_shell',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShellIndexRoute = ShellIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellSettingsRoute = ShellSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellPPropertyIdIndexRoute = ShellPPropertyIdIndexRouteImport.update({
+  id: '/p/$propertyId/',
+  path: '/p/$propertyId/',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellPPropertyIdPipelineRoute =
+  ShellPPropertyIdPipelineRouteImport.update({
+    id: '/p/$propertyId/pipeline',
+    path: '/p/$propertyId/pipeline',
+    getParentRoute: () => ShellRoute,
+  } as any)
+const ShellPPropertyIdAccountsIndexRoute =
+  ShellPPropertyIdAccountsIndexRouteImport.update({
+    id: '/p/$propertyId/accounts/',
+    path: '/p/$propertyId/accounts/',
+    getParentRoute: () => ShellRoute,
+  } as any)
+const ShellPPropertyIdAccountsAccountIdRoute =
+  ShellPPropertyIdAccountsAccountIdRouteImport.update({
+    id: '/p/$propertyId/accounts/$accountId',
+    path: '/p/$propertyId/accounts/$accountId',
+    getParentRoute: () => ShellRoute,
+  } as any)
+const ShellPPropertyIdAgentJobIdRoute =
+  ShellPPropertyIdAgentJobIdRouteImport.update({
+    id: '/p/$propertyId/agent/$jobId',
+    path: '/p/$propertyId/agent/$jobId',
+    getParentRoute: () => ShellRoute,
+  } as any)
+const ShellPPropertyIdAgentNewRoute =
+  ShellPPropertyIdAgentNewRouteImport.update({
+    id: '/p/$propertyId/agent/new',
+    path: '/p/$propertyId/agent/new',
+    getParentRoute: () => ShellRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof ShellIndexRoute
+  '/login': typeof LoginRoute
+  '/settings': typeof ShellSettingsRoute
+  '/p/$propertyId/pipeline': typeof ShellPPropertyIdPipelineRoute
+  '/p/$propertyId/': typeof ShellPPropertyIdIndexRoute
+  '/p/$propertyId/accounts/$accountId': typeof ShellPPropertyIdAccountsAccountIdRoute
+  '/p/$propertyId/agent/$jobId': typeof ShellPPropertyIdAgentJobIdRoute
+  '/p/$propertyId/agent/new': typeof ShellPPropertyIdAgentNewRoute
+  '/p/$propertyId/accounts/': typeof ShellPPropertyIdAccountsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/settings': typeof ShellSettingsRoute
+  '/': typeof ShellIndexRoute
+  '/p/$propertyId/pipeline': typeof ShellPPropertyIdPipelineRoute
+  '/p/$propertyId': typeof ShellPPropertyIdIndexRoute
+  '/p/$propertyId/accounts/$accountId': typeof ShellPPropertyIdAccountsAccountIdRoute
+  '/p/$propertyId/agent/$jobId': typeof ShellPPropertyIdAgentJobIdRoute
+  '/p/$propertyId/agent/new': typeof ShellPPropertyIdAgentNewRoute
+  '/p/$propertyId/accounts': typeof ShellPPropertyIdAccountsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_shell': typeof ShellRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_shell/settings': typeof ShellSettingsRoute
+  '/_shell/': typeof ShellIndexRoute
+  '/_shell/p/$propertyId/pipeline': typeof ShellPPropertyIdPipelineRoute
+  '/_shell/p/$propertyId/': typeof ShellPPropertyIdIndexRoute
+  '/_shell/p/$propertyId/accounts/$accountId': typeof ShellPPropertyIdAccountsAccountIdRoute
+  '/_shell/p/$propertyId/agent/$jobId': typeof ShellPPropertyIdAgentJobIdRoute
+  '/_shell/p/$propertyId/agent/new': typeof ShellPPropertyIdAgentNewRoute
+  '/_shell/p/$propertyId/accounts/': typeof ShellPPropertyIdAccountsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/settings'
+    | '/p/$propertyId/pipeline'
+    | '/p/$propertyId/'
+    | '/p/$propertyId/accounts/$accountId'
+    | '/p/$propertyId/agent/$jobId'
+    | '/p/$propertyId/agent/new'
+    | '/p/$propertyId/accounts/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/login'
+    | '/settings'
+    | '/'
+    | '/p/$propertyId/pipeline'
+    | '/p/$propertyId'
+    | '/p/$propertyId/accounts/$accountId'
+    | '/p/$propertyId/agent/$jobId'
+    | '/p/$propertyId/agent/new'
+    | '/p/$propertyId/accounts'
+  id:
+    | '__root__'
+    | '/_shell'
+    | '/login'
+    | '/_shell/settings'
+    | '/_shell/'
+    | '/_shell/p/$propertyId/pipeline'
+    | '/_shell/p/$propertyId/'
+    | '/_shell/p/$propertyId/accounts/$accountId'
+    | '/_shell/p/$propertyId/agent/$jobId'
+    | '/_shell/p/$propertyId/agent/new'
+    | '/_shell/p/$propertyId/accounts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  ShellRoute: typeof ShellRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_shell': {
+      id: '/_shell'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ShellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_shell/': {
+      id: '/_shell/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ShellIndexRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/settings': {
+      id: '/_shell/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof ShellSettingsRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/p/$propertyId/': {
+      id: '/_shell/p/$propertyId/'
+      path: '/p/$propertyId'
+      fullPath: '/p/$propertyId/'
+      preLoaderRoute: typeof ShellPPropertyIdIndexRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/p/$propertyId/pipeline': {
+      id: '/_shell/p/$propertyId/pipeline'
+      path: '/p/$propertyId/pipeline'
+      fullPath: '/p/$propertyId/pipeline'
+      preLoaderRoute: typeof ShellPPropertyIdPipelineRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/p/$propertyId/accounts/': {
+      id: '/_shell/p/$propertyId/accounts/'
+      path: '/p/$propertyId/accounts'
+      fullPath: '/p/$propertyId/accounts/'
+      preLoaderRoute: typeof ShellPPropertyIdAccountsIndexRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/p/$propertyId/accounts/$accountId': {
+      id: '/_shell/p/$propertyId/accounts/$accountId'
+      path: '/p/$propertyId/accounts/$accountId'
+      fullPath: '/p/$propertyId/accounts/$accountId'
+      preLoaderRoute: typeof ShellPPropertyIdAccountsAccountIdRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/p/$propertyId/agent/$jobId': {
+      id: '/_shell/p/$propertyId/agent/$jobId'
+      path: '/p/$propertyId/agent/$jobId'
+      fullPath: '/p/$propertyId/agent/$jobId'
+      preLoaderRoute: typeof ShellPPropertyIdAgentJobIdRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/p/$propertyId/agent/new': {
+      id: '/_shell/p/$propertyId/agent/new'
+      path: '/p/$propertyId/agent/new'
+      fullPath: '/p/$propertyId/agent/new'
+      preLoaderRoute: typeof ShellPPropertyIdAgentNewRouteImport
+      parentRoute: typeof ShellRoute
     }
   }
 }
 
+interface ShellRouteChildren {
+  ShellSettingsRoute: typeof ShellSettingsRoute
+  ShellIndexRoute: typeof ShellIndexRoute
+  ShellPPropertyIdPipelineRoute: typeof ShellPPropertyIdPipelineRoute
+  ShellPPropertyIdIndexRoute: typeof ShellPPropertyIdIndexRoute
+  ShellPPropertyIdAccountsAccountIdRoute: typeof ShellPPropertyIdAccountsAccountIdRoute
+  ShellPPropertyIdAgentJobIdRoute: typeof ShellPPropertyIdAgentJobIdRoute
+  ShellPPropertyIdAgentNewRoute: typeof ShellPPropertyIdAgentNewRoute
+  ShellPPropertyIdAccountsIndexRoute: typeof ShellPPropertyIdAccountsIndexRoute
+}
+
+const ShellRouteChildren: ShellRouteChildren = {
+  ShellSettingsRoute: ShellSettingsRoute,
+  ShellIndexRoute: ShellIndexRoute,
+  ShellPPropertyIdPipelineRoute: ShellPPropertyIdPipelineRoute,
+  ShellPPropertyIdIndexRoute: ShellPPropertyIdIndexRoute,
+  ShellPPropertyIdAccountsAccountIdRoute:
+    ShellPPropertyIdAccountsAccountIdRoute,
+  ShellPPropertyIdAgentJobIdRoute: ShellPPropertyIdAgentJobIdRoute,
+  ShellPPropertyIdAgentNewRoute: ShellPPropertyIdAgentNewRoute,
+  ShellPPropertyIdAccountsIndexRoute: ShellPPropertyIdAccountsIndexRoute,
+}
+
+const ShellRouteWithChildren = ShellRoute._addFileChildren(ShellRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  ShellRoute: ShellRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
