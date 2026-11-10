@@ -2,7 +2,7 @@ import { animate, useReducedMotion } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-function CountUp({ value, format }: { value: number; format?: (n: number) => string }) {
+function CountUp({ value, format }: { value: number; format?: ((n: number) => string) | undefined }) {
   const reduce = useReducedMotion();
   const [n, setN] = useState(reduce ? value : 0);
   useEffect(() => {

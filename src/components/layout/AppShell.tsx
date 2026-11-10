@@ -29,7 +29,7 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
       </button>
       <nav className="flex flex-col gap-1" aria-label="Main">
         {nav.map((n) => (
-          <Link key={n.label} to={n.to} params={pid ? { propertyId: pid } : undefined} onClick={onNavigate}
+          <Link key={n.label} to={n.to} params={{ propertyId: pid ?? "" } as never} onClick={onNavigate}
             activeOptions={{ exact: "exact" in n }}
             className={cn(item, collapsed && "justify-center px-0")}
             activeProps={{ className: "bg-surface-2 !text-foreground [&>svg]:text-gold" }} title={collapsed ? n.label : undefined}>
@@ -121,7 +121,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </header>
         <AnimatePresence mode="wait">
           <motion.main key={pathname} className="flex-1 p-4 md:p-8"
-            initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0 }} transition={{ duration: 0.15 }}>
+            initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: reduce ? 1 : 0 }} transition={{ duration: 0.15 }}>
             {children}
           </motion.main>
         </AnimatePresence>
