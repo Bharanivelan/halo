@@ -15,7 +15,7 @@ const CITIES = [
   { name: "Coimbatore", x: 24, y: 70, r: 17, color: "var(--coral)", delay: 2.6 },
 ];
 const DOTS = Array.from({ length: 54 }, (_, i) => {
-  const c = CITIES[i % 3];
+  const c = CITIES[i % 3]!;
   const a = i * 2.39996;
   const d = c.r * (0.25 + ((i * 37) % 70) / 100);
   return { x: c.x + Math.cos(a) * d, y: c.y + Math.sin(a) * d * 0.9, color: c.color, delay: (i * 0.37) % 5, big: i % 7 === 0 };
