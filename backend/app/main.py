@@ -27,6 +27,10 @@ async def request_id(request: Request, call_next):
     rid = request.headers.get("X-Request-ID") or f"req_{uuid.uuid4().hex[:16]}"
     request.state.request_id = rid
     response = await call_next(request)
+    # Chrome Private/Local Network Access: lets an https Lovable preview call this API on localhost (D-37).
+    if request.method == "OPTIONS" and request.headers.get("access-control-request-private-network") == "true" \
+            and response.headers.get("access-control-allow-origin"):
+        response.headers["Access-Control-Allow-Private-Network"] = "true"
     response.headers["X-Request-ID"] = rid
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
