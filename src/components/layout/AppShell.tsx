@@ -28,7 +28,11 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
         {!collapsed && <><span className="flex-1 truncate">{pid ? "Current location" : "All locations"}</span><ChevronsUpDown className="size-3.5 text-muted-foreground" /></>}
       </button>
       <nav className="flex flex-col gap-1" aria-label="Main">
-        {nav.map((n) => (
+        {nav.map((n) => !pid && n.label !== "Command center" ? (
+          <span key={n.label} aria-disabled title="Pick a location first" className={cn(item, "cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground", collapsed && "justify-center px-0")}>
+            <n.icon className="size-4 shrink-0" />{!collapsed && n.label}
+          </span>
+        ) : (
           <Link key={n.label} to={n.to} params={{ propertyId: pid ?? "" } as never} onClick={onNavigate}
             activeOptions={{ exact: "exact" in n }}
             className={cn(item, collapsed && "justify-center px-0")}
