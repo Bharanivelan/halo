@@ -39,7 +39,8 @@ import type {
   Offering,
 } from "./halo-types";
 
-export const DEFAULT_API_URL = "http://localhost:8000";
+// Demo tunnel to the Halo API (localhost.run; rotates, so update here or via Connection settings).
+export const DEFAULT_API_URL = "https://8717295d791419.lhr.life";
 const URL_KEY = "halo.apiUrl";
 const TOKEN_KEY = "halo.token";
 
