@@ -47,20 +47,37 @@ def bootstrap(a) -> None:
     print(f"Created workspace '{a.workspace}' and admin {a.email}.")
 
 
+def _find_workspace(slug: str | None):
+    """Workspaces sit behind RLS, so an unscoped session sees none. Discover ids via the global
+    memberships table, then read each workspace inside its own tenant context. Oldest match wins."""
+    with plain_session() as db:
+        ids = db.execute(select(Membership.workspace_id).distinct()).scalars().all()
+    found = []
+    for wid in ids:
+        with tenant_session(wid) as db:
+            ws = db.get(Workspace, wid)
+            if ws is not None and (slug is None or ws.slug == slug):
+                found.append((ws.created_at, ws.id, ws.name))
+    return min(found) if found else None
+
+
 def add_user(a) -> None:
     pw = _password(a.password)
+    ws = _find_workspace(a.workspace)
+    if ws is None:
+        sys.exit("Workspace not found.")
+    _, ws_id, ws_name = ws
     with plain_session() as db:
-        ws = db.execute(select(Workspace).order_by(Workspace.created_at)).scalars().first() if not a.workspace else \
-            db.execute(select(Workspace).where(Workspace.slug == a.workspace)).scalar_one_or_none()
-        if ws is None:
-            sys.exit("Workspace not found.")
+        if db.execute(select(Membership).join(User, User.id == Membership.user_id)
+                      .where(User.email == a.email.lower(), Membership.workspace_id == ws_id)).first():
+            sys.exit(f"{a.email} is already a member of {ws_name}.")
         u = db.execute(select(User).where(User.email == a.email.lower())).scalar_one_or_none()
         if u is None:
             u = User(email=a.email.lower(), full_name=a.name, password_hash=hash_password(pw))
             db.add(u)
             db.flush()
-        db.add(Membership(workspace_id=ws.id, user_id=u.id, role=a.role))
-    print(f"Added {a.email} as {a.role}.")
+        db.add(Membership(workspace_id=ws_id, user_id=u.id, role=a.role))
+    print(f"Added {a.email} to {ws_name} as {a.role}.")
 
 
 def main() -> None:
