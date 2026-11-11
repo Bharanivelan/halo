@@ -40,7 +40,7 @@ import type {
 } from "./halo-types";
 
 // Demo tunnel to the Halo API (localhost.run; rotates, so update here or via Connection settings).
-export const DEFAULT_API_URL = "https://8717295d791419.lhr.life";
+export const DEFAULT_API_URL = "https://2df60e2d2dd9cf.lhr.life";
 const URL_KEY = "halo.apiUrl";
 const TOKEN_KEY = "halo.token";
 
