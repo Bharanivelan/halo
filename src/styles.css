@@ -173,6 +173,10 @@
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 @keyframes drift { from { transform: translate3d(0,0,0); } to { transform: translate3d(-40px,-20px,0); } }
 
+@keyframes radar-sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes blip { 0% { r: 0; opacity: .9; } 100% { r: 6; opacity: 0; } }
+.anim-radar-sweep { transform-box: view-box; transform-origin: center; animation: radar-sweep 6s linear infinite; }
+.anim-blip { animation: blip 2.4s ease-out infinite; }
 .anim-halo-ring { transform-box: fill-box; transform-origin: center; animation: halo-ring 4.5s cubic-bezier(.2,.6,.3,1) infinite; }
 .anim-halo-pulse { animation: halo-pulse 2s ease-out infinite; }
 .anim-dot-light { animation: dot-light 5s ease-in-out infinite; }
@@ -181,4 +185,5 @@
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   .anim-halo-ring { animation: none; opacity: 0.5; transform: scale(0.8); }
   .anim-dot-light { animation: none; opacity: 0.7; }
+  .anim-radar-sweep, .anim-blip { animation: none; }
 }
