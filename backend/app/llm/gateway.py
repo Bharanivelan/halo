@@ -71,12 +71,13 @@ class OpenAICompatibleProvider:
         if self.name == "gemini":
             kwargs["max_tokens"] = max_output_tokens
             # Keep "thinking" small: cheaper and faster; our prompts are extraction-style.
+            # Sent via extra_body so it works with the pinned openai SDK (no reasoning_effort kwarg there).
             if model.startswith(("gemini-2.5", "gemini-3")):
-                kwargs["reasoning_effort"] = "low"
+                kwargs["extra_body"] = {"reasoning_effort": "low"}
         else:
             kwargs["max_completion_tokens"] = max_output_tokens
             if model.startswith(("gpt-5", "o3", "o4")):
-                kwargs["reasoning_effort"] = "low"
+                kwargs["extra_body"] = {"reasoning_effort": "low"}
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
         if tools:

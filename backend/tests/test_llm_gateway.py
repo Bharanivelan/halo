@@ -26,7 +26,7 @@ def test_key_follows_provider():
 def test_gemini_request_shape():
     kw = _provider("gemini")._kwargs("gemini-2.5-flash", [], 4000, True, None, None)
     assert kw["max_tokens"] == 4000 and "max_completion_tokens" not in kw
-    assert kw["reasoning_effort"] == "low" and kw["response_format"] == {"type": "json_object"}
+    assert kw["extra_body"] == {"reasoning_effort": "low"} and kw["response_format"] == {"type": "json_object"}
     kw = _provider("openai")._kwargs("gpt-5-mini", [], 4000, False, None, None)
     assert kw["max_completion_tokens"] == 4000 and "max_tokens" not in kw
 
