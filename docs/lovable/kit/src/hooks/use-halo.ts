@@ -73,7 +73,7 @@ export const useRun = (id?: string) =>
     queryKey: ["run", id], queryFn: () => halo.run(id!), enabled: !!id,
     refetchInterval: (q) => (isJobActive(q.state.data?.status) || !q.state.data ? 2000 : false),
   });
-function useRunAction<A>(fn: (a: A) => Promise<unknown>) {
+function useRunAction<A, R>(fn: (a: A) => Promise<R>) {
   const qc = useQueryClient();
   return useMutation({ mutationFn: fn, onSuccess: () => { qc.invalidateQueries({ queryKey: ["run"] }); qc.invalidateQueries({ queryKey: ["runs"] }); } });
 }
@@ -92,7 +92,7 @@ export const useAccountsMap = (propertyId?: string) =>
 export const useAccount = (id?: string) =>
   useQuery({ queryKey: ["account", id], queryFn: () => halo.account(id!), enabled: !!id });
 
-function useAccountMutation<A>(fn: (a: A) => Promise<unknown>, accountId?: string) {
+function useAccountMutation<A, R>(fn: (a: A) => Promise<R>, accountId?: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: fn,
@@ -117,7 +117,7 @@ export const useDeleteContact = (accountId: string) => useAccountMutation((id: s
 /* ── Pitch ── */
 export const usePitches = (accountId?: string) =>
   useQuery({ queryKey: ["pitches", accountId], queryFn: () => halo.pitches(accountId!), enabled: !!accountId });
-function usePitchMutation<A>(accountId: string, fn: (a: A) => Promise<unknown>) {
+function usePitchMutation<A, R>(accountId: string, fn: (a: A) => Promise<R>) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: fn,

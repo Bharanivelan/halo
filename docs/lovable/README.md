@@ -1,6 +1,8 @@
 # Building the Halo web app in Lovable
 
-The Halo UI is built in [Lovable](https://lovable.dev) as its own repo (`halo-web`). It talks to this API (`halo-api`)
+The Halo UI is built in [Lovable](https://lovable.dev) as its own repo (`halo-web`; on GitHub it is
+`Bharanivelan/nearby-hospitality-prospect-scout`, the name Lovable picked). It is a TanStack Start app (SSR), so
+the sign-in gate runs client-side after mount. It talks to this API (`halo-api`)
 over HTTPS with a bearer token. Lovable owns the look; the API owns all data and logic (D-34, D-35, D-36).
 
 ## What's in this folder

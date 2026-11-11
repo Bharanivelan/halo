@@ -24,7 +24,7 @@ function store(): Storage | null {
 
 export function getApiUrl(): string {
   const saved = store()?.getItem(URL_KEY);
-  const env = (import.meta as any).env?.VITE_HALO_API_URL as string | undefined;
+  const env = (import.meta as { env?: Record<string, string | undefined> }).env?.["VITE_HALO_API_URL"];
   return (saved || env || DEFAULT_API_URL).replace(/\/+$/, "");
 }
 export function setApiUrl(url: string) {
@@ -42,7 +42,7 @@ function setToken(t: string | null) {
 export class ApiError extends Error {
   readonly status: number;
   readonly title: string;
-  readonly detail?: string;
+  readonly detail: string | undefined;
   readonly errors: { field: string; code: string; message: string }[];
   constructor(status: number, p: Partial<ProblemDetails>) {
     super(p.detail || p.title || `Request failed (${status})`);
@@ -65,7 +65,7 @@ function buildUrl(path: string, query?: Query) {
   return `${getApiUrl()}/api/v1${path}${qs ? `?${qs}` : ""}`;
 }
 
-async function request<T>(path: string, opts: { method?: string; query?: Query; body?: unknown; form?: FormData; headers?: Record<string, string>; raw?: boolean } = {}): Promise<T> {
+async function request<T>(path: string, opts: { method?: string; query?: Query | undefined; body?: unknown; form?: FormData; headers?: Record<string, string>; raw?: boolean } = {}): Promise<T> {
   const headers: Record<string, string> = {
     Accept: "application/json, application/problem+json",
     // Skips the free-ngrok browser warning page when the API is reached through an ngrok tunnel (D-37).
@@ -73,8 +73,8 @@ async function request<T>(path: string, opts: { method?: string; query?: Query; 
     ...(opts.headers ?? {}),
   };
   const token = getToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
-  let body: BodyInit | undefined;
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  let body: BodyInit | null = null;
   if (opts.form) body = opts.form;
   else if (opts.body !== undefined) { headers["Content-Type"] = "application/json"; body = JSON.stringify(opts.body); }
 
