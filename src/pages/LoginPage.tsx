@@ -13,9 +13,9 @@ import { Label } from "@/components/ui/label";
 
 // Fixed layout so SSR and client render identically (no randomness).
 const CITIES = [
-  { name: "Chennai", x: 74, y: 40, r: 22, color: "var(--gold)", delay: 0 },
-  { name: "Vellore", x: 52, y: 30, r: 13, color: "var(--teal)", delay: 1.4 },
-  { name: "Coimbatore", x: 24, y: 70, r: 17, color: "var(--coral)", delay: 2.6 },
+  { name: "Houston", x: 74, y: 40, r: 22, color: "var(--gold)", delay: 0 },
+  { name: "Dallas", x: 52, y: 30, r: 13, color: "var(--teal)", delay: 1.4 },
+  { name: "Austin", x: 24, y: 70, r: 17, color: "var(--coral)", delay: 2.6 },
 ];
 const DOTS = Array.from({ length: 54 }, (_, i) => {
   const c = CITIES[i % 3]!;
