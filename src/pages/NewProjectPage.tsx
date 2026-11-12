@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Explain, HaloRadar, errorText } from "@/components/halo";
+import { CountryPicker } from "@/components/halo/CountryPicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,7 +44,6 @@ const FALLBACK_REGIONS: Region[] = [
     default_radius_km: 8,
   },
 ];
-const FLAG: Record<CountryCode, string> = { US: "🇺🇸", IN: "🇮🇳" };
 const OFFERINGS: Offering[] = ["corporate_rate", "mice", "long_stay", "fnb"];
 const OFFERING_HINT: Record<Offering, string> = {
   corporate_rate: "Business travellers on a company rate",
@@ -309,34 +309,8 @@ export function NewProjectPage() {
               {step === 0 && (
                 <>
                   <div className="space-y-1.5">
-                    <Label>Country</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {regions.map((r) => (
-                        <button
-                          key={r.code}
-                          type="button"
-                          onClick={() => setCountry(r.code)}
-                          aria-pressed={country === r.code}
-                          className={cn(
-                            "flex items-center gap-3 rounded-xl border p-3 text-left transition-colors",
-                            country === r.code
-                              ? "border-gold/50 bg-gold/10"
-                              : "border-border hover:border-gold/30",
-                          )}
-                        >
-                          <span className="text-2xl" aria-hidden>
-                            {FLAG[r.code]}
-                          </span>
-                          <span>
-                            <span className="block font-medium">{r.label}</span>
-                            <span className="block text-xs text-muted-foreground">
-                              Prices in {r.currency} · distances in{" "}
-                              {r.distance_unit === "mi" ? "miles" : "kilometres"}
-                            </span>
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                    <Label>Which country is the hotel in?</Label>
+                    <CountryPicker regions={regions} value={country} onChange={setCountry} />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="hotel-name">Hotel name</Label>
@@ -347,7 +321,9 @@ export function NewProjectPage() {
                       placeholder={
                         country === "US"
                           ? "e.g. Marriott Downtown Austin"
-                          : "e.g. Hyatt Regency Chennai"
+                          : country === "IN"
+                            ? "e.g. Hyatt Regency Chennai"
+                            : "Your hotel's name"
                       }
                       autoFocus
                     />
@@ -377,7 +353,9 @@ export function NewProjectPage() {
                             placeholder={
                               country === "US"
                                 ? "Street address or area, e.g. 701 E 11th St, Austin"
-                                : "Street address or area, e.g. Guindy, Chennai"
+                                : country === "IN"
+                                  ? "Street address or area, e.g. Guindy, Chennai"
+                                  : "Street address, area or landmark"
                             }
                             className="pl-9"
                           />
