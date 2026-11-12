@@ -14,6 +14,7 @@ from app.api.deps import CtxDep
 from app.api.serializers import (account_items, iso, property_full, property_summary, signal_out)
 from app.core.config import get_settings
 from app.core.errors import ValidationFailed
+from app.core.regions import DEFAULT_COUNTRY, REGIONS, region
 from app.core.vocab import (ACCOUNT_STATUS_LABELS, DISMISS_REASONS, INDUSTRIES, LOSS_REASONS, OFFERING_LABELS, ROLE_CODES,
                             SIGNAL_TYPES, STAGE_LABELS, Offering)
 from app.discovery.common import point_wkt
@@ -45,6 +46,7 @@ def reference(ctx: CtxDep):
              "reason": None if s.search_configured else "Add TAVILY_API_KEY to the server .env to enable"},
             {"key": "google_places", "label": "Google Places", "enabled": False, "reason": "Optional, disabled by default (P-06)"},
         ],
+        "regions": list(REGIONS.values()), "default_country": DEFAULT_COUNTRY,
         "llm_configured": s.llm_configured, "search_configured": s.search_configured,
         "scoring": {"tier_a_min": params.get("tiers", {}).get("A", 65), "tier_b_min": params.get("tiers", {}).get("B", 45),
                     "signal_window_days": params.get("signal_window_days", 365), "fresh_days": params.get("fresh_days", 90)},
@@ -60,10 +62,12 @@ def members(ctx: CtxDep):
 
 
 @router.get("/geocode")
-def geocode(q: str, ctx: CtxDep):
+def geocode(q: str, ctx: CtxDep, country: str | None = None):
+    """Address search. `country` (US, IN) keeps results inside the project's market."""
     if len(q.strip()) < 3:
         return []
-    return list(geocoder.geocode(q.strip()))
+    cc = country.upper() if country and country.upper() in REGIONS else None
+    return list(geocoder.geocode(q.strip(), country=cc))
 
 
 # ───────── properties ─────────
@@ -73,7 +77,7 @@ class GeoIn(BaseModel):
 
 
 class TargetIn(BaseModel):
-    radius_km: float = Field(15, ge=1, le=50)
+    radius_km: float = Field(8.0, ge=1, le=50)
     industries: list[str] = []
     employee_min: int | None = None
     employee_max: int | None = None
@@ -96,7 +100,7 @@ class PropertyIn(BaseModel):
     city: str | None = None
     state: str | None = None
     postal_code: str | None = None
-    country: str = "IN"
+    country: str = DEFAULT_COUNTRY
     location: GeoIn
     lifecycle: str = Field("pre_opening", pattern="^(pre_opening|operating)$")
     opening_date: date | None = None
@@ -110,6 +114,15 @@ class PropertyIn(BaseModel):
     is_hypothetical: bool = False
     offerings: list[Offering] = [Offering.corporate_rate]
     target: TargetIn = TargetIn()
+    start_agent: bool = False  # D-40: create the project and kick off the first discovery run in one step
+
+    @field_validator("country")
+    @classmethod
+    def supported_country(cls, v):
+        v = v.upper()
+        if v not in REGIONS:
+            raise ValueError(f"Supported countries: {', '.join(REGIONS)}")
+        return v
 
 
 class PropertyPatch(BaseModel):
@@ -176,10 +189,14 @@ def create_property(body: PropertyIn, ctx: CtxDep):
     prop = Property(workspace_id=ctx.p.workspace_id, name=body.name)
     ctx.db.add(prop)
     ctx.db.flush()
-    _apply(ctx, prop, body.model_dump(mode="python"))
+    _apply(ctx, prop, body.model_dump(mode="python", exclude={"start_agent"}))
     ctx.db.flush()
     ctx.audit("property.create", "property", prop.id, after={"name": prop.name})
-    return property_full(ctx.db, prop)
+    out = property_full(ctx.db, prop)
+    if body.start_agent:
+        from app.api.discovery import autostart_config, start_discovery
+        out["started_job_id"] = start_discovery(ctx, autostart_config(ctx, prop), "Automatic first run for a new project")["job_id"]
+    return out
 
 
 @router.get("/properties/{property_id}")
@@ -191,9 +208,36 @@ def get_property(property_id: UUID, ctx: CtxDep):
 def patch_property(property_id: UUID, body: PropertyPatch, ctx: CtxDep):
     ctx.require_role("admin", "manager")
     prop = ctx.property(property_id)
-    _apply(ctx, prop, body.model_dump(mode="python", exclude_unset=True))
+    data = body.model_dump(mode="python", exclude_unset=True)
+    if data.get("country") is not None:
+        data["country"] = data["country"].upper()
+        if data["country"] not in REGIONS:
+            raise ValidationFailed(f"Supported countries: {', '.join(REGIONS)}")
+    _apply(ctx, prop, data)
     ctx.db.flush()
     return property_full(ctx.db, prop)
+
+
+@router.delete("/properties/{property_id}", status_code=204)
+def archive_property(property_id: UUID, ctx: CtxDep):
+    """Delete a project (D-38). Soft delete: it disappears everywhere, running agent work is stopped,
+    and the rows stay recoverable by an admin. Admins and managers only."""
+    ctx.require_role("admin", "manager")
+    prop = ctx.property(property_id)
+    from app.models import JobEvent, WorkflowTask
+    now = datetime.now(timezone.utc)
+    for j in ctx.db.execute(select(DiscoveryJob).where(DiscoveryJob.property_id == prop.id,
+                                                       DiscoveryJob.status.in_(("queued", "running", "paused_budget", "cancelling")))).scalars():
+        j.cancel_requested = True
+        j.status = "cancelled"
+        j.finished_at = now
+        for t in ctx.db.execute(select(WorkflowTask).where(WorkflowTask.job_id == j.id,
+                                                           WorkflowTask.status.in_(("pending", "blocked_budget")))).scalars():
+            t.status = "skipped"
+        ctx.db.add(JobEvent(workspace_id=j.workspace_id, job_id=j.id, level="warning", stage=None,
+                            message=f"Stopped because the project was deleted by {ctx.p.full_name}."))
+    prop.archived_at = now
+    ctx.audit("property.archive", "property", prop.id, before={"name": prop.name})
 
 
 @router.get("/properties/{property_id}/overview")
@@ -233,7 +277,7 @@ def overview(property_id: UUID, ctx: CtxDep):
     usage = db.execute(select(func.coalesce(func.sum(LlmCall.cost_usd), 0), func.count())
                        .where(LlmCall.created_at >= datetime.now(timezone.utc) - timedelta(days=30))).first()
     return {"property": property_summary(db, prop), "account_count": sum(funnel.values()), "tier_counts": tiers,
-            "funnel": funnel, "opportunities": {**opp, "open_value": open_value, "currency": "INR"},
+            "funnel": funnel, "opportunities": {**opp, "open_value": open_value, "currency": region(prop.country)["currency"]},
             "recent_signals": recent, "attention": account_items(db, att), "running_jobs": [job_summary(db, j) for j in jobs],
             "usage_30d": {"cost_usd": float(usage[0] or 0), "llm_calls": int(usage[1] or 0)}}
 

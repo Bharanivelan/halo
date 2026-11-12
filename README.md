@@ -1,4 +1,4 @@
-# Halo API (by Inhabitr)
+# Halo API
 
 Backend for **Halo**, the AI go-to-market agent for multi-location hotel and restaurant groups: discover the companies
 around each location, research them, detect buying signals, score them, recommend whom to approach and draft the pitch.
@@ -39,7 +39,7 @@ docker compose up -d db
 cd backend
 python -m venv .venv && .venv/Scripts/pip install -r requirements.txt     # macOS/Linux: .venv/bin/pip
 .venv/Scripts/alembic upgrade head
-.venv/Scripts/python -m app.cli bootstrap --workspace "Inhabitr" --email you@company.com --name "Your Name"
+.venv/Scripts/python -m app.cli bootstrap --workspace "Halo" --email you@company.com --name "Your Name"
 .venv/Scripts/python -m uvicorn app.main:app --port 8000 --reload --reload-dir app     # API  → http://localhost:8000/api/v1/docs
 .venv/Scripts/python -m app.worker                                                       # worker (second terminal)
 

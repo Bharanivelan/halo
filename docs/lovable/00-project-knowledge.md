@@ -1,7 +1,7 @@
 # Halo — Project Knowledge (paste into Lovable → Project settings → Knowledge)
 
 ## What Halo is
-Halo (by Inhabitr) is an AI go-to-market agent for multi-location hospitality businesses (hotel groups, restaurant chains).
+Halo is an AI sales agent for hotels. One project = one hotel (D-38); US by default, India selectable (D-39).
 The owner pins each location on a map. For any location, Halo's agent discovers the companies around it, researches
 each one, detects buying signals (hiring, expansion, new offices, events), scores how good a prospect it is, recommends
 whom to approach and how, and drafts an evidence-backed pitch. Humans review and send — Halo never sends anything itself.
@@ -30,7 +30,7 @@ Audience: hotel/restaurant owners, sales managers and reps. The CEO demo matters
 
 ## Brand & visual identity
 - **Name:** Halo. Wordmark: "halo" lowercase in Plus Jakarta Sans 700, with a small glowing ring (◯ with gold→teal
-  gradient stroke) as the logo mark. Sub-label "by Inhabitr" in small muted text.
+  gradient stroke) as the logo mark. Sub-label "AI sales agent for hotels" in small muted text (no other brand, D-42).
 - **Concept:** every location radiates a *halo* — concentric glowing rings marking its catchment. Prospects light up
   inside the rings. Use this motif in the logo, map, empty states, loaders and the login screen.
 - **Theme:** dark-first "command center" (default), with a polished light theme toggle.

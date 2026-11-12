@@ -3,7 +3,7 @@ from fastapi import Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-PROBLEM_BASE = "https://inhabitr.app/problems/"
+PROBLEM_BASE = "https://halo.app/problems/"
 
 
 class AppError(Exception):

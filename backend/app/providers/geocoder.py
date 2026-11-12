@@ -13,11 +13,13 @@ _throttle = Throttle(1.1)
 
 
 @lru_cache(maxsize=512)
-def geocode(q: str, limit: int = 6) -> tuple[dict, ...]:
+def geocode(q: str, limit: int = 6, country: str | None = None) -> tuple[dict, ...]:
     _throttle.wait("nominatim")
+    params: dict = {"q": q, "format": "jsonv2", "addressdetails": 1, "limit": limit}
+    if country:
+        params["countrycodes"] = country.lower()
     try:
-        r = client.get(f"{_settings.nominatim_url}/search",
-                       params={"q": q, "format": "jsonv2", "addressdetails": 1, "limit": limit}, timeout=12)
+        r = client.get(f"{_settings.nominatim_url}/search", params=params, timeout=12)
     except httpx.HTTPError:
         return ()
     raise_for_status(r, "Geocoder")

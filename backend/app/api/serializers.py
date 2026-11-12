@@ -9,6 +9,7 @@ from geoalchemy2.shape import to_shape
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.regions import region
 from app.core.vocab import CLAIM_FIELDS, INDUSTRIES, ROLE_CODES, SIGNAL_TYPES
 from app.models import (Account, ActivityRow, Claim, Company, CompanyLocation, Contact, DiscoveryJob, Membership,
                         Opportunity, Property, PropertyAccess, PropertyOffering, PropertyTargetProfile, Signal, Source,
@@ -81,23 +82,30 @@ def _target(db: Session, prop_id: UUID) -> PropertyTargetProfile | None:
 def property_summary(db: Session, p: Property) -> dict:
     t = _target(db, p.id)
     count = db.execute(select(func.count()).select_from(Account).where(Account.property_id == p.id)).scalar_one()
+    job = db.execute(select(DiscoveryJob).where(DiscoveryJob.property_id == p.id)
+                     .order_by(DiscoveryJob.created_at.desc()).limit(1)).scalar_one_or_none()
+    r = region(p.country)
     return {"id": str(p.id), "name": p.name, "brand": p.brand, "locality": p.locality, "city": p.city,
             "lifecycle": p.lifecycle, "opening_date": iso(p.opening_date), "is_hypothetical": p.is_hypothetical,
-            "location": point(p.location), "radius_km": t.radius_km if t else 15, "account_count": count}
+            "location": point(p.location), "radius_km": t.radius_km if t else 15, "account_count": count,
+            "country": r["code"], "currency": r["currency"], "distance_unit": r["distance_unit"],
+            "created_at": iso(p.created_at),
+            "latest_job": ({"id": str(job.id), "status": job.status, "created_at": iso(job.created_at),
+                            "finished_at": iso(job.finished_at)} if job else None)}
 
 
 def property_full(db: Session, p: Property) -> dict:
     t = _target(db, p.id)
     offerings = db.execute(select(PropertyOffering.offering).where(PropertyOffering.property_id == p.id)).scalars().all()
     return {**property_summary(db, p), "address_line": p.address_line, "state": p.state, "postal_code": p.postal_code,
-            "country": p.country, "rooms_count": p.rooms_count, "meeting_rooms_count": p.meeting_rooms_count,
+            "rooms_count": p.rooms_count, "meeting_rooms_count": p.meeting_rooms_count,
             "largest_meeting_capacity": p.largest_meeting_capacity, "banquet_capacity": p.banquet_capacity,
             "restaurants_count": p.restaurants_count, "facilities": p.facilities or [], "description": p.description,
             "offerings": list(offerings),
             "target": {"radius_km": t.radius_km if t else 15, "industries": t.industries if t else [],
                        "employee_min": t.employee_min if t else None, "employee_max": t.employee_max if t else None,
                        "notes": t.notes if t else None},
-            "created_at": iso(p.created_at)}
+            }
 
 
 # ───────── evidence ─────────

@@ -1,7 +1,9 @@
 """Admin CLI.
 
-python -m app.cli bootstrap --workspace "Inhabitr" --email you@company.com --name "Your Name" [--password ...]
+python -m app.cli bootstrap --workspace "Halo" --email you@company.com --name "Your Name" [--password ...]
 python -m app.cli add-user --email rep@company.com --name "Rep Name" --role rep [--password ...]
+python -m app.cli rename-workspace --name "Halo" [--workspace old-slug]
+python -m app.cli purge-property --name "Test Property" [--workspace slug] --yes   (permanent delete, cascades)
 """
 from __future__ import annotations
 
@@ -15,7 +17,7 @@ from sqlalchemy import select
 from app.core.db import plain_session, tenant_session
 from app.core.ids import uuid7
 from app.core.security import hash_password
-from app.models import Membership, ScoringModel, User, Workspace
+from app.models import Membership, Property, ScoringModel, User, Workspace
 from app.scoring.engine import DEFAULT_MODEL
 
 
@@ -35,7 +37,7 @@ def bootstrap(a) -> None:
     ws_id = uuid7()
     with tenant_session(ws_id) as db:  # RLS: a workspace row is only writable inside its own tenant context
         db.add(Workspace(id=ws_id, name=a.workspace, slug=slug, is_demo=a.demo,
-                         settings={"currency": "INR", "timezone": "Asia/Kolkata"}))
+                         settings={"currency": "USD", "timezone": "America/New_York"}))
     with tenant_session(ws_id) as db:
         db.add(ScoringModel(workspace_id=ws_id, version=1, weights=DEFAULT_MODEL["weights"], params=DEFAULT_MODEL["params"],
                             notes="Initial hypothesis weights (DD-09…DD-11)"))
@@ -80,8 +82,38 @@ def add_user(a) -> None:
     print(f"Added {a.email} to {ws_name} as {a.role}.")
 
 
+def rename_workspace(a) -> None:
+    ws = _find_workspace(a.workspace)
+    if ws is None:
+        sys.exit("Workspace not found.")
+    _, ws_id, old = ws
+    slug = re.sub(r"[^a-z0-9]+", "-", a.name.lower()).strip("-")
+    with tenant_session(ws_id) as db:
+        w = db.get(Workspace, ws_id)
+        w.name, w.slug = a.name, slug
+    print(f"Renamed workspace '{old}' to '{a.name}' (slug {slug}).")
+
+
+def purge_property(a) -> None:
+    """Permanently delete a property and everything under it (accounts, runs, outreach). For test data only."""
+    ws = _find_workspace(a.workspace)
+    if ws is None:
+        sys.exit("Workspace not found.")
+    _, ws_id, _ = ws
+    with tenant_session(ws_id) as db:
+        props = db.execute(select(Property).where(Property.name.ilike(f"%{a.name}%"))).scalars().all()
+        if not props:
+            sys.exit("No matching property.")
+        for p in props:
+            print(f"{'Deleting' if a.yes else 'Would delete'}: {p.name} ({p.id})")
+            if a.yes:
+                db.delete(p)
+    if not a.yes:
+        print("Dry run. Re-run with --yes to delete.")
+
+
 def main() -> None:
-    p = argparse.ArgumentParser(prog="inhabitr")
+    p = argparse.ArgumentParser(prog="halo")
     sub = p.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("bootstrap")
     b.add_argument("--workspace", required=True)
@@ -97,6 +129,15 @@ def main() -> None:
     u.add_argument("--workspace")
     u.add_argument("--password")
     u.set_defaults(fn=add_user)
+    r = sub.add_parser("rename-workspace")
+    r.add_argument("--name", required=True)
+    r.add_argument("--workspace")
+    r.set_defaults(fn=rename_workspace)
+    d = sub.add_parser("purge-property")
+    d.add_argument("--name", required=True)
+    d.add_argument("--workspace")
+    d.add_argument("--yes", action="store_true")
+    d.set_defaults(fn=purge_property)
     args = p.parse_args()
     args.fn(args)
 

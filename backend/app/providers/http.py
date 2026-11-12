@@ -15,7 +15,7 @@ from app.workflow.errors import PermanentError, TransientError
 
 _settings = get_settings()
 client = httpx.Client(
-    headers={"User-Agent": _settings.http_user_agent, "Accept-Language": "en-IN,en;q=0.9"},
+    headers={"User-Agent": _settings.http_user_agent, "Accept-Language": "en-US,en;q=0.9"},
     timeout=httpx.Timeout(_settings.fetch_timeout_s, connect=8.0),
     follow_redirects=False,
 )

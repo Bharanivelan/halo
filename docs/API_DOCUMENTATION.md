@@ -90,14 +90,14 @@
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/properties` | list accessible |
-| POST | `/properties` | create (Manager+) |
+| GET | `/properties` | list accessible projects; each has `country`, `currency`, `distance_unit`, `created_at`, `latest_job` |
+| POST | `/properties` | create (Manager+). `country` = `US` (default) or `IN` (D-39). `start_agent: true` also starts the first capped run and returns `started_job_id` (D-40) |
 | GET/PATCH | `/properties/{id}` | detail / update |
-| POST | `/properties/{id}/archive` | archive |
+| DELETE | `/properties/{id}` | delete project (soft: archives, stops running work, hides its runs) → 204 (Manager+, D-38) |
 | PUT | `/properties/{id}/offerings` | replace offerings set |
 | GET/PUT | `/properties/{id}/target-profile` | default target profile |
 | GET/POST/DELETE | `/properties/{id}/competitors[/{cid}]` | free-text competitors |
-| GET | `/geocode?q=` | address → candidates (server-side; cached) |
+| GET | `/geocode?q=&country=US` | address → candidates, limited to the country (server-side; cached) |
 | GET | `/properties/{id}/overview` | funnel counts, recent signals, my accounts, running jobs |
 
 ```json

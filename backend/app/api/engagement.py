@@ -14,6 +14,7 @@ from app.api.discovery import job_summary
 from app.api.serializers import activity_out, contact_out, iso, opportunity_out
 from app.copilot import service as copilot
 from app.core.errors import NotFound, ValidationFailed
+from app.core.regions import region
 from app.core.vocab import LOSS_REASONS, OFFERING_LABELS, ROLE_CODES, Offering
 from app.models import (Account, ActivityRow, Company, Contact, CopilotOutput, DiscoveryJob, LlmCall, Opportunity,
                         ProviderCall)
@@ -249,7 +250,8 @@ def create_opp(account_id: UUID, body: OpportunityIn, ctx: CtxDep):
     a = _account(ctx, account_id)
     o = Opportunity(workspace_id=ctx.p.workspace_id, account_id=a.id, name=body.name, offering=str(body.offering),
                     value_amount=body.value_amount, expected_close_date=body.expected_close_date, probability=body.probability,
-                    owner_membership_id=body.owner_membership_id or a.owner_membership_id or ctx.p.membership_id)
+                    owner_membership_id=body.owner_membership_id or a.owner_membership_id or ctx.p.membership_id,
+                    currency=region(ctx.property(a.property_id).country)["currency"])
     ctx.db.add(o)
     ctx.db.flush()
     if a.status != "engaged":

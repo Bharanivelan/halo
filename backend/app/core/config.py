@@ -62,7 +62,7 @@ class Settings(BaseSettings):
     # Providers (P-06)
     tavily_api_key: str | None = None
     tavily_cost_per_search_usd: float = 0.008
-    http_user_agent: str = "InhabitrBot/0.1 (B2B account research; respects robots.txt)"
+    http_user_agent: str = "HaloBot/0.1 (B2B account research; respects robots.txt)"
     overpass_endpoints: list[str] = [
         "https://overpass-api.de/api/interpreter",
         "https://overpass.kumi.systems/api/interpreter",
@@ -90,6 +90,9 @@ class Settings(BaseSettings):
     # Limits (DD-16)
     max_companies_per_job: int = 200
     worker_concurrency: int = 4
+    # Automatic first run when a project is created (D-40). Small on purpose: it spends AI quota without a click.
+    autostart_max_companies: int = 50
+    autostart_budget_usd: float = 2.0
     job_wall_clock_hours: float = 3.0
     default_budget_usd: float = 5.0
     task_lease_seconds: int = 180
@@ -126,7 +129,7 @@ class Settings(BaseSettings):
 
     @property
     def session_cookie_name(self) -> str:
-        return "__Host-inhabitr_session" if self.cookie_secure else "inhabitr_session"
+        return "__Host-halo_session" if self.cookie_secure else "halo_session"
 
 
 @lru_cache

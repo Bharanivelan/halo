@@ -20,10 +20,11 @@ from app.workflow.engine import NewTask
 
 router = APIRouter(prefix="/discovery", tags=["discovery"])
 
-STAGES = [("plan", "Understanding request & geography"), ("discover", "Discovering companies"),
-          ("resolve", "Removing duplicates"), ("classify", "Filtering for relevance"),
-          ("research", "Researching companies"), ("signals", "Identifying business signals"),
-          ("score", "Scoring & validating evidence")]
+# Plain-language stage names (D-41): these are shown to hotel owners, not engineers.
+STAGES = [("plan", "Getting ready"), ("discover", "Finding businesses near your hotel"),
+          ("resolve", "Removing duplicates"), ("classify", "Keeping the relevant ones"),
+          ("research", "Reading their websites"), ("signals", "Looking for buying signals"),
+          ("score", "Scoring and double-checking facts")]
 
 
 class DiscoveryConfig(BaseModel):
@@ -236,7 +237,24 @@ def parse_request(body: ParseIn, ctx: CtxDep):
 @router.post("/jobs", status_code=202)
 def create_job(body: JobIn, ctx: CtxDep):
     ctx.require_role("admin", "manager")
-    cfg = body.config
+    return start_discovery(ctx, body.config, body.nl_request)
+
+
+def autostart_config(ctx, prop: Property) -> DiscoveryConfig:
+    """First run for a new project (D-40): the owner's own targeting, small and capped."""
+    from app.models import PropertyOffering, PropertyTargetProfile
+    s = get_settings()
+    t = ctx.db.execute(select(PropertyTargetProfile).where(PropertyTargetProfile.property_id == prop.id)).scalar_one_or_none()
+    offerings = ctx.db.execute(select(PropertyOffering.offering).where(PropertyOffering.property_id == prop.id)).scalars().all()
+    sources = ["osm"] + (["web_search"] if s.search_configured else [])
+    return DiscoveryConfig(property_id=prop.id, radius_km=t.radius_km if t else 8.0, industries=t.industries if t else [],
+                           employee_min=t.employee_min if t else None, employee_max=t.employee_max if t else None,
+                           offerings_focus=list(offerings), sources=sources, max_companies=s.autostart_max_companies,
+                           budget_usd=s.autostart_budget_usd)
+
+
+def start_discovery(ctx, cfg: DiscoveryConfig, nl_request: str | None = None) -> dict:
+    cfg = cfg.model_copy(deep=True)
     ctx.property(cfg.property_id)
     if "csv" in cfg.sources and not cfg.csv_import_id:
         raise ValidationFailed("Upload a CSV file or unselect the CSV source.")
@@ -250,7 +268,7 @@ def create_job(body: JobIn, ctx: CtxDep):
         raise Conflict("A discovery job is already running for this property. Wait for it to finish or cancel it.")
     est = estimate(ctx.db, cfg)
     j = DiscoveryJob(workspace_id=ctx.p.workspace_id, property_id=cfg.property_id, created_by=ctx.p.user_id,
-                     config=cfg.model_dump(mode="json"), nl_request=body.nl_request, estimate=est, budget_usd=cfg.budget_usd)
+                     config=cfg.model_dump(mode="json"), nl_request=nl_request, estimate=est, budget_usd=cfg.budget_usd)
     ctx.db.add(j)
     ctx.db.flush()
     engine.start_job(ctx.db, j, NewTask("plan"))
@@ -262,7 +280,12 @@ def create_job(body: JobIn, ctx: CtxDep):
 
 @router.get("/jobs")
 def list_jobs(ctx: CtxDep, property_id: UUID | None = None):
-    q = select(DiscoveryJob).order_by(DiscoveryJob.created_at.desc()).limit(100)
+    # Only runs of live projects the caller can see (deleted projects and, for reps, unshared ones are hidden).
+    q = (select(DiscoveryJob).join(Property, Property.id == DiscoveryJob.property_id)
+         .where(Property.archived_at.is_(None)).order_by(DiscoveryJob.created_at.desc()).limit(100))
+    ids = ctx.accessible_property_ids()
+    if ids is not None:
+        q = q.where(DiscoveryJob.property_id.in_(ids))
     if property_id:
         ctx.property(property_id)
         q = q.where(DiscoveryJob.property_id == property_id)

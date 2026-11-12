@@ -14,7 +14,7 @@ next. If Lovable drifts, reply: *"Follow the Project Knowledge rules: data only 
 > 1. Set up the design system: Tailwind theme + CSS variables for every colour token in dark and light themes (dark is
 >    default), fonts (Plus Jakarta Sans, Inter, JetBrains Mono via Google Fonts), radius 16px, and a theme toggle
 >    saved in localStorage.
-> 2. Create reusable components: `Logo` (glowing gold→teal ring + "halo" wordmark + "by Inhabitr"), `HaloRings`
+> 2. Create reusable components: `Logo` (glowing gold→teal ring + "halo" wordmark + "AI sales agent for hotels"), `HaloRings`
 >    (animated concentric rings, used as decoration), `ScoreRing` (0–100 circular gauge with mono number, colour prop),
 >    `TierBadge` (A Hot / B Warm / C Cool), `SignalChip` (coral dot + label + age), `KpiTile` (label, big count-up
 >    number, small delta/subtext), `AgentPulse` (violet pulsing dot), `EmptyState` (halo rings illustration + title +

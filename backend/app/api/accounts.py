@@ -131,7 +131,7 @@ def export_accounts(property_id: UUID, ctx: CtxDep, q: str | None = None, status
                     it["priority"], it["fit"], it["intent"], it["confidence"], s["title"] if s else "", s["age_days"] if s else "",
                     it["status"], it["owner"]["name"] if it["owner"] else "", c["data_origin"]])
     ctx.audit("accounts.export", "property", property_id, after={"rows": len(items)})
-    fname = f"inhabitr-accounts-{prop.name.lower().replace(' ', '-')[:40]}-{datetime.now(timezone.utc):%Y%m%d}.csv"
+    fname = f"halo-accounts-{prop.name.lower().replace(' ', '-')[:40]}-{datetime.now(timezone.utc):%Y%m%d}.csv"
     return StreamingResponse(iter([buf.getvalue()]), media_type="text/csv",
                              headers={"Content-Disposition": f'attachment; filename="{fname}"'})
 

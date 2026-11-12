@@ -1,1 +1,3793 @@
-{"openapi":"3.1.0","info":{"title":"Halo API (by Inhabitr)","version":"0.2.0"},"paths":{"/api/v1/auth/login":{"post":{"tags":["auth"],"summary":"Login","operationId":"login_api_v1_auth_login_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/LoginIn"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/auth/logout":{"post":{"tags":["auth"],"summary":"Logout","operationId":"logout_api_v1_auth_logout_post","responses":{"204":{"description":"Successful Response"}}}},"/api/v1/auth/me":{"get":{"tags":["auth"],"summary":"Me","operationId":"me_api_v1_auth_me_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/v1/reference":{"get":{"tags":["properties"],"summary":"Reference","operationId":"reference_api_v1_reference_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/v1/members":{"get":{"tags":["properties"],"summary":"Members","operationId":"members_api_v1_members_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/v1/geocode":{"get":{"tags":["properties"],"summary":"Geocode","operationId":"geocode_api_v1_geocode_get","parameters":[{"name":"q","in":"query","required":true,"schema":{"type":"string","title":"Q"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties":{"get":{"tags":["properties"],"summary":"List Properties","operationId":"list_properties_api_v1_properties_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}},"post":{"tags":["properties"],"summary":"Create Property","operationId":"create_property_api_v1_properties_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/PropertyIn"}}},"required":true},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}":{"get":{"tags":["properties"],"summary":"Get Property","operationId":"get_property_api_v1_properties__property_id__get","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"patch":{"tags":["properties"],"summary":"Patch Property","operationId":"patch_property_api_v1_properties__property_id__patch","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/PropertyPatch"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}/overview":{"get":{"tags":["properties"],"summary":"Overview","operationId":"overview_api_v1_properties__property_id__overview_get","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}/imports":{"post":{"tags":["properties"],"summary":"Import Csv","operationId":"import_csv_api_v1_properties__property_id__imports_post","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}}],"requestBody":{"required":true,"content":{"multipart/form-data":{"schema":{"$ref":"#/components/schemas/Body_import_csv_api_v1_properties__property_id__imports_post"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/discovery/estimate":{"post":{"tags":["discovery"],"summary":"Post Estimate","operationId":"post_estimate_api_v1_discovery_estimate_post","requestBody":{"content":{"application/json":{"schema":{"type":"object","title":"Body"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/discovery/parse-request":{"post":{"tags":["discovery"],"summary":"Parse Request","operationId":"parse_request_api_v1_discovery_parse_request_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ParseIn"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/discovery/jobs":{"post":{"tags":["discovery"],"summary":"Create Job","operationId":"create_job_api_v1_discovery_jobs_post","requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/JobIn"}}}},"responses":{"202":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"get":{"tags":["discovery"],"summary":"List Jobs","operationId":"list_jobs_api_v1_discovery_jobs_get","parameters":[{"name":"property_id","in":"query","required":false,"schema":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Property Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/discovery/jobs/{job_id}":{"get":{"tags":["discovery"],"summary":"Get Job","operationId":"get_job_api_v1_discovery_jobs__job_id__get","parameters":[{"name":"job_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Job Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/discovery/jobs/{job_id}/cancel":{"post":{"tags":["discovery"],"summary":"Cancel Job","operationId":"cancel_job_api_v1_discovery_jobs__job_id__cancel_post","parameters":[{"name":"job_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Job Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/discovery/jobs/{job_id}/resume":{"post":{"tags":["discovery"],"summary":"Resume","operationId":"resume_api_v1_discovery_jobs__job_id__resume_post","parameters":[{"name":"job_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Job Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ResumeIn"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/discovery/jobs/{job_id}/retry-failed":{"post":{"tags":["discovery"],"summary":"Retry Failed","operationId":"retry_failed_api_v1_discovery_jobs__job_id__retry_failed_post","parameters":[{"name":"job_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Job Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/discovery/jobs/{job_id}/results":{"get":{"tags":["discovery"],"summary":"Results","operationId":"results_api_v1_discovery_jobs__job_id__results_get","parameters":[{"name":"job_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Job Id"}},{"name":"outcome","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Outcome"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}/accounts":{"get":{"tags":["accounts"],"summary":"List Accounts","operationId":"list_accounts_api_v1_properties__property_id__accounts_get","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}},{"name":"q","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Q"}},{"name":"status","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Status"}},{"name":"tier","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Tier"}},{"name":"industry","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Industry"}},{"name":"distance_max_km","in":"query","required":false,"schema":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Distance Max Km"}},{"name":"owner","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Owner"}},{"name":"min_fit","in":"query","required":false,"schema":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Min Fit"}},{"name":"min_intent","in":"query","required":false,"schema":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Min Intent"}},{"name":"has_signal","in":"query","required":false,"schema":{"anyOf":[{"type":"boolean"},{"type":"null"}],"title":"Has Signal"}},{"name":"sort","in":"query","required":false,"schema":{"type":"string","default":"-priority","title":"Sort"}},{"name":"limit","in":"query","required":false,"schema":{"type":"integer","default":50,"title":"Limit"}},{"name":"cursor","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Cursor"}},{"name":"job_id","in":"query","required":false,"schema":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Job Id"}},{"name":"ids","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Ids"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}/accounts/map":{"get":{"tags":["accounts"],"summary":"Accounts Map","operationId":"accounts_map_api_v1_properties__property_id__accounts_map_get","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}/accounts/export.csv":{"get":{"tags":["accounts"],"summary":"Export Accounts","operationId":"export_accounts_api_v1_properties__property_id__accounts_export_csv_get","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}},{"name":"q","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Q"}},{"name":"status","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Status"}},{"name":"tier","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Tier"}},{"name":"industry","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Industry"}},{"name":"distance_max_km","in":"query","required":false,"schema":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Distance Max Km"}},{"name":"owner","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Owner"}},{"name":"min_fit","in":"query","required":false,"schema":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Min Fit"}},{"name":"min_intent","in":"query","required":false,"schema":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Min Intent"}},{"name":"has_signal","in":"query","required":false,"schema":{"anyOf":[{"type":"boolean"},{"type":"null"}],"title":"Has Signal"}},{"name":"job_id","in":"query","required":false,"schema":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Job Id"}},{"name":"ids","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Ids"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}/accounts/bulk":{"post":{"tags":["accounts"],"summary":"Bulk","operationId":"bulk_api_v1_properties__property_id__accounts_bulk_post","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/BulkIn"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/accounts/{account_id}":{"get":{"tags":["accounts"],"summary":"Get Account","operationId":"get_account_api_v1_accounts__account_id__get","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Account Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"patch":{"tags":["accounts"],"summary":"Patch Account","operationId":"patch_account_api_v1_accounts__account_id__patch","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Account Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AccountPatch"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/accounts/{account_id}/research":{"post":{"tags":["accounts"],"summary":"Research Account","operationId":"research_account_api_v1_accounts__account_id__research_post","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Account Id"}}],"responses":{"202":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}/contacts":{"get":{"tags":["engagement"],"summary":"List Contacts","operationId":"list_contacts_api_v1_properties__property_id__contacts_get","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}},{"name":"q","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Q"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/companies/{company_id}/contacts":{"post":{"tags":["engagement"],"summary":"Create Contact","operationId":"create_contact_api_v1_companies__company_id__contacts_post","parameters":[{"name":"company_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Company Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ContactIn"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/contacts/{contact_id}":{"patch":{"tags":["engagement"],"summary":"Patch Contact","operationId":"patch_contact_api_v1_contacts__contact_id__patch","parameters":[{"name":"contact_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Contact Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ContactPatch"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"tags":["engagement"],"summary":"Delete Contact","operationId":"delete_contact_api_v1_contacts__contact_id__delete","parameters":[{"name":"contact_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Contact Id"}}],"responses":{"204":{"description":"Successful Response"},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/companies/{company_id}":{"patch":{"tags":["engagement"],"summary":"Patch Company","operationId":"patch_company_api_v1_companies__company_id__patch","parameters":[{"name":"company_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Company Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CompanyPatch"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/accounts/{account_id}/copilot":{"post":{"tags":["engagement"],"summary":"Generate Copilot","operationId":"generate_copilot_api_v1_accounts__account_id__copilot_post","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Account Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CopilotIn"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"get":{"tags":["engagement"],"summary":"List Copilot","operationId":"list_copilot_api_v1_accounts__account_id__copilot_get","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Account Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/copilot-outputs/{output_id}":{"patch":{"tags":["engagement"],"summary":"Edit Draft","operationId":"edit_draft_api_v1_copilot_outputs__output_id__patch","parameters":[{"name":"output_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Output Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/DraftEdit"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/copilot-outputs/{output_id}/copied":{"post":{"tags":["engagement"],"summary":"Draft Copied","operationId":"draft_copied_api_v1_copilot_outputs__output_id__copied_post","parameters":[{"name":"output_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Output Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/copilot-outputs/{output_id}/mark-sent":{"post":{"tags":["engagement"],"summary":"Draft Sent","operationId":"draft_sent_api_v1_copilot_outputs__output_id__mark_sent_post","parameters":[{"name":"output_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Output Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/properties/{property_id}/opportunities":{"get":{"tags":["engagement"],"summary":"List Opps","operationId":"list_opps_api_v1_properties__property_id__opportunities_get","parameters":[{"name":"property_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Property Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/accounts/{account_id}/opportunities":{"post":{"tags":["engagement"],"summary":"Create Opp","operationId":"create_opp_api_v1_accounts__account_id__opportunities_post","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Account Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/OpportunityIn"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/opportunities/{opp_id}":{"patch":{"tags":["engagement"],"summary":"Patch Opp","operationId":"patch_opp_api_v1_opportunities__opp_id__patch","parameters":[{"name":"opp_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Opp Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/OpportunityPatch"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/accounts/{account_id}/activities":{"get":{"tags":["engagement"],"summary":"List Activities","operationId":"list_activities_api_v1_accounts__account_id__activities_get","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Account Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"post":{"tags":["engagement"],"summary":"Add Activity","operationId":"add_activity_api_v1_accounts__account_id__activities_post","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","format":"uuid","title":"Account Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ActivityIn"}}}},"responses":{"201":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/activity/jobs":{"get":{"tags":["engagement"],"summary":"Activity Jobs","operationId":"activity_jobs_api_v1_activity_jobs_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/v1/activity/usage":{"get":{"tags":["engagement"],"summary":"Usage","operationId":"usage_api_v1_activity_usage_get","parameters":[{"name":"group_by","in":"query","required":false,"schema":{"type":"string","default":"step","title":"Group By"}},{"name":"days","in":"query","required":false,"schema":{"type":"integer","default":30,"title":"Days"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/v1/activity/llm-calls":{"get":{"tags":["engagement"],"summary":"Llm Calls","operationId":"llm_calls_api_v1_activity_llm_calls_get","parameters":[{"name":"job_id","in":"query","required":false,"schema":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Job Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/healthz":{"get":{"summary":"Healthz","operationId":"healthz_healthz_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/readyz":{"get":{"summary":"Readyz","operationId":"readyz_readyz_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}}},"components":{"schemas":{"AccountPatch":{"properties":{"status":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Status"},"owner_membership_id":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Owner Membership Id"},"dismissed_reason":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Dismissed Reason"},"dismissed_note":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Dismissed Note"}},"type":"object","title":"AccountPatch"},"ActivityIn":{"properties":{"type":{"type":"string","pattern":"^(note|call|meeting|email_sent)$","title":"Type"},"body":{"type":"string","maxLength":5000,"minLength":1,"title":"Body"},"opportunity_id":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Opportunity Id"}},"type":"object","required":["type","body"],"title":"ActivityIn"},"Body_import_csv_api_v1_properties__property_id__imports_post":{"properties":{"file":{"type":"string","format":"binary","title":"File"}},"type":"object","required":["file"],"title":"Body_import_csv_api_v1_properties__property_id__imports_post"},"BulkIn":{"properties":{"account_ids":{"items":{"type":"string","format":"uuid"},"type":"array","maxItems":500,"minItems":1,"title":"Account Ids"},"action":{"type":"string","pattern":"^(assign|set_status|dismiss)$","title":"Action"},"owner_membership_id":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Owner Membership Id"},"status":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Status"},"dismissed_reason":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Dismissed Reason"},"dismissed_note":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Dismissed Note"}},"type":"object","required":["account_ids","action"],"title":"BulkIn"},"CompanyPatch":{"properties":{"do_not_contact":{"type":"boolean","title":"Do Not Contact"}},"type":"object","required":["do_not_contact"],"title":"CompanyPatch"},"ContactIn":{"properties":{"full_name":{"type":"string","maxLength":200,"minLength":2,"title":"Full Name"},"title":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Title"},"role_code":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Role Code"},"email":{"anyOf":[{"type":"string","format":"email"},{"type":"null"}],"title":"Email"},"phone":{"anyOf":[{"type":"string","maxLength":40},{"type":"null"}],"title":"Phone"},"profile_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Profile Url"},"source_note":{"type":"string","maxLength":500,"minLength":3,"title":"Source Note"}},"type":"object","required":["full_name","source_note"],"title":"ContactIn"},"ContactPatch":{"properties":{"full_name":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Full Name"},"title":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Title"},"role_code":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Role Code"},"email":{"anyOf":[{"type":"string","format":"email"},{"type":"null"}],"title":"Email"},"phone":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Phone"},"profile_url":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Profile Url"},"source_note":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Source Note"},"do_not_contact":{"anyOf":[{"type":"boolean"},{"type":"null"}],"title":"Do Not Contact"},"verification_status":{"anyOf":[{"type":"string","pattern":"^(unverified|user_verified)$"},{"type":"null"}],"title":"Verification Status"}},"type":"object","title":"ContactPatch"},"CopilotIn":{"properties":{"offering":{"$ref":"#/components/schemas/Offering"},"contact_id":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Contact Id"},"role_code":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Role Code"},"tone":{"type":"string","pattern":"^(warm|formal)$","title":"Tone","default":"warm"}},"type":"object","required":["offering"],"title":"CopilotIn"},"DiscoveryConfig":{"properties":{"property_id":{"type":"string","format":"uuid","title":"Property Id"},"radius_km":{"type":"number","maximum":50.0,"minimum":1.0,"title":"Radius Km","default":15},"industries":{"items":{"type":"string"},"type":"array","title":"Industries","default":[]},"employee_min":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Employee Min"},"employee_max":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Employee Max"},"offerings_focus":{"items":{"$ref":"#/components/schemas/Offering"},"type":"array","title":"Offerings Focus","default":[]},"sources":{"items":{"type":"string"},"type":"array","title":"Sources","default":["osm"]},"csv_import_id":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Csv Import Id"},"max_companies":{"type":"integer","maximum":200.0,"minimum":1.0,"title":"Max Companies","default":50},"research_depth":{"type":"string","pattern":"^(light|standard)$","title":"Research Depth","default":"standard"},"signal_window_days":{"type":"integer","maximum":730.0,"minimum":30.0,"title":"Signal Window Days","default":365},"prioritisation_notes":{"anyOf":[{"type":"string","maxLength":500},{"type":"null"}],"title":"Prioritisation Notes"},"budget_usd":{"type":"number","maximum":500.0,"exclusiveMinimum":0.0,"title":"Budget Usd","default":5.0}},"type":"object","required":["property_id"],"title":"DiscoveryConfig"},"DraftEdit":{"properties":{"subject":{"type":"string","maxLength":200,"title":"Subject"},"body":{"type":"string","maxLength":10000,"title":"Body"}},"type":"object","required":["subject","body"],"title":"DraftEdit"},"GeoIn":{"properties":{"lat":{"type":"number","maximum":90.0,"minimum":-90.0,"title":"Lat"},"lng":{"type":"number","maximum":180.0,"minimum":-180.0,"title":"Lng"}},"type":"object","required":["lat","lng"],"title":"GeoIn"},"HTTPValidationError":{"properties":{"detail":{"items":{"$ref":"#/components/schemas/ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"},"JobIn":{"properties":{"config":{"$ref":"#/components/schemas/DiscoveryConfig"},"nl_request":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Nl Request"}},"type":"object","required":["config"],"title":"JobIn"},"LoginIn":{"properties":{"email":{"type":"string","format":"email","title":"Email"},"password":{"type":"string","title":"Password"}},"type":"object","required":["email","password"],"title":"LoginIn"},"Offering":{"type":"string","enum":["corporate_rate","mice","long_stay","fnb"],"title":"Offering"},"OpportunityIn":{"properties":{"name":{"type":"string","maxLength":200,"minLength":2,"title":"Name"},"offering":{"$ref":"#/components/schemas/Offering"},"value_amount":{"anyOf":[{"type":"number","minimum":0.0},{"type":"null"}],"title":"Value Amount"},"expected_close_date":{"anyOf":[{"type":"string","format":"date"},{"type":"null"}],"title":"Expected Close Date"},"probability":{"anyOf":[{"type":"integer","maximum":100.0,"minimum":0.0},{"type":"null"}],"title":"Probability"},"owner_membership_id":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Owner Membership Id"}},"type":"object","required":["name","offering"],"title":"OpportunityIn"},"OpportunityPatch":{"properties":{"name":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Name"},"offering":{"anyOf":[{"$ref":"#/components/schemas/Offering"},{"type":"null"}]},"value_amount":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Value Amount"},"expected_close_date":{"anyOf":[{"type":"string","format":"date"},{"type":"null"}],"title":"Expected Close Date"},"probability":{"anyOf":[{"type":"integer","maximum":100.0,"minimum":0.0},{"type":"null"}],"title":"Probability"},"owner_membership_id":{"anyOf":[{"type":"string","format":"uuid"},{"type":"null"}],"title":"Owner Membership Id"},"stage":{"anyOf":[{"type":"string","pattern":"^(interested|meeting_scheduled|negotiation|won|lost)$"},{"type":"null"}],"title":"Stage"},"loss_reason":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Loss Reason"},"loss_note":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Loss Note"}},"type":"object","title":"OpportunityPatch"},"ParseIn":{"properties":{"property_id":{"type":"string","format":"uuid","title":"Property Id"},"text":{"type":"string","maxLength":1000,"minLength":3,"title":"Text"},"current_config":{"$ref":"#/components/schemas/DiscoveryConfig"}},"type":"object","required":["property_id","text","current_config"],"title":"ParseIn"},"PropertyIn":{"properties":{"name":{"type":"string","maxLength":200,"minLength":2,"title":"Name"},"brand":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Brand"},"address_line":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Address Line"},"locality":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Locality"},"city":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"City"},"state":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"State"},"postal_code":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Postal Code"},"country":{"type":"string","title":"Country","default":"IN"},"location":{"$ref":"#/components/schemas/GeoIn"},"lifecycle":{"type":"string","pattern":"^(pre_opening|operating)$","title":"Lifecycle","default":"pre_opening"},"opening_date":{"anyOf":[{"type":"string","format":"date"},{"type":"null"}],"title":"Opening Date"},"rooms_count":{"anyOf":[{"type":"integer","minimum":0.0},{"type":"null"}],"title":"Rooms Count"},"meeting_rooms_count":{"anyOf":[{"type":"integer","minimum":0.0},{"type":"null"}],"title":"Meeting Rooms Count"},"largest_meeting_capacity":{"anyOf":[{"type":"integer","minimum":0.0},{"type":"null"}],"title":"Largest Meeting Capacity"},"banquet_capacity":{"anyOf":[{"type":"integer","minimum":0.0},{"type":"null"}],"title":"Banquet Capacity"},"restaurants_count":{"anyOf":[{"type":"integer","minimum":0.0},{"type":"null"}],"title":"Restaurants Count"},"facilities":{"items":{"type":"string"},"type":"array","title":"Facilities","default":[]},"description":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Description"},"is_hypothetical":{"type":"boolean","title":"Is Hypothetical","default":false},"offerings":{"items":{"$ref":"#/components/schemas/Offering"},"type":"array","title":"Offerings","default":["corporate_rate"]},"target":{"$ref":"#/components/schemas/TargetIn","default":{"radius_km":15.0,"industries":[]}}},"type":"object","required":["name","location"],"title":"PropertyIn"},"PropertyPatch":{"properties":{"name":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Name"},"brand":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Brand"},"address_line":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Address Line"},"locality":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Locality"},"city":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"City"},"state":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"State"},"postal_code":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Postal Code"},"country":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Country"},"location":{"anyOf":[{"$ref":"#/components/schemas/GeoIn"},{"type":"null"}]},"lifecycle":{"anyOf":[{"type":"string","pattern":"^(pre_opening|operating)$"},{"type":"null"}],"title":"Lifecycle"},"opening_date":{"anyOf":[{"type":"string","format":"date"},{"type":"null"}],"title":"Opening Date"},"rooms_count":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Rooms Count"},"meeting_rooms_count":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Meeting Rooms Count"},"largest_meeting_capacity":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Largest Meeting Capacity"},"banquet_capacity":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Banquet Capacity"},"restaurants_count":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Restaurants Count"},"facilities":{"anyOf":[{"items":{"type":"string"},"type":"array"},{"type":"null"}],"title":"Facilities"},"description":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Description"},"is_hypothetical":{"anyOf":[{"type":"boolean"},{"type":"null"}],"title":"Is Hypothetical"},"offerings":{"anyOf":[{"items":{"$ref":"#/components/schemas/Offering"},"type":"array"},{"type":"null"}],"title":"Offerings"},"target":{"anyOf":[{"$ref":"#/components/schemas/TargetIn"},{"type":"null"}]}},"type":"object","title":"PropertyPatch"},"ResumeIn":{"properties":{"budget_usd":{"anyOf":[{"type":"number","maximum":500.0,"exclusiveMinimum":0.0},{"type":"null"}],"title":"Budget Usd"}},"type":"object","title":"ResumeIn"},"TargetIn":{"properties":{"radius_km":{"type":"number","maximum":50.0,"minimum":1.0,"title":"Radius Km","default":15},"industries":{"items":{"type":"string"},"type":"array","title":"Industries","default":[]},"employee_min":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Employee Min"},"employee_max":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Employee Max"},"notes":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Notes"}},"type":"object","title":"TargetIn"},"ValidationError":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Halo API",
+    "version": "0.2.0"
+  },
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reference": {
+      "get": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Reference",
+        "operationId": "reference_api_v1_reference_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/members": {
+      "get": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Members",
+        "operationId": "members_api_v1_members_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/geocode": {
+      "get": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Geocode",
+        "description": "Address search. `country` (US, IN) keeps results inside the project's market.",
+        "operationId": "geocode_api_v1_geocode_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "country",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Country"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties": {
+      "get": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "List Properties",
+        "operationId": "list_properties_api_v1_properties_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Create Property",
+        "operationId": "create_property_api_v1_properties_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PropertyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}": {
+      "get": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Get Property",
+        "operationId": "get_property_api_v1_properties__property_id__get",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Patch Property",
+        "operationId": "patch_property_api_v1_properties__property_id__patch",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PropertyPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Archive Property",
+        "description": "Delete a project (D-38). Soft delete: it disappears everywhere, running agent work is stopped,\nand the rows stay recoverable by an admin. Admins and managers only.",
+        "operationId": "archive_property_api_v1_properties__property_id__delete",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}/overview": {
+      "get": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Overview",
+        "operationId": "overview_api_v1_properties__property_id__overview_get",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}/imports": {
+      "post": {
+        "tags": [
+          "properties"
+        ],
+        "summary": "Import Csv",
+        "operationId": "import_csv_api_v1_properties__property_id__imports_post",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_csv_api_v1_properties__property_id__imports_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/estimate": {
+      "post": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Post Estimate",
+        "operationId": "post_estimate_api_v1_discovery_estimate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "title": "Body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/parse-request": {
+      "post": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Parse Request",
+        "operationId": "parse_request_api_v1_discovery_parse_request_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/jobs": {
+      "post": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Create Job",
+        "operationId": "create_job_api_v1_discovery_jobs_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "List Jobs",
+        "operationId": "list_jobs_api_v1_discovery_jobs_get",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Property Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/jobs/{job_id}": {
+      "get": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Get Job",
+        "operationId": "get_job_api_v1_discovery_jobs__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/jobs/{job_id}/cancel": {
+      "post": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Cancel Job",
+        "operationId": "cancel_job_api_v1_discovery_jobs__job_id__cancel_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/jobs/{job_id}/resume": {
+      "post": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Resume",
+        "operationId": "resume_api_v1_discovery_jobs__job_id__resume_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResumeIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/jobs/{job_id}/retry-failed": {
+      "post": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Retry Failed",
+        "operationId": "retry_failed_api_v1_discovery_jobs__job_id__retry_failed_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/discovery/jobs/{job_id}/results": {
+      "get": {
+        "tags": [
+          "discovery"
+        ],
+        "summary": "Results",
+        "operationId": "results_api_v1_discovery_jobs__job_id__results_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "outcome",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Outcome"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}/accounts": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "List Accounts",
+        "operationId": "list_accounts_api_v1_properties__property_id__accounts_get",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "tier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tier"
+            }
+          },
+          {
+            "name": "industry",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Industry"
+            }
+          },
+          {
+            "name": "distance_max_km",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Distance Max Km"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Owner"
+            }
+          },
+          {
+            "name": "min_fit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Fit"
+            }
+          },
+          {
+            "name": "min_intent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Intent"
+            }
+          },
+          {
+            "name": "has_signal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Has Signal"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "-priority",
+              "title": "Sort"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "job_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ids"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}/accounts/map": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Accounts Map",
+        "operationId": "accounts_map_api_v1_properties__property_id__accounts_map_get",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}/accounts/export.csv": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Export Accounts",
+        "operationId": "export_accounts_api_v1_properties__property_id__accounts_export_csv_get",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "tier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tier"
+            }
+          },
+          {
+            "name": "industry",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Industry"
+            }
+          },
+          {
+            "name": "distance_max_km",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Distance Max Km"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Owner"
+            }
+          },
+          {
+            "name": "min_fit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Fit"
+            }
+          },
+          {
+            "name": "min_intent",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Intent"
+            }
+          },
+          {
+            "name": "has_signal",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Has Signal"
+            }
+          },
+          {
+            "name": "job_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ids"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}/accounts/bulk": {
+      "post": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Bulk",
+        "operationId": "bulk_api_v1_properties__property_id__accounts_bulk_post",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Get Account",
+        "operationId": "get_account_api_v1_accounts__account_id__get",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Patch Account",
+        "operationId": "patch_account_api_v1_accounts__account_id__patch",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}/research": {
+      "post": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Research Account",
+        "operationId": "research_account_api_v1_accounts__account_id__research_post",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}/contacts": {
+      "get": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "List Contacts",
+        "operationId": "list_contacts_api_v1_properties__property_id__contacts_get",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}/contacts": {
+      "post": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Create Contact",
+        "operationId": "create_contact_api_v1_companies__company_id__contacts_post",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/contacts/{contact_id}": {
+      "patch": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Patch Contact",
+        "operationId": "patch_contact_api_v1_contacts__contact_id__patch",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Contact Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Delete Contact",
+        "operationId": "delete_contact_api_v1_contacts__contact_id__delete",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Contact Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/companies/{company_id}": {
+      "patch": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Patch Company",
+        "operationId": "patch_company_api_v1_companies__company_id__patch",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Company Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}/copilot": {
+      "post": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Generate Copilot",
+        "operationId": "generate_copilot_api_v1_accounts__account_id__copilot_post",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopilotIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "List Copilot",
+        "operationId": "list_copilot_api_v1_accounts__account_id__copilot_get",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/copilot-outputs/{output_id}": {
+      "patch": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Edit Draft",
+        "operationId": "edit_draft_api_v1_copilot_outputs__output_id__patch",
+        "parameters": [
+          {
+            "name": "output_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Output Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftEdit"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/copilot-outputs/{output_id}/copied": {
+      "post": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Draft Copied",
+        "operationId": "draft_copied_api_v1_copilot_outputs__output_id__copied_post",
+        "parameters": [
+          {
+            "name": "output_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Output Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/copilot-outputs/{output_id}/mark-sent": {
+      "post": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Draft Sent",
+        "operationId": "draft_sent_api_v1_copilot_outputs__output_id__mark_sent_post",
+        "parameters": [
+          {
+            "name": "output_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Output Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/properties/{property_id}/opportunities": {
+      "get": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "List Opps",
+        "operationId": "list_opps_api_v1_properties__property_id__opportunities_get",
+        "parameters": [
+          {
+            "name": "property_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Property Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}/opportunities": {
+      "post": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Create Opp",
+        "operationId": "create_opp_api_v1_accounts__account_id__opportunities_post",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpportunityIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/opportunities/{opp_id}": {
+      "patch": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Patch Opp",
+        "operationId": "patch_opp_api_v1_opportunities__opp_id__patch",
+        "parameters": [
+          {
+            "name": "opp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Opp Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpportunityPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/accounts/{account_id}/activities": {
+      "get": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "List Activities",
+        "operationId": "list_activities_api_v1_accounts__account_id__activities_get",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Add Activity",
+        "operationId": "add_activity_api_v1_accounts__account_id__activities_post",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/activity/jobs": {
+      "get": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Activity Jobs",
+        "operationId": "activity_jobs_api_v1_activity_jobs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/activity/usage": {
+      "get": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Usage",
+        "operationId": "usage_api_v1_activity_usage_get",
+        "parameters": [
+          {
+            "name": "group_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "step",
+              "title": "Group By"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 30,
+              "title": "Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/activity/llm-calls": {
+      "get": {
+        "tags": [
+          "engagement"
+        ],
+        "summary": "Llm Calls",
+        "operationId": "llm_calls_api_v1_activity_llm_calls_get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/healthz": {
+      "get": {
+        "summary": "Healthz",
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "summary": "Readyz",
+        "operationId": "readyz_readyz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountPatch": {
+        "properties": {
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "owner_membership_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Membership Id"
+          },
+          "dismissed_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dismissed Reason"
+          },
+          "dismissed_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dismissed Note"
+          }
+        },
+        "type": "object",
+        "title": "AccountPatch"
+      },
+      "ActivityIn": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "pattern": "^(note|call|meeting|email_sent)$",
+            "title": "Type"
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Body"
+          },
+          "opportunity_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opportunity Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "body"
+        ],
+        "title": "ActivityIn"
+      },
+      "Body_import_csv_api_v1_properties__property_id__imports_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_import_csv_api_v1_properties__property_id__imports_post"
+      },
+      "BulkIn": {
+        "properties": {
+          "account_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "maxItems": 500,
+            "minItems": 1,
+            "title": "Account Ids"
+          },
+          "action": {
+            "type": "string",
+            "pattern": "^(assign|set_status|dismiss)$",
+            "title": "Action"
+          },
+          "owner_membership_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Membership Id"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "dismissed_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dismissed Reason"
+          },
+          "dismissed_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dismissed Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account_ids",
+          "action"
+        ],
+        "title": "BulkIn"
+      },
+      "CompanyPatch": {
+        "properties": {
+          "do_not_contact": {
+            "type": "boolean",
+            "title": "Do Not Contact"
+          }
+        },
+        "type": "object",
+        "required": [
+          "do_not_contact"
+        ],
+        "title": "CompanyPatch"
+      },
+      "ContactIn": {
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Full Name"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "role_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role Code"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "profile_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Url"
+          },
+          "source_note": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 3,
+            "title": "Source Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "full_name",
+          "source_note"
+        ],
+        "title": "ContactIn"
+      },
+      "ContactPatch": {
+        "properties": {
+          "full_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "role_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role Code"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "profile_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Url"
+          },
+          "source_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Note"
+          },
+          "do_not_contact": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Do Not Contact"
+          },
+          "verification_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(unverified|user_verified)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verification Status"
+          }
+        },
+        "type": "object",
+        "title": "ContactPatch"
+      },
+      "CopilotIn": {
+        "properties": {
+          "offering": {
+            "$ref": "#/components/schemas/Offering"
+          },
+          "contact_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Id"
+          },
+          "role_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role Code"
+          },
+          "tone": {
+            "type": "string",
+            "pattern": "^(warm|formal)$",
+            "title": "Tone",
+            "default": "warm"
+          }
+        },
+        "type": "object",
+        "required": [
+          "offering"
+        ],
+        "title": "CopilotIn"
+      },
+      "DiscoveryConfig": {
+        "properties": {
+          "property_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Property Id"
+          },
+          "radius_km": {
+            "type": "number",
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Radius Km",
+            "default": 15
+          },
+          "industries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Industries",
+            "default": []
+          },
+          "employee_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employee Min"
+          },
+          "employee_max": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employee Max"
+          },
+          "offerings_focus": {
+            "items": {
+              "$ref": "#/components/schemas/Offering"
+            },
+            "type": "array",
+            "title": "Offerings Focus",
+            "default": []
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Sources",
+            "default": [
+              "osm"
+            ]
+          },
+          "csv_import_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Csv Import Id"
+          },
+          "max_companies": {
+            "type": "integer",
+            "maximum": 200.0,
+            "minimum": 1.0,
+            "title": "Max Companies",
+            "default": 50
+          },
+          "research_depth": {
+            "type": "string",
+            "pattern": "^(light|standard)$",
+            "title": "Research Depth",
+            "default": "standard"
+          },
+          "signal_window_days": {
+            "type": "integer",
+            "maximum": 730.0,
+            "minimum": 30.0,
+            "title": "Signal Window Days",
+            "default": 365
+          },
+          "prioritisation_notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prioritisation Notes"
+          },
+          "budget_usd": {
+            "type": "number",
+            "maximum": 500.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Budget Usd",
+            "default": 5.0
+          }
+        },
+        "type": "object",
+        "required": [
+          "property_id"
+        ],
+        "title": "DiscoveryConfig"
+      },
+      "DraftEdit": {
+        "properties": {
+          "subject": {
+            "type": "string",
+            "maxLength": 200,
+            "title": "Subject"
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 10000,
+            "title": "Body"
+          }
+        },
+        "type": "object",
+        "required": [
+          "subject",
+          "body"
+        ],
+        "title": "DraftEdit"
+      },
+      "GeoIn": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Lng"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lng"
+        ],
+        "title": "GeoIn"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "JobIn": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/DiscoveryConfig"
+          },
+          "nl_request": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nl Request"
+          }
+        },
+        "type": "object",
+        "required": [
+          "config"
+        ],
+        "title": "JobIn"
+      },
+      "LoginIn": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginIn"
+      },
+      "Offering": {
+        "type": "string",
+        "enum": [
+          "corporate_rate",
+          "mice",
+          "long_stay",
+          "fnb"
+        ],
+        "title": "Offering"
+      },
+      "OpportunityIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Name"
+          },
+          "offering": {
+            "$ref": "#/components/schemas/Offering"
+          },
+          "value_amount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value Amount"
+          },
+          "expected_close_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Close Date"
+          },
+          "probability": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Probability"
+          },
+          "owner_membership_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Membership Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "offering"
+        ],
+        "title": "OpportunityIn"
+      },
+      "OpportunityPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "offering": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Offering"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value_amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value Amount"
+          },
+          "expected_close_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Close Date"
+          },
+          "probability": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Probability"
+          },
+          "owner_membership_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Membership Id"
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(interested|meeting_scheduled|negotiation|won|lost)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stage"
+          },
+          "loss_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loss Reason"
+          },
+          "loss_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loss Note"
+          }
+        },
+        "type": "object",
+        "title": "OpportunityPatch"
+      },
+      "ParseIn": {
+        "properties": {
+          "property_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Property Id"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 3,
+            "title": "Text"
+          },
+          "current_config": {
+            "$ref": "#/components/schemas/DiscoveryConfig"
+          }
+        },
+        "type": "object",
+        "required": [
+          "property_id",
+          "text",
+          "current_config"
+        ],
+        "title": "ParseIn"
+      },
+      "PropertyIn": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 2,
+            "title": "Name"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "address_line": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line"
+          },
+          "locality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locality"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postal Code"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "default": "US"
+          },
+          "location": {
+            "$ref": "#/components/schemas/GeoIn"
+          },
+          "lifecycle": {
+            "type": "string",
+            "pattern": "^(pre_opening|operating)$",
+            "title": "Lifecycle",
+            "default": "pre_opening"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "rooms_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rooms Count"
+          },
+          "meeting_rooms_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Rooms Count"
+          },
+          "largest_meeting_capacity": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Largest Meeting Capacity"
+          },
+          "banquet_capacity": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Banquet Capacity"
+          },
+          "restaurants_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restaurants Count"
+          },
+          "facilities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Facilities",
+            "default": []
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "is_hypothetical": {
+            "type": "boolean",
+            "title": "Is Hypothetical",
+            "default": false
+          },
+          "offerings": {
+            "items": {
+              "$ref": "#/components/schemas/Offering"
+            },
+            "type": "array",
+            "title": "Offerings",
+            "default": [
+              "corporate_rate"
+            ]
+          },
+          "target": {
+            "$ref": "#/components/schemas/TargetIn",
+            "default": {
+              "radius_km": 8.0,
+              "industries": []
+            }
+          },
+          "start_agent": {
+            "type": "boolean",
+            "title": "Start Agent",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "location"
+        ],
+        "title": "PropertyIn"
+      },
+      "PropertyPatch": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "address_line": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address Line"
+          },
+          "locality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Locality"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postal Code"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeoIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lifecycle": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(pre_opening|operating)$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifecycle"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "rooms_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rooms Count"
+          },
+          "meeting_rooms_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meeting Rooms Count"
+          },
+          "largest_meeting_capacity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Largest Meeting Capacity"
+          },
+          "banquet_capacity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Banquet Capacity"
+          },
+          "restaurants_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restaurants Count"
+          },
+          "facilities": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facilities"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "is_hypothetical": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Hypothetical"
+          },
+          "offerings": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Offering"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offerings"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TargetIn"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "PropertyPatch"
+      },
+      "ResumeIn": {
+        "properties": {
+          "budget_usd": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 500.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Usd"
+          }
+        },
+        "type": "object",
+        "title": "ResumeIn"
+      },
+      "TargetIn": {
+        "properties": {
+          "radius_km": {
+            "type": "number",
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Radius Km",
+            "default": 8.0
+          },
+          "industries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Industries",
+            "default": []
+          },
+          "employee_min": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employee Min"
+          },
+          "employee_max": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employee Max"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "title": "TargetIn"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
