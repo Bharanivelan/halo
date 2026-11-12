@@ -63,7 +63,7 @@ def members(ctx: CtxDep):
 
 @router.get("/geocode")
 def geocode(q: str, ctx: CtxDep, country: str | None = None):
-    """Address search. `country` (US, IN) keeps results inside the project's market."""
+    """Address search. `country` (any ISO code) keeps results inside the project's market."""
     if len(q.strip()) < 3:
         return []
     cc = country.upper() if country and country.upper() in REGIONS else None
@@ -121,7 +121,7 @@ class PropertyIn(BaseModel):
     def supported_country(cls, v):
         v = v.upper()
         if v not in REGIONS:
-            raise ValueError(f"Supported countries: {', '.join(REGIONS)}")
+            raise ValueError("Unknown country. Use a two-letter country code, e.g. US, IN, GB")
         return v
 
 
@@ -212,7 +212,7 @@ def patch_property(property_id: UUID, body: PropertyPatch, ctx: CtxDep):
     if data.get("country") is not None:
         data["country"] = data["country"].upper()
         if data["country"] not in REGIONS:
-            raise ValidationFailed(f"Supported countries: {', '.join(REGIONS)}")
+            raise ValidationFailed("Unknown country. Use a two-letter country code, e.g. US, IN, GB")
     _apply(ctx, prop, data)
     ctx.db.flush()
     return property_full(ctx.db, prop)

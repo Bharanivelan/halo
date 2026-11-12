@@ -91,7 +91,7 @@
 | Method | Path | Description |
 |---|---|---|
 | GET | `/properties` | list accessible projects; each has `country`, `currency`, `distance_unit`, `created_at`, `latest_job` |
-| POST | `/properties` | create (Manager+). `country` = `US` (default) or `IN` (D-39). `start_agent: true` also starts the first capped run and returns `started_job_id` (D-40) |
+| POST | `/properties` | create (Manager+). `country` = any ISO 3166-1 alpha-2 code, default `US` (D-39, D-43). `start_agent: true` also starts the first capped run and returns `started_job_id` (D-40) |
 | GET/PATCH | `/properties/{id}` | detail / update |
 | DELETE | `/properties/{id}` | delete project (soft: archives, stops running work, hides its runs) → 204 (Manager+, D-38) |
 | PUT | `/properties/{id}/offerings` | replace offerings set |

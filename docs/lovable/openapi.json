@@ -121,7 +121,7 @@
           "properties"
         ],
         "summary": "Geocode",
-        "description": "Address search. `country` (US, IN) keeps results inside the project's market.",
+        "description": "Address search. `country` (any ISO code) keeps results inside the project's market.",
         "operationId": "geocode_api_v1_geocode_get",
         "parameters": [
           {

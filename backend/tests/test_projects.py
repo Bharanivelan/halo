@@ -68,11 +68,19 @@ def test_india_project_uses_rupees_and_km(ws):
     assert (p["country"], p["currency"], p["distance_unit"]) == ("IN", "INR", "km")
 
 
+def test_any_country_gets_its_own_currency_and_unit(ws):
+    _, c, h = ws
+    fr = c.post("/api/v1/properties", json={**HOTEL, "country": "FR"}, headers=h["manager"]).json()
+    gb = c.post("/api/v1/properties", json={**HOTEL, "country": "gb"}, headers=h["manager"]).json()
+    assert (fr["currency"], fr["distance_unit"]) == ("EUR", "km")
+    assert (gb["country"], gb["currency"], gb["distance_unit"]) == ("GB", "GBP", "mi")
+
+
 def test_unsupported_country_is_rejected(ws):
     _, c, h = ws
-    assert c.post("/api/v1/properties", json={**HOTEL, "country": "FR"}, headers=h["manager"]).status_code == 422
+    assert c.post("/api/v1/properties", json={**HOTEL, "country": "XX"}, headers=h["manager"]).status_code == 422
     pid = c.post("/api/v1/properties", json=HOTEL, headers=h["manager"]).json()["id"]
-    assert c.patch(f"/api/v1/properties/{pid}", json={"country": "FR"}, headers=h["manager"]).status_code == 422
+    assert c.patch(f"/api/v1/properties/{pid}", json={"country": "XX"}, headers=h["manager"]).status_code == 422
 
 
 def test_start_agent_creates_capped_first_run(ws):
@@ -131,4 +139,5 @@ def test_reference_lists_both_markets(ws):
     _, c, h = ws
     ref = c.get("/api/v1/reference", headers=h["manager"]).json()
     assert ref["default_country"] == "US"
-    assert {r["code"] for r in ref["regions"]} == {"US", "IN"}
+    codes = [r["code"] for r in ref["regions"]]
+    assert codes[:2] == ["US", "IN"] and len(codes) > 190 and "FR" in codes

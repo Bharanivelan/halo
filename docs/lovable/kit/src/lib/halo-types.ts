@@ -111,8 +111,8 @@ export interface ReferenceData {
   };
 }
 
-/** Supported markets (D-39). Currency and distance unit follow the project's country. */
-export type CountryCode = "US" | "IN";
+/** Any ISO 3166-1 alpha-2 country (D-43). Currency and distance unit follow the project's country. */
+export type CountryCode = string;
 export type DistanceUnit = "mi" | "km";
 export interface Region {
   code: CountryCode;
