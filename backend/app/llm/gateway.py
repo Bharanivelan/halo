@@ -15,9 +15,38 @@ from app.core.config import get_settings
 from app.core.db import tenant_session
 from app.models import LlmCall
 from app.workflow.budget import BudgetGuard
-from app.workflow.errors import PermanentError, TransientError
+from app.workflow.errors import AIQuotaExhausted, PermanentError, TransientError
 
 _settings = get_settings()
+_rpm_throttle = None
+_quota_until = 0.0  # epoch seconds; while in the future, the daily AI allowance is spent (D-44)
+QUOTA_MESSAGE = "The AI's daily allowance is used up, so this step continued without AI."
+
+
+def ai_available() -> bool:
+    """AI is configured and its daily allowance isn't spent. Steps use their no-AI path otherwise."""
+    return _settings.llm_configured and time.time() >= _quota_until
+
+
+def _daily_quota_cooldown(err: Exception) -> float | None:
+    """Seconds until a per-day quota resets, if this rate-limit error is a per-day quota (else None)."""
+    import re
+    msg = str(err)
+    if "PerDay" not in msg:
+        return None
+    m = re.search(r"retryDelay'?\"?:\s*'?\"?(\d+)s", msg)
+    return min(float(m.group(1)) if m else 3600.0, 6 * 3600.0)
+
+
+def _pace() -> None:
+    """Space requests out to stay under LLM_MAX_RPM (shared by all worker threads in this process)."""
+    global _rpm_throttle
+    if _settings.llm_max_rpm <= 0:
+        return
+    if _rpm_throttle is None:
+        from app.providers.http import Throttle
+        _rpm_throttle = Throttle(60.0 / _settings.llm_max_rpm)
+    _rpm_throttle.wait("llm")
 
 
 class LLMNotConfigured(Exception):
@@ -89,7 +118,11 @@ class OpenAICompatibleProvider:
     def chat(self, *, model, messages, max_output_tokens, json_mode, tools, tool_choice):
         import openai
 
+        global _quota_until
+        if not ai_available():
+            raise AIQuotaExhausted(QUOTA_MESSAGE)
         kwargs = self._kwargs(model, messages, max_output_tokens, json_mode, tools, tool_choice)
+        _pace()
         try:
             try:
                 resp = self.client.chat.completions.create(**kwargs)
@@ -101,8 +134,15 @@ class OpenAICompatibleProvider:
                     resp = self.client.chat.completions.create(**kwargs)
                 else:
                     raise
-        except (openai.RateLimitError, openai.APITimeoutError, openai.APIConnectionError, openai.InternalServerError) as e:
-            raise TransientError(f"AI provider temporarily unavailable ({type(e).__name__})", retry_after_s=20) from e
+        except openai.RateLimitError as e:
+            cool = _daily_quota_cooldown(e)
+            if cool is not None:
+                _quota_until = time.time() + cool
+                raise AIQuotaExhausted(QUOTA_MESSAGE) from e
+            raise TransientError("AI provider temporarily unavailable (RateLimitError)", retry_after_s=60) from e
+        except (openai.APITimeoutError, openai.APIConnectionError, openai.InternalServerError) as e:
+            wait = 60 if isinstance(e, openai.RateLimitError) else 20
+            raise TransientError(f"AI provider temporarily unavailable ({type(e).__name__})", retry_after_s=wait) from e
         except (openai.AuthenticationError, openai.PermissionDeniedError) as e:
             raise PermanentError(f"AI provider rejected the API key. Check {_settings.llm_key_name}.") from e
         except openai.NotFoundError as e:

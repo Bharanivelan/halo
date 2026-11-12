@@ -44,3 +44,67 @@ def test_gemini_thinking_tokens_counted_and_signature_kept():
     assert (tin, tout) == (100, 220)
     assert calls == [{"id": "call_0", "name": "finish", "arguments": {"claims": []},
                       "extra_content": {"google": {"thought_signature": "abc"}}}]
+
+
+def test_rate_limit_becomes_transient_with_a_minute_wait():
+    import httpx
+    import openai
+    import pytest
+    from app.workflow.errors import TransientError
+
+    req = httpx.Request("POST", "https://example.invalid")
+    err = openai.RateLimitError("429", response=httpx.Response(429, request=req), body=None)
+
+    def boom(**kw):
+        raise err
+
+    p = _provider("gemini")
+    p.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=boom)))
+    with pytest.raises(TransientError) as e:
+        p.chat(model="gemini-2.5-flash", messages=[], max_output_tokens=10, json_mode=False, tools=None, tool_choice=None)
+    assert e.value.retry_after_s == 60
+
+
+def test_pacing_spaces_calls_to_the_rpm_limit(monkeypatch):
+    waits = []
+    monkeypatch.setattr(gateway._settings, "llm_max_rpm", 10)
+    monkeypatch.setattr(gateway, "_rpm_throttle", None)
+    monkeypatch.setattr("app.providers.http.time.sleep", lambda s: waits.append(s))
+    gateway._pace()
+    gateway._pace()
+    assert gateway._rpm_throttle.interval == 6.0 and waits and 5.0 < waits[0] <= 6.0
+    monkeypatch.setattr(gateway._settings, "llm_max_rpm", 0)
+    monkeypatch.setattr(gateway, "_rpm_throttle", None)
+    gateway._pace()
+    assert gateway._rpm_throttle is None
+
+
+def test_daily_quota_trips_breaker_and_stops_further_calls(monkeypatch):
+    import httpx
+    import openai
+    import pytest
+    from app.workflow.errors import AIQuotaExhausted
+
+    req = httpx.Request("POST", "https://example.invalid")
+    body = ("{'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaValue': '20'}, "
+            "{'@type': 'RetryInfo', 'retryDelay': '55219s'}")
+    err = openai.RateLimitError(body, response=httpx.Response(429, request=req), body=None)
+    calls = []
+
+    def boom(**kw):
+        calls.append(1)
+        raise err
+
+    monkeypatch.setattr(gateway, "_quota_until", 0.0)
+    monkeypatch.setattr(gateway._settings, "gemini_api_key", "test-key")
+    monkeypatch.setattr(gateway._settings, "llm_provider", "gemini")
+    p = _provider("gemini")
+    p.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=boom)))
+    kw = dict(model="gemini-2.5-flash", messages=[], max_output_tokens=10, json_mode=False, tools=None, tool_choice=None)
+    with pytest.raises(AIQuotaExhausted):
+        p.chat(**kw)
+    assert not gateway.ai_available()
+    assert 6 * 3600 - 5 <= gateway._quota_until - __import__("time").time() <= 6 * 3600  # capped at 6 h
+    with pytest.raises(AIQuotaExhausted):  # no second request to the provider
+        p.chat(**kw)
+    assert len(calls) == 1

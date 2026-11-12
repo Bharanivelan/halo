@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from datetime import datetime, timezone
 from uuid import UUID
 
@@ -27,7 +28,7 @@ from app.providers import fetcher, gdelt, geocoder, osm, search
 from app.providers.http import record_provider_call
 from app.scoring.engine import ClaimIn, ScoreInput, SignalIn, recommend_roles, score
 from app.workflow.engine import NewTask, Step, StepContext, all_terminal, lock_job, step
-from app.workflow.errors import PermanentError, TransientError
+from app.workflow.errors import AIQuotaExhausted, PermanentError, TransientError
 
 
 # ───────── helpers ─────────
@@ -72,6 +73,9 @@ class PlanStep(Step):
             raise PermanentError("No discovery sources selected")
         ctx.event(f"Searching {cfg['radius_km']:g} km around {prop.name} ({lat:.4f}, {lng:.4f}) "
                   f"for {len(cfg.get('industries') or [])} industries.")
+        if ctx.settings.llm_configured and not llm.ai_available():
+            ctx.event("The AI's daily allowance is used up. This run will use map data, websites and keyword rules "
+                      "instead of AI.", level="warning")
         if not ctx.settings.llm_configured:
             ctx.event(f"AI is not configured (no {ctx.settings.llm_key_name}). Classification and research will use OpenStreetMap "
                       "data and rules only.", level="warning")
@@ -287,7 +291,8 @@ class ClassifyStep(Step):
         companies = {c.id: c for c in db.execute(select(Company).where(Company.id.in_(list(by_company)))).scalars()}
         decisions: dict[UUID, dict] = {}
 
-        if ctx.settings.llm_configured and by_company:
+        ai_skipped = 0
+        if llm.ai_available() and by_company:
             items = list(by_company.items())
             for i in range(0, len(items), 25):
                 batch = items[i:i + 25]
@@ -297,7 +302,22 @@ class ClassifyStep(Step):
                 pid, ver, system = prompts.CLASSIFY
                 user = (f"Hotel target industries: {sorted(targets) or 'any'}.\nCandidates:\n"
                         + json.dumps(payload, ensure_ascii=False))
-                out = llm.call_json(ctx=_llm_ctx(ctx), prompt_id=pid, version=ver, system=system, user=user, tier="fast")
+                # D-44: one busy batch must not sink the run. Wait and retry once; then fall back to map tags
+                # for this batch (handled below) and keep going. Budget and key errors still stop the step.
+                out = None
+                for attempt in range(2):
+                    try:
+                        out = llm.call_json(ctx=_llm_ctx(ctx), prompt_id=pid, version=ver, system=system, user=user,
+                                            tier="fast")
+                        break
+                    except TransientError as e:
+                        if attempt == 0:
+                            time.sleep(min(60.0, e.retry_after_s or 20))
+                    except AIQuotaExhausted:
+                        break
+                if out is None:
+                    ai_skipped += len(batch)
+                    continue
                 for res in out.get("results", []):
                     try:
                         decisions[UUID(res["id"])] = res
@@ -312,6 +332,9 @@ class ClassifyStep(Step):
                 decisions[cid] = {"is_business_office": ok, "industry_code": code, "relevance": rel,
                                   "reason": "OpenStreetMap tags" if r.provider == "osm" else "Imported by user", "_rules": True}
 
+        if ai_skipped:
+            ctx.event(f"The AI was unavailable (rate limit), so {ai_skipped} businesses were sorted using their map tags.",
+                      level="warning")
         keep, drop = [], []
         for cid, d in decisions.items():
             comp, r = companies.get(cid), by_company.get(cid)
@@ -471,7 +494,7 @@ class ResearchStep(Step):
             company.primary_domain = site
         company.website = home.final_url
 
-        if not s.llm_configured:
+        if not llm.ai_available():
             if home.description:
                 add_claim(db, workspace_id=ctx.workspace_id, company_id=company.id, field="description",
                           value=home.description[:300], kind="fact", source=home_src, quote=home.description[:240],
@@ -691,15 +714,19 @@ class SignalsStep(Step):
             return {"signals": 0, "candidates": 0}
 
         found: list[dict] = []
-        if s.llm_configured:
+        use_rules = not llm.ai_available()
+        if not use_rules:
             pid, ver, system = prompts.SIGNALS
             user = (f"Company: {company.name}\nWebsite: {company.website}\nDescription: {company.description or 'unknown'}\n"
                     f"Hotel city: {prop.city}\nToday: {datetime.now(timezone.utc).date().isoformat()}\nItems:\n"
                     + "\n".join(_wrap(i["id"], i["url"] or "", i["title"], f"[date: {i['published_at'] or 'unknown'}]\n{i['text']}", 2500)
                                 for i in items))
-            out = llm.call_json(ctx=_llm_ctx(ctx), prompt_id=pid, version=ver, system=system, user=user, tier="fast")
-            found = out.get("signals", []) or []
-        else:
+            try:
+                out = llm.call_json(ctx=_llm_ctx(ctx), prompt_id=pid, version=ver, system=system, user=user, tier="fast")
+                found = out.get("signals", []) or []
+            except AIQuotaExhausted:
+                use_rules = True  # daily AI allowance ran out mid-run: use keyword rules (D-44)
+        if use_rules:
             for it in items:
                 if it["kind"] == "page":
                     continue

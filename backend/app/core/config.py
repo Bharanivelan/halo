@@ -41,6 +41,8 @@ class Settings(BaseSettings):
     # Empty -> provider default (see llm_default_models).
     llm_model_fast: str | None = None
     llm_model_standard: str | None = None
+    # Requests per minute the AI key allows (D-44). 0 = no limit. Free Gemini keys: about 10.
+    llm_max_rpm: int = 0
     llm_timeout_s: int = 120
     llm_default_models: dict[str, dict[str, str]] = {
         "gemini": {"fast": "gemini-2.5-flash", "standard": "gemini-2.5-flash"},

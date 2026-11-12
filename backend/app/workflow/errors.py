@@ -15,3 +15,7 @@ class PermanentError(Exception):
 
 class BudgetExceeded(Exception):
     """The next paid call would exceed the job's budget cap → pause the job."""
+
+
+class AIQuotaExhausted(PermanentError):
+    """The AI key's daily allowance is used up (D-44). Steps finish without AI instead of retrying."""
