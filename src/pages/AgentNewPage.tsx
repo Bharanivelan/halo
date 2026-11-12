@@ -20,6 +20,7 @@ import {
   HaloRadar,
   SectionTitle,
   errorText,
+  Explain,
 } from "@/components/halo";
 import { RunStatusBadge } from "@/components/halo/RunStatus";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ import {
   useRuns,
   useStartRun,
 } from "@/hooks/use-halo";
-import { ago, duration, OFFERING_LABEL, usd } from "@/lib/halo-format";
+import { ago, dist, duration, fromUnit, OFFERING_LABEL, toUnit, usd } from "@/lib/halo-format";
 import type {
   DiscoveryConfig,
   JobStatus,
@@ -49,7 +50,7 @@ import { cn } from "@/lib/utils";
 const OFFERINGS: Offering[] = ["corporate_rate", "mice", "long_stay", "fnb"];
 const WINDOWS = [90, 180, 365, 730];
 const EXAMPLES = [
-  "IT and consulting firms within 8 km that are hiring",
+  "IT and consulting firms within 5 miles that are hiring",
   "Manufacturers with 200+ staff who could need long stays",
   "Companies that host events or training programmes",
 ];
@@ -125,6 +126,7 @@ export function AgentNewPage() {
   const { propertyId } = useParams({ strict: false }) as { propertyId: string };
   const navigate = useNavigate();
   const prop = useProperty(propertyId);
+  const unit = prop.data?.distance_unit ?? "mi";
   const { data: ref } = useReference();
   const runs = useRuns(propertyId);
   const parse = useParseRequest();
@@ -216,7 +218,7 @@ export function AgentNewPage() {
       <div className="mb-8">
         <p className="flex items-center gap-2 text-sm text-muted-foreground">
           <Sparkles className="size-4 text-gold" />
-          {prop.data?.name ?? "Location"}
+          {prop.data?.name ?? "Hotel"}
         </p>
         <h1 className="mt-1 text-[32px] font-bold leading-tight">Brief the agent</h1>
         <p className="mt-1 text-muted-foreground">
@@ -231,7 +233,7 @@ export function AgentNewPage() {
           params={{ propertyId, jobId: active.id }}
           className="mb-6 flex items-center gap-3 rounded-xl border border-violet/40 bg-violet/10 p-3 text-sm hover:border-violet/70"
         >
-          <AgentPulse />A run is already in progress for this location (
+          <AgentPulse />A run is already in progress for this hotel (
           {Math.round(active.progress * 100)}%).
           <span className="ml-auto flex items-center gap-1 text-violet">
             Watch
@@ -268,7 +270,7 @@ export function AgentNewPage() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) runBrief();
                   }}
-                  placeholder="e.g. Find IT and pharma companies within 10 km that are expanding or hiring"
+                  placeholder="e.g. Find tech and healthcare companies within 5 miles that are hiring or expanding"
                   className="resize-none rounded-xl border-border bg-surface-2 pr-28"
                 />
                 <Button
@@ -321,15 +323,25 @@ export function AgentNewPage() {
               <SectionTitle>Search settings</SectionTitle>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <Label>Radius</Label>
-                  <span className="font-mono text-gold">{cfg.radius_km} km</span>
+                  <Label className="flex items-center gap-1">
+                    How far to look <Explain k="radius" />
+                  </Label>
+                  <span className="font-mono text-gold">{dist(cfg.radius_km, unit)}</span>
                 </div>
                 <Slider
                   min={1}
-                  max={50}
-                  step={1}
-                  value={[cfg.radius_km]}
-                  onValueChange={(v) => set("radius_km", v[0] ?? cfg.radius_km)}
+                  max={unit === "mi" ? 30 : 50}
+                  step={unit === "mi" ? 0.5 : 1}
+                  value={[Number(toUnit(cfg.radius_km, unit).toFixed(1))]}
+                  onValueChange={(v) =>
+                    set(
+                      "radius_km",
+                      v[0] == null
+                        ? cfg.radius_km
+                        : Math.min(50, Math.round(fromUnit(v[0], unit) * 1000) / 1000),
+                    )
+                  }
+                  aria-label="Search distance"
                 />
               </div>
               <div className="space-y-2">
@@ -441,7 +453,9 @@ export function AgentNewPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Research depth</Label>
+                  <Label className="flex items-center gap-1">
+                    Research depth <Explain k="depth" />
+                  </Label>
                   <div className="grid grid-cols-2 gap-1 rounded-xl bg-surface-2 p-1">
                     {(["light", "standard"] as const).map((d) => (
                       <button
@@ -485,6 +499,7 @@ export function AgentNewPage() {
                   <HaloRadar
                     center={prop.data.location}
                     radiusKm={cfg.radius_km}
+                    unit={unit}
                     labels
                     sweep
                     className="mx-auto max-w-[240px]"
@@ -544,7 +559,9 @@ export function AgentNewPage() {
                 )}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <Label htmlFor="budget">Spending cap</Label>
+                    <Label htmlFor="budget" className="flex items-center gap-1">
+                      Spending cap <Explain k="budget" />
+                    </Label>
                     <span className="text-xs text-muted-foreground">
                       The agent pauses if it hits this
                     </span>
@@ -588,7 +605,7 @@ export function AgentNewPage() {
             <div className="card-halo p-5">
               <SectionTitle>Recent runs</SectionTitle>
               {!runs.data?.length ? (
-                <p className="text-sm text-muted-foreground">No runs yet for this location.</p>
+                <p className="text-sm text-muted-foreground">No runs yet for this hotel.</p>
               ) : (
                 <ul className="space-y-1">
                   {runs.data.slice(0, 6).map((r) => (

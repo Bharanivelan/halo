@@ -16,6 +16,7 @@ import {
   CardSkeleton,
   EmptyState,
   ErrorState,
+  Explain,
   HaloRadar,
   KpiSkeleton,
   KpiTile,
@@ -28,7 +29,7 @@ import {
 } from "@/components/halo";
 import { Button } from "@/components/ui/button";
 import { useAccountsMap, useOverview, useReference } from "@/hooks/use-halo";
-import { ago, ageDays, date, money, usd } from "@/lib/halo-format";
+import { ago, ageDays, date, dist, money, usd } from "@/lib/halo-format";
 import type { AccountStatus, Tier } from "@/lib/halo-types";
 
 const FUNNEL: AccountStatus[] = [
@@ -81,16 +82,16 @@ export function CommandCenterPage() {
         <div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin className="size-4 text-gold" />
-            {p ? [p.locality, p.city].filter(Boolean).join(", ") : "Loading location"}
+            {p ? [p.locality, p.city].filter(Boolean).join(", ") : "Loading hotel"}
             {p?.lifecycle === "pre_opening" && (
               <span className="inline-flex items-center gap-1 rounded-full border border-teal/40 bg-teal/10 px-2 py-0.5 text-[11px] text-teal">
                 <CalendarClock className="size-3" />
-                {p.opening_date ? `Opens ${date(p.opening_date)}` : "Pre-opening"}
+                {p.opening_date ? `Opens ${date(p.opening_date)}` : "Opening soon"}
               </span>
             )}
           </div>
           <h1 className="mt-1 text-[32px] font-bold leading-tight">
-            {p?.name ?? "Command center"}
+            {p?.name ?? "Overview"}
           </h1>
         </div>
         <div className="flex gap-2">
@@ -123,7 +124,7 @@ export function CommandCenterPage() {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 font-semibold">
                 <AgentPulse />
-                The agent is working on this location
+                The agent is working on this hotel
               </div>
               <div className="mt-0.5 font-mono text-xs text-muted-foreground">
                 {run.counts.found} found · {run.counts.researched} researched · {run.counts.scored}{" "}
@@ -152,7 +153,8 @@ export function CommandCenterPage() {
           <SectionTitle right={<RadarLegend />}>
             <span className="inline-flex items-center gap-2">
               <Radar className="size-4 text-gold" />
-              The halo
+              Businesses around your hotel
+              <Explain k="radius" />
             </span>
           </SectionTitle>
           {p ? (
@@ -160,6 +162,7 @@ export function CommandCenterPage() {
               <HaloRadar
                 center={p.location}
                 radiusKm={p.radius_km}
+                unit={p.distance_unit}
                 points={points}
                 sweep
                 onSelect={(pt) =>
@@ -174,7 +177,7 @@ export function CommandCenterPage() {
             <div className="mx-auto aspect-square max-w-[520px] animate-pulse rounded-full bg-surface-2" />
           )}
           <p className="mt-2 text-center text-xs text-muted-foreground">
-            Each dot is a company at its real bearing and distance. Click one to open its dossier.
+            Your hotel is in the centre. Each dot is a business at its real direction and distance; gold dots are the best matches. Click one to see what Halo learned.
           </p>
         </motion.div>
 
@@ -186,34 +189,55 @@ export function CommandCenterPage() {
               <KpiTile
                 label="Prospects"
                 value={o.account_count}
-                sub={`within ${o.property.radius_km} km`}
+                icon={<Explain k="prospect" />}
+                sub={`within ${dist(o.property.radius_km, o.property.distance_unit)}`}
               />
               <KpiTile
                 label="Hot prospects"
                 value={tiers.A}
                 accent
-                icon={<Flame className="size-4 text-gold" />}
-                sub="Tier A · act this week"
+                icon={
+                  <span className="flex items-center gap-1">
+                    <Flame className="size-4 text-gold" />
+                    <Explain k="tier" />
+                  </span>
+                }
+                sub="Strong match with recent news: call this week"
               />
               <KpiTile
                 label="Open pipeline"
                 value={o.opportunities.open_value}
                 format={(n) => money(n, o.opportunities.currency)}
-                icon={<Wallet className="size-4" />}
+                icon={
+                  <span className="flex items-center gap-1">
+                    <Wallet className="size-4" />
+                    <Explain k="pipeline" />
+                  </span>
+                }
                 sub={`${openPipeline} open · ${o.opportunities.won} won`}
               />
               <KpiTile
                 label="AI spend · 30 days"
                 value={o.usage_30d.cost_usd}
                 format={(n) => usd(n)}
-                icon={<Zap className="size-4" />}
+                icon={
+                  <span className="flex items-center gap-1">
+                    <Zap className="size-4" />
+                    <Explain k="budget" />
+                  </span>
+                }
                 sub={`${o.usage_30d.llm_calls} AI calls`}
               />
             </>
           )}
           {o && (
             <motion.div {...fade(0.15)} className="card-halo p-5 sm:col-span-2">
-              <SectionTitle>Tier mix</SectionTitle>
+              <SectionTitle>
+                <span className="inline-flex items-center gap-2">
+                  Hot, warm and cool
+                  <Explain k="tier" />
+                </span>
+              </SectionTitle>
               <div className="flex h-3 overflow-hidden rounded-full bg-surface-2">
                 {(["A", "B", "C"] as Tier[]).map(
                   (t) =>
@@ -251,8 +275,8 @@ export function CommandCenterPage() {
       {o && o.account_count === 0 && !run && (
         <div className="card-halo">
           <EmptyState
-            title="This halo is still dark"
-            text="Run the agent: it finds nearby companies, researches each one and scores who to call first."
+            title="No businesses yet"
+            text="Run the AI agent: it finds businesses near your hotel, reads up on each one and tells you who to call first. It takes a few minutes."
             action={
               <Button variant="signature" className="rounded-xl" asChild>
                 <Link to="/p/$propertyId/agent/new" params={{ propertyId }}>
@@ -281,7 +305,10 @@ export function CommandCenterPage() {
                 </Link>
               }
             >
-              Call these first
+              <span className="inline-flex items-center gap-2">
+                Call these first
+                <Explain k="score" />
+              </span>
             </SectionTitle>
             {o.attention.length === 0 ? (
               <p className="py-6 text-center text-sm text-muted-foreground">
@@ -305,7 +332,7 @@ export function CommandCenterPage() {
                         <div className="truncate text-xs text-muted-foreground">
                           {[
                             a.company.industry_label,
-                            a.distance_km != null ? `${a.distance_km.toFixed(1)} km` : null,
+                            a.distance_km != null ? dist(a.distance_km, p?.distance_unit) : null,
                             statusLabel(a.status),
                           ]
                             .filter(Boolean)
@@ -329,7 +356,12 @@ export function CommandCenterPage() {
 
           {/* Signals */}
           <motion.div {...fade(0.2)} className="card-halo p-5">
-            <SectionTitle>Fresh signals</SectionTitle>
+            <SectionTitle>
+              <span className="inline-flex items-center gap-2">
+                Recent buying signals
+                <Explain k="signal" />
+              </span>
+            </SectionTitle>
             {o.recent_signals.length === 0 ? (
               <p className="py-6 text-center text-sm text-muted-foreground">
                 No buying signals found yet.

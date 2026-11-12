@@ -1,5 +1,6 @@
 import { useId } from "react";
-import type { GeoPoint, MapPoint, Tier } from "@/lib/halo-types";
+import type { DistanceUnit, GeoPoint, MapPoint, Tier } from "@/lib/halo-types";
+import { dist } from "@/lib/halo-format";
 import { cn } from "@/lib/utils";
 
 export const TIER_COLOR: Record<Tier | "none", string> = {
@@ -29,6 +30,7 @@ export function HaloRadar({
   selectedId,
   onSelect,
   className,
+  unit = "mi",
 }: {
   center: GeoPoint;
   radiusKm: number;
@@ -39,6 +41,7 @@ export function HaloRadar({
   selectedId?: string | null | undefined;
   onSelect?: ((p: MapPoint) => void) | undefined;
   className?: string;
+  unit?: DistanceUnit;
 }) {
   const id = useId().replace(/:/g, "");
   const R = 92;
@@ -62,7 +65,7 @@ export function HaloRadar({
       height={size}
       className={cn("block aspect-square w-full select-none", className)}
       role="img"
-      aria-label={`${plotted.length} prospects within ${radiusKm} km`}
+      aria-label={`${plotted.length} prospects within ${dist(radiusKm, unit)}`}
     >
       <defs>
         <radialGradient id={`${id}bg`}>
@@ -95,7 +98,7 @@ export function HaloRadar({
               fill="var(--muted-foreground)"
               fontFamily="var(--font-mono)"
             >
-              {(radiusKm * f).toFixed(radiusKm * f < 10 ? 1 : 0)} km
+              {dist(radiusKm * f, unit, radiusKm * f < 10 ? 1 : 0)}
             </text>
           )}
         </g>

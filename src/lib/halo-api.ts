@@ -1,5 +1,5 @@
 /**
- * Halo API client (by Inhabitr). Single fetch wrapper for the whole app.
+ * Halo API client. Single fetch wrapper for the whole app.
  *
  * - Server URL is a runtime setting (the demo backend sits behind a tunnel whose URL changes),
  *   stored in localStorage; falls back to VITE_HALO_API_URL, then DEFAULT_API_URL.
@@ -205,7 +205,7 @@ export const halo = {
   /* Reference & workspace */
   reference: () => get<ReferenceData>("/reference"),
   members: () => get<Member[]>("/members"),
-  geocode: (q: string) => get<GeocodeResult[]>("/geocode", { q }),
+  geocode: (q: string, country?: string) => get<GeocodeResult[]>("/geocode", { q, country }),
   health: async () =>
     (
       await fetch(`${getApiUrl()}/readyz`, { headers: { "ngrok-skip-browser-warning": "1" } })
@@ -222,6 +222,7 @@ export const halo = {
   createProperty: (input: PropertyInput) => post<Property>("/properties", input),
   updateProperty: (id: string, input: Partial<PropertyInput>) =>
     patch<Property>(`/properties/${id}`, input),
+  deleteProperty: (id: string) => request<void>(`/properties/${id}`, { method: "DELETE" }),
   overview: (id: string) => get<Overview>(`/properties/${id}/overview`),
   importCsv: (id: string, file: File) => {
     const f = new FormData();

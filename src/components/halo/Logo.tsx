@@ -28,7 +28,7 @@ export function Logo({ compact = false, className }: { compact?: boolean; classN
       {!compact && (
         <div className="flex flex-col leading-none">
           <span className="font-display text-xl font-bold tracking-tight">halo</span>
-          <span className="mt-0.5 text-[11px] text-muted-foreground">by Inhabitr</span>
+          <span className="mt-0.5 text-[11px] text-muted-foreground">AI sales agent for hotels</span>
         </div>
       )}
     </div>

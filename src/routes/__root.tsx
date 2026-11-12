@@ -85,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Halo — AI go-to-market for hospitality" },
       { name: "description", content: "Halo finds, researches and scores the companies around each of your locations." },
-      { name: "author", content: "Inhabitr" },
+      { name: "author", content: "Halo" },
       { name: "theme-color", content: "#070B18" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

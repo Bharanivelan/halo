@@ -1,5 +1,5 @@
 /**
- * Halo API v1 (by Inhabitr) — TypeScript contract. Generated from the backend; do not edit by hand.
+ * Halo API v1 — TypeScript contract. Generated from the backend; do not edit by hand.
  * Base path: <API_URL>/api/v1. All timestamps are ISO-8601 UTC strings. All ids are UUID strings.
  * Auth for this app: Authorization: Bearer <access_token> (from POST /auth/login with header X-Auth-Mode: token).
  * No CSRF header is needed with a bearer token. Errors are RFC 9457 problem+json: see ProblemDetails.
@@ -99,6 +99,8 @@ export interface ReferenceData {
   signal_types: Option[];
   role_codes: Option[];
   providers: { key: ProviderKey; label: string; enabled: boolean; reason?: string }[];
+  regions: Region[];
+  default_country: CountryCode;
   llm_configured: boolean;
   search_configured: boolean;
   scoring: {
@@ -107,6 +109,18 @@ export interface ReferenceData {
     signal_window_days: number;
     fresh_days: number;
   };
+}
+
+/** Supported markets (D-39). Currency and distance unit follow the project's country. */
+export type CountryCode = "US" | "IN";
+export type DistanceUnit = "mi" | "km";
+export interface Region {
+  code: CountryCode;
+  label: string;
+  currency: string;
+  distance_unit: DistanceUnit;
+  locale: string;
+  default_radius_km: number;
 }
 
 /* ───────── Auth ───────── */
@@ -160,12 +174,17 @@ export interface PropertySummary {
   location: GeoPoint;
   radius_km: number;
   account_count: number;
+  country: CountryCode;
+  currency: string;
+  distance_unit: DistanceUnit;
+  created_at: ISODate;
+  /** Most recent agent run for this project, if any. */
+  latest_job: { id: UUID; status: JobStatus; created_at: ISODate; finished_at: ISODate | null } | null;
 }
 export interface Property extends PropertySummary {
   address_line: string | null;
   state: string | null;
   postal_code: string | null;
-  country: string;
   rooms_count: number | null;
   meeting_rooms_count: number | null;
   largest_meeting_capacity: number | null;
@@ -175,14 +194,29 @@ export interface Property extends PropertySummary {
   description: string | null;
   offerings: Offering[];
   target: TargetProfile;
-  created_at: ISODate;
+  /** Present when the project was created with start_agent: the first run's id. */
+  started_job_id?: UUID;
 }
-export type PropertyInput = Omit<Property, "id" | "account_count" | "created_at" | "radius_km">;
+export type PropertyInput = Omit<
+  Property,
+  | "id"
+  | "account_count"
+  | "created_at"
+  | "radius_km"
+  | "currency"
+  | "distance_unit"
+  | "latest_job"
+  | "started_job_id"
+> & {
+  /** Create the project and start the first discovery run in one step (D-40). */
+  start_agent?: boolean;
+};
 // GET /properties -> PropertySummary[]
 // POST /properties (PropertyInput) -> Property
 // GET /properties/{id} -> Property
 // PATCH /properties/{id} (Partial<PropertyInput>) -> Property
-// GET /geocode?q=... -> GeocodeResult[]
+// DELETE /properties/{id} -> 204 (soft delete; stops running agent work; admin/manager)
+// GET /geocode?q=...&country=US -> GeocodeResult[]
 export interface GeocodeResult {
   label: string;
   lat: number;

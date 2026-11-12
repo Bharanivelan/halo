@@ -43,7 +43,7 @@ import {
   useRetryFailed,
   useRun,
 } from "@/hooks/use-halo";
-import { ago, dateTime, duration, usd } from "@/lib/halo-format";
+import { ago, dateTime, dist, duration, usd } from "@/lib/halo-format";
 import type { Stage, StageStatus } from "@/lib/halo-types";
 import { cn } from "@/lib/utils";
 
@@ -342,6 +342,7 @@ export function AgentRunPage() {
               <HaloRadar
                 center={prop.data.location}
                 radiusKm={j.config.radius_km}
+                unit={prop.data.distance_unit}
                 points={points}
                 sweep={active}
                 labels={false}
@@ -353,7 +354,7 @@ export function AgentRunPage() {
                   this week.
                 </p>
                 <p className="mt-3 font-mono text-xs">
-                  {j.config.radius_km} km · up to {j.config.max_companies} companies ·{" "}
+                  {dist(j.config.radius_km, prop.data.distance_unit)} · up to {j.config.max_companies} companies ·{" "}
                   {j.config.research_depth} research
                 </p>
               </div>

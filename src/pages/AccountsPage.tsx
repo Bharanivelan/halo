@@ -31,12 +31,13 @@ import {
   useAccounts,
   useAccountsMap,
   useBulk,
+  useProjectUnits,
   useProperty,
   useReference,
   useRuns,
 } from "@/hooks/use-halo";
 import { halo, type AccountFilters } from "@/lib/halo-api";
-import { ageDays, km } from "@/lib/halo-format";
+import { ageDays, dist } from "@/lib/halo-format";
 import type { AccountListItem, MapPoint } from "@/lib/halo-types";
 import { cn } from "@/lib/utils";
 import type { AccountsSearch } from "@/routes/_shell.p.$propertyId.accounts.index";
@@ -73,6 +74,7 @@ function ProspectRow({
   onSelect: (v: boolean) => void;
   statusLabel: (s: string) => string;
 }) {
+  const { unit } = useProjectUnits(propertyId);
   return (
     <tr
       className={cn(
@@ -144,7 +146,7 @@ function ProspectRow({
         )}
       </td>
       <td className="hidden py-3 pr-3 font-mono text-sm tabular sm:table-cell">
-        {km(a.distance_km)}
+        {dist(a.distance_km, unit)}
       </td>
       <td className="hidden py-3 pr-3 xl:table-cell">
         <span className="rounded-full bg-surface-2 px-2.5 py-1 text-xs">
@@ -417,6 +419,7 @@ export function AccountsPage() {
               <HaloRadar
                 center={prop.data.location}
                 radiusKm={prop.data.radius_km}
+                unit={prop.data.distance_unit}
                 points={map.data}
                 selectedId={focus?.id}
                 onSelect={setFocus}
@@ -453,7 +456,7 @@ export function AccountsPage() {
           {unfiltered ? (
             <EmptyState
               title="No prospects yet"
-              text="Run the agent to find and score companies around this location."
+              text="Run the agent to find and score companies around this hotel."
               action={
                 <Button variant="signature" className="rounded-xl" asChild>
                   <Link to="/p/$propertyId/agent/new" params={{ propertyId }}>

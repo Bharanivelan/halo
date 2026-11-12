@@ -63,10 +63,10 @@ export const useOverview = (id?: string) =>
     enabled: !!id,
     refetchInterval: (q) => (q.state.data?.running_jobs?.length ? 5000 : false),
   });
-export const useGeocode = (q: string) =>
+export const useGeocode = (q: string, country?: string) =>
   useQuery({
-    queryKey: ["geocode", q],
-    queryFn: () => halo.geocode(q),
+    queryKey: ["geocode", q, country],
+    queryFn: () => halo.geocode(q, country),
     enabled: q.trim().length >= 3,
     staleTime: 10 * 60_000,
   });
@@ -80,6 +80,25 @@ export function useCreateProperty() {
     },
   });
 }
+export function useDeleteProperty() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => halo.deleteProperty(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["properties"] });
+      qc.invalidateQueries({ queryKey: ["runs"] });
+      qc.invalidateQueries({ queryKey: ["me"] });
+    },
+  });
+}
+
+/** Distance unit and currency for a project, from the cached project list. Defaults to US. */
+export function useProjectUnits(id?: string) {
+  const { data } = useQuery({ queryKey: ["properties"], queryFn: halo.properties });
+  const p = data?.find((x) => x.id === id);
+  return { unit: p?.distance_unit ?? "mi", currency: p?.currency ?? "USD" } as const;
+}
+
 export function useUpdateProperty(id: string) {
   const qc = useQueryClient();
   return useMutation({

@@ -1,7 +1,8 @@
 import { Link, useLocation, useNavigate, useParams } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
+  BookOpen,
   Bot,
   Check,
   ChevronsUpDown,
@@ -13,6 +14,8 @@ import {
   Moon,
   PanelLeftClose,
   PanelLeftOpen,
+  Plug,
+  Plus,
   Search,
   Settings,
   Sparkles,
@@ -33,6 +36,7 @@ import {
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { isJobActive, useLogout, useMe, useProperties, useRuns } from "@/hooks/use-halo";
+import { setLastProject } from "@/lib/halo-projects";
 import { AuthGate } from "./AuthGate";
 
 const ROLE_LABEL = { admin: "Admin", manager: "Manager", rep: "Sales rep" } as const;
@@ -55,13 +59,13 @@ function LocationSwitcher({
           "flex items-center gap-2 rounded-xl border border-border bg-surface-2 px-3 py-2 text-left text-sm transition-colors hover:border-gold/40",
           collapsed && "justify-center px-0",
         )}
-        aria-label="Switch location"
+        aria-label="Switch project"
       >
         <MapPin className="size-4 shrink-0 text-gold" />
         {!collapsed && (
           <>
             <span className="min-w-0 flex-1">
-              <span className="block truncate font-medium">{current?.name ?? "All locations"}</span>
+              <span className="block truncate font-medium">{current?.name ?? "All projects"}</span>
               {current && (
                 <span className="block truncate text-[11px] text-muted-foreground">
                   {[current.locality, current.city].filter(Boolean).join(", ")}
@@ -76,11 +80,11 @@ function LocationSwitcher({
         <DropdownMenuItem asChild>
           <Link to="/" onClick={onNavigate}>
             <Globe2 className="size-4" />
-            All locations{!pid && <Check className="ml-auto size-4" />}
+            All projects{!pid && <Check className="ml-auto size-4" />}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-xs text-muted-foreground">Locations</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs text-muted-foreground">Your hotels</DropdownMenuLabel>
         {props.map((p) => (
           <DropdownMenuItem key={p.id} asChild>
             <Link to="/p/$propertyId" params={{ propertyId: p.id }} onClick={onNavigate}>
@@ -94,6 +98,13 @@ function LocationSwitcher({
             </Link>
           </DropdownMenuItem>
         ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/new" onClick={onNavigate}>
+            <Plus className="size-4" />
+            List a new hotel
+          </Link>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -110,12 +121,12 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
   const active = runs.filter((r) => isJobActive(r.status) && (!pid || r.property_id === pid));
   const nav = [
     {
-      label: "Command center",
+      label: "Overview",
       icon: LayoutDashboard,
       to: pid ? "/p/$propertyId" : "/",
       exact: true,
     },
-    { label: "Agent runs", icon: Bot, to: pid ? "/p/$propertyId/agent/new" : "/" },
+    { label: "AI agent", icon: Bot, to: pid ? "/p/$propertyId/agent/new" : "/" },
     { label: "Prospects", icon: Users, to: pid ? "/p/$propertyId/accounts" : "/" },
     { label: "Pipeline", icon: Kanban, to: pid ? "/p/$propertyId/pipeline" : "/" },
   ] as const;
@@ -130,11 +141,11 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
       <LocationSwitcher collapsed={collapsed} pid={pid} onNavigate={onNavigate} />
       <nav className="flex flex-col gap-1" aria-label="Main">
         {nav.map((n) =>
-          !pid && n.label !== "Command center" ? (
+          !pid && n.label !== "Overview" ? (
             <span
               key={n.label}
               aria-disabled
-              title="Pick a location first"
+              title="Open a project first"
               className={cn(
                 item,
                 "cursor-not-allowed opacity-50 hover:bg-transparent hover:text-muted-foreground",
@@ -157,7 +168,7 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
             >
               <n.icon className="size-4 shrink-0" />
               {!collapsed && n.label}
-              {!collapsed && n.label === "Agent runs" && active.length > 0 && (
+              {!collapsed && n.label === "AI agent" && active.length > 0 && (
                 <AgentPulse className="ml-auto" />
               )}
             </Link>
@@ -187,6 +198,24 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
       )}
 
       <div className="mt-auto flex flex-col gap-1">
+        {(
+          [
+            { to: "/how-it-works", label: "How it works", icon: BookOpen },
+            { to: "/connectors", label: "Connectors", icon: Plug },
+          ] as const
+        ).map((l) => (
+          <Link
+            key={l.to}
+            to={l.to}
+            onClick={onNavigate}
+            className={cn(item, collapsed && "justify-center px-0")}
+            activeProps={{ className: "bg-surface-2 !text-foreground" }}
+            title={collapsed ? l.label : undefined}
+          >
+            <l.icon className="size-4 shrink-0" />
+            {!collapsed && l.label}
+          </Link>
+        ))}
         <Link
           to="/settings"
           onClick={onNavigate}
@@ -252,16 +281,22 @@ function Breadcrumbs() {
   const parts = pathname.split("/").filter(Boolean);
   const labels: Record<string, string> = {
     p: "",
-    agent: "Agent runs",
+    agent: "AI agent",
     new: "New run",
     accounts: "Prospects",
     pipeline: "Pipeline",
     settings: "Settings",
+    "how-it-works": "How it works",
+    connectors: "Connectors",
   };
-  const crumbs = ["Portfolio"];
+  const crumbs = ["Projects"];
   parts.forEach((p, i) => {
     if (p === "p") return;
-    if (parts[i - 1] === "p") crumbs.push(props.find((x) => x.id === p)?.name ?? "Location");
+    if (i === 0 && p === "new") {
+      crumbs.push("List a new hotel");
+      return;
+    }
+    if (parts[i - 1] === "p") crumbs.push(props.find((x) => x.id === p)?.name ?? "Project");
     else if (labels[p] !== undefined) crumbs.push(labels[p]);
     else crumbs.push(parts[i - 1] === "agent" ? "Run" : "Prospect");
   });
@@ -300,7 +335,7 @@ function GlobalSearch({ pid }: { pid: string | undefined }) {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         disabled={!pid}
-        placeholder={pid ? "Search prospects" : "Pick a location to search"}
+        placeholder={pid ? "Search prospects" : "Open a project to search"}
         aria-label="Search prospects"
         className="h-9 rounded-xl border-border bg-surface pl-9"
       />
@@ -314,6 +349,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const reduce = useReducedMotion();
   const params = useParams({ strict: false }) as { propertyId?: string };
+  // Remember the project in use, so the next sign-in offers "Continue where you left off".
+  useEffect(() => {
+    if (params.propertyId) setLastProject(params.propertyId);
+  }, [params.propertyId]);
   return (
     <AuthGate>
       <div className="flex min-h-screen">
@@ -365,7 +404,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 variant="signature"
                 className="rounded-xl"
                 disabled
-                title="Pick a location first"
+                title="Open a project first"
               >
                 <Sparkles />
                 <span className="hidden sm:inline">Run agent</span>

@@ -180,12 +180,12 @@ export function LoginPage() {
           <Logo />
           <div className="max-w-xl pt-24 lg:pt-0">
             <motion.h1 {...fade(0.1)} className="text-3xl font-bold leading-[1.1] md:text-5xl">
-              Every location has a halo.{" "}
+              Every hotel has a halo.{" "}
               <span className="text-signature">Halo finds who's inside it.</span>
             </motion.h1>
             <motion.p {...fade(0.25)} className="mt-4 max-w-md text-muted-foreground md:text-lg">
-              AI agent that discovers, researches and scores the companies around each of your
-              properties.
+              An AI sales agent for hotels. It finds the businesses around your hotel, learns
+              which ones need rooms and event space, and tells you who to call first.
             </motion.p>
           </div>
         </div>
@@ -196,7 +196,7 @@ export function LoginPage() {
           <div className="card-halo p-7 md:p-8">
             <h2 className="text-2xl font-bold">Sign in</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Welcome back to your command center.
+              Pick up where you left off, or list a new hotel.
             </p>
             <form
               className="mt-6 space-y-4"

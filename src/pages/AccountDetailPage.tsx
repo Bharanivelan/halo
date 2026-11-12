@@ -54,8 +54,9 @@ import {
   useReference,
   useReResearch,
   useUpdateAccount,
+  useProjectUnits,
 } from "@/hooks/use-halo";
-import { ago, ageDays, date, km, OFFERING_LABEL, pct } from "@/lib/halo-format";
+import { ago, ageDays, date, dist, OFFERING_LABEL, pct } from "@/lib/halo-format";
 import type { AccountDetail, Offering } from "@/lib/halo-types";
 
 const UNASSIGNED = "__none";
@@ -149,6 +150,7 @@ export function AccountDetailPage() {
     propertyId: string;
     accountId: string;
   };
+  const { unit } = useProjectUnits(propertyId);
   const reduce = useReducedMotion();
   const acc = useAccount(accountId);
   const { data: ref } = useReference();
@@ -289,7 +291,7 @@ export function AccountDetailPage() {
               )}
               <span className="inline-flex items-center gap-1.5">
                 <MapPin className="size-4" />
-                {km(a.distance_km)} from {a.property_name}
+                {dist(a.distance_km, unit)} from {a.property_name}
               </span>
               {(c.website || c.domain) && (
                 <a
@@ -510,7 +512,7 @@ export function AccountDetailPage() {
               </div>
               {a.related_accounts.length > 0 && (
                 <div className="card-halo p-5">
-                  <SectionTitle>Also near your other locations</SectionTitle>
+                  <SectionTitle>Also near your other hotels</SectionTitle>
                   <ul className="space-y-2">
                     {a.related_accounts.map((r) => (
                       <li key={r.id}>
