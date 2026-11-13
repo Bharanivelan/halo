@@ -124,6 +124,8 @@ async function request<T>(
     ...(opts.headers ?? {}),
   };
   const token = getToken();
+  // Signed out: don't call the server at all (screens still mounted during sign-out would loop on 401s).
+  if (!token && path !== "/auth/login") throw new ApiError(401, { detail: "Please sign in." });
   if (token) headers["Authorization"] = `Bearer ${token}`;
   let body: BodyInit | null = null;
   if (opts.form) body = opts.form;

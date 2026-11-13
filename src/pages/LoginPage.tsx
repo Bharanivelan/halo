@@ -158,7 +158,10 @@ export function LoginPage() {
   const busy = login.isPending;
   const err = login.error
     ? login.error instanceof ApiError && login.error.status === 401
-      ? { title: "Couldn't sign you in", detail: "That email and password don't match. Please try again." }
+      ? {
+          title: "Couldn't sign you in",
+          detail: "That email and password don't match. Please try again.",
+        }
       : errorText(login.error)
     : null;
 
@@ -188,8 +191,8 @@ export function LoginPage() {
               <span className="text-signature">Halo finds who's inside it.</span>
             </motion.h1>
             <motion.p {...fade(0.25)} className="mt-4 max-w-md text-muted-foreground md:text-lg">
-              An AI sales agent for hotels. It finds the businesses around your hotel, learns
-              which ones need rooms and event space, and tells you who to call first.
+              An AI sales agent for hotels. It finds the businesses around your hotel, learns which
+              ones need rooms and event space, and tells you who to call first.
             </motion.p>
           </div>
         </div>

@@ -22,6 +22,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   useOpportunities,
+  useProjectUnits,
   useProperty,
   useReference,
   useUpdateOpportunity,
@@ -50,7 +51,8 @@ export function PipelinePage() {
   const [lossReason, setLossReason] = useState("");
   const [lossNote, setLossNote] = useState("");
   const list = opps.data ?? [];
-  const currency = list[0]?.currency ?? "INR";
+  const { currency: projectCurrency } = useProjectUnits(propertyId);
+  const currency = list[0]?.currency ?? projectCurrency;
   const label = (s: string) =>
     ref?.opportunity_stages.find((x) => x.code === s)?.label ?? s.replace(/_/g, " ");
   const open = list.filter((o) => !["won", "lost"].includes(o.stage));

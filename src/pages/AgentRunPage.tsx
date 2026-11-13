@@ -348,14 +348,17 @@ export function AgentRunPage() {
                 labels={false}
               />
               <div className="text-sm text-muted-foreground">
-                <p className="font-medium text-foreground">The halo is filling in</p>
+                <p className="font-medium text-foreground">
+                  {active ? "The halo is filling in" : "Every business the agent scored"}
+                </p>
                 <p className="mt-1">
-                  Each company lights up as it's scored. Gold dots are hot prospects worth calling
-                  this week.
+                  {active
+                    ? "Each company lights up as it's scored. Gold dots are hot prospects worth calling this week."
+                    : "Your hotel is in the centre. Gold dots are hot prospects worth calling this week."}
                 </p>
                 <p className="mt-3 font-mono text-xs">
-                  {dist(j.config.radius_km, prop.data.distance_unit)} · up to {j.config.max_companies} companies ·{" "}
-                  {j.config.research_depth} research
+                  {dist(j.config.radius_km, prop.data.distance_unit)} · up to{" "}
+                  {j.config.max_companies} companies · {j.config.research_depth} research
                 </p>
               </div>
             </div>
