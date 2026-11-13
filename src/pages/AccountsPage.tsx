@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { RateLeadCompact } from "@/components/halo/RateLead";
 import { Link, useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { ArrowRight, Download, List, Loader2, Radar, Search, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
@@ -120,6 +121,9 @@ function ProspectRow({
       </td>
       <td className="py-3 pr-3">
         <TierBadge tier={a.tier} />
+      </td>
+      <td className="py-3 pr-3">
+        <RateLeadCompact accountId={a.id} rating={a.feedback} name={a.company.name} />
       </td>
       <td className="hidden w-36 py-3 pr-3 lg:table-cell">
         <div className="space-y-1.5">
@@ -485,6 +489,9 @@ export function AccountsPage() {
                 <th className="py-3 pr-3 font-medium">Priority</th>
                 <th className="py-3 pr-3 font-medium">Company</th>
                 <th className="py-3 pr-3 font-medium">Tier</th>
+                <th className="py-3 pr-3 font-medium" title="Rate leads to teach Halo Lab">
+                  Good lead?
+                </th>
                 <th className="hidden py-3 pr-3 font-medium lg:table-cell">Scores</th>
                 <th className="hidden py-3 pr-3 font-medium md:table-cell">Top signal</th>
                 <th className="hidden py-3 pr-3 font-medium sm:table-cell">Distance</th>

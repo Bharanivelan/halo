@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ShellIndexRouteImport } from './routes/_shell.index'
 import { Route as ShellConnectorsRouteImport } from './routes/_shell.connectors'
 import { Route as ShellHowItWorksRouteImport } from './routes/_shell.how-it-works'
+import { Route as ShellLabRouteImport } from './routes/_shell.lab'
 import { Route as ShellNewRouteImport } from './routes/_shell.new'
 import { Route as ShellSettingsRouteImport } from './routes/_shell.settings'
 import { Route as ShellPPropertyIdIndexRouteImport } from './routes/_shell.p.$propertyId.index'
@@ -45,6 +46,11 @@ const ShellConnectorsRoute = ShellConnectorsRouteImport.update({
 const ShellHowItWorksRoute = ShellHowItWorksRouteImport.update({
   id: '/how-it-works',
   path: '/how-it-works',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellLabRoute = ShellLabRouteImport.update({
+  id: '/lab',
+  path: '/lab',
   getParentRoute: () => ShellRoute,
 } as any)
 const ShellNewRoute = ShellNewRouteImport.update({
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/connectors': typeof ShellConnectorsRoute
   '/how-it-works': typeof ShellHowItWorksRoute
+  '/lab': typeof ShellLabRoute
   '/new': typeof ShellNewRoute
   '/settings': typeof ShellSettingsRoute
   '/p/$propertyId/pipeline': typeof ShellPPropertyIdPipelineRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/connectors': typeof ShellConnectorsRoute
   '/how-it-works': typeof ShellHowItWorksRoute
+  '/lab': typeof ShellLabRoute
   '/new': typeof ShellNewRoute
   '/settings': typeof ShellSettingsRoute
   '/': typeof ShellIndexRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_shell/connectors': typeof ShellConnectorsRoute
   '/_shell/how-it-works': typeof ShellHowItWorksRoute
+  '/_shell/lab': typeof ShellLabRoute
   '/_shell/new': typeof ShellNewRoute
   '/_shell/settings': typeof ShellSettingsRoute
   '/_shell/': typeof ShellIndexRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/connectors'
     | '/how-it-works'
+    | '/lab'
     | '/new'
     | '/settings'
     | '/p/$propertyId/pipeline'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/connectors'
     | '/how-it-works'
+    | '/lab'
     | '/new'
     | '/settings'
     | '/'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_shell/connectors'
     | '/_shell/how-it-works'
+    | '/_shell/lab'
     | '/_shell/new'
     | '/_shell/settings'
     | '/_shell/'
@@ -223,6 +235,13 @@ declare module '@tanstack/react-router' {
       path: '/how-it-works'
       fullPath: '/how-it-works'
       preLoaderRoute: typeof ShellHowItWorksRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/lab': {
+      id: '/_shell/lab'
+      path: '/lab'
+      fullPath: '/lab'
+      preLoaderRoute: typeof ShellLabRouteImport
       parentRoute: typeof ShellRoute
     }
     '/_shell/new': {
@@ -287,6 +306,7 @@ declare module '@tanstack/react-router' {
 interface ShellRouteChildren {
   ShellConnectorsRoute: typeof ShellConnectorsRoute
   ShellHowItWorksRoute: typeof ShellHowItWorksRoute
+  ShellLabRoute: typeof ShellLabRoute
   ShellNewRoute: typeof ShellNewRoute
   ShellSettingsRoute: typeof ShellSettingsRoute
   ShellIndexRoute: typeof ShellIndexRoute
@@ -301,6 +321,7 @@ interface ShellRouteChildren {
 const ShellRouteChildren: ShellRouteChildren = {
   ShellConnectorsRoute: ShellConnectorsRoute,
   ShellHowItWorksRoute: ShellHowItWorksRoute,
+  ShellLabRoute: ShellLabRoute,
   ShellNewRoute: ShellNewRoute,
   ShellSettingsRoute: ShellSettingsRoute,
   ShellIndexRoute: ShellIndexRoute,

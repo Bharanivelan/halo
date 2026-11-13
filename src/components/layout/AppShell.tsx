@@ -3,6 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   BookOpen,
+  FlaskConical,
   Bot,
   Check,
   ChevronsUpDown,
@@ -200,6 +201,7 @@ function SidebarBody({ collapsed, onNavigate }: { collapsed: boolean; onNavigate
       <div className="mt-auto flex flex-col gap-1">
         {(
           [
+            { to: "/lab", label: "Halo Lab", icon: FlaskConical },
             { to: "/how-it-works", label: "How it works", icon: BookOpen },
             { to: "/connectors", label: "Connectors", icon: Plug },
           ] as const
@@ -288,6 +290,7 @@ function Breadcrumbs() {
     settings: "Settings",
     "how-it-works": "How it works",
     connectors: "Connectors",
+    lab: "Halo Lab",
   };
   const crumbs = ["Projects"];
   parts.forEach((p, i) => {

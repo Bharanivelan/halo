@@ -381,6 +381,8 @@ export interface SignalItem {
   recommended_approach: string | null;
   evidence_quote: string | null;
   source: SourceRef | null;
+  /** Team flag on this signal (dossier only). */
+  feedback?: SignalVerdict | null;
 }
 
 /* ───────── Scores ───────── */
@@ -449,6 +451,8 @@ export interface AccountListItem {
   owner: { id: UUID; name: string } | null;
   research_status: ResearchStatus;
   updated_at: ISODate;
+  /** The team's rating of this prospect (Halo Lab answer key). */
+  feedback?: LeadRating | null;
 }
 export interface Page<T> {
   items: T[];
@@ -546,6 +550,7 @@ export interface AccountDetail extends AccountListItem {
     tier: Tier | null;
     status: AccountStatus;
   }[];
+  feedback: LeadFeedback | null;
   next_action: {
     title: string;
     detail: string;
@@ -648,3 +653,96 @@ export interface LlmCall {
   error: string | null;
   created_at: ISODate;
 }
+
+
+/* ───────── Halo Lab (D-47): ratings, agent versions, improvement runs ───────── */
+export type LeadVerdict = "good_fit" | "not_fit";
+export type SignalVerdict = "correct" | "wrong";
+export interface LeadRating {
+  verdict: LeadVerdict;
+  reason: string | null;
+}
+export interface LeadFeedback extends LeadRating {
+  reason_label: string | null;
+  note: string | null;
+  source: "app" | "csv";
+  updated_at: ISODate;
+}
+/** How well a version agrees with the team's ratings on one set of prospects. */
+export interface LabScore {
+  accuracy: number; // 0..1, balanced (good fits and not-fits count equally)
+  good_found: number;
+  good_total: number;
+  not_found: number;
+  not_total: number;
+  n: number;
+}
+export interface LabCase {
+  account_id: UUID;
+  name: string;
+  verdict: LeadVerdict;
+}
+export interface LabVersionMetrics {
+  accuracy?: number; // on prospects it was not tuned on (or all ratings for the starting version)
+  rated?: number;
+  mode?: "ai" | "rules";
+  before?: { all: LabScore; tune: LabScore; check: LabScore };
+  after?: { all: LabScore; tune: LabScore; check: LabScore };
+  fixed?: LabCase[];
+  broken?: LabCase[];
+  tier_moves?: { up: number; down: number; total: number };
+}
+export type AgentVersionStatus = "active" | "candidate" | "retired" | "rejected";
+export interface AgentVersion {
+  id: UUID;
+  version: number;
+  status: AgentVersionStatus;
+  parent_version: number | null;
+  summary: string | null;
+  changes: string[];
+  metrics: LabVersionMetrics;
+  classify_guidance: string;
+  lab_job_id: UUID | null;
+  created_at: ISODate;
+  decided_at: ISODate | null;
+}
+export interface LabSummary {
+  active_version: AgentVersion;
+  candidate: AgentVersion | null;
+  ratings: {
+    good_fit: number;
+    not_fit: number;
+    total: number;
+    from_dismissals: number;
+    per_project: { property_id: UUID; property_name: string; good_fit: number; not_fit: number }[];
+    signals_correct: number;
+    signals_wrong: number;
+  };
+  min_ratings: number;
+  recommended_ratings: number;
+  ready: boolean;
+  not_ready_reason: string | null;
+  last_run: {
+    job_id: UUID;
+    status: JobStatus;
+    property_id: UUID;
+    created_at: ISODate;
+    finished_at: ISODate | null;
+    error: string | null;
+  } | null;
+  lessons: { id: UUID; text: string; evidence: Record<string, unknown>; created_at: ISODate }[];
+  not_fit_reasons: Record<string, string>;
+  can_manage: boolean;
+}
+export interface RatingsImport {
+  created: number;
+  updated: number;
+  unmatched: string[];
+  unmatched_count: number;
+  invalid: { row: number; company: string; message: string }[];
+}
+// PUT /accounts/{id}/feedback {verdict, reason?, note?} -> LeadFeedback ; DELETE -> 204
+// PUT /signals/{id}/feedback {verdict: correct|wrong} ; DELETE -> 204
+// POST /lab/ratings/import?property_id= (multipart file) -> RatingsImport
+// GET /lab/summary -> LabSummary ; GET /lab/versions -> AgentVersion[]
+// POST /lab/runs {property_id} -> {job_id} ; POST /lab/versions/{id}/approve|reject|activate -> AgentVersion

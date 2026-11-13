@@ -10,6 +10,8 @@ import {
   MapPin,
   RefreshCw,
   Sparkles,
+  ThumbsDown,
+  ThumbsUp,
   Undo2,
   Users,
   XCircle,
@@ -26,6 +28,7 @@ import {
   TierBadge,
   errorText,
 } from "@/components/halo";
+import { RateLeadCard } from "@/components/halo/RateLead";
 import { ActivityPanel } from "@/components/dossier/ActivityPanel";
 import { ClaimCard, SourceLink } from "@/components/dossier/Evidence";
 import { PeoplePanel } from "@/components/dossier/PeoplePanel";
@@ -52,6 +55,7 @@ import {
   useAccount,
   useMembers,
   useReference,
+  useRateSignal,
   useReResearch,
   useUpdateAccount,
   useProjectUnits,
@@ -157,6 +161,7 @@ export function AccountDetailPage() {
   const { data: members } = useMembers();
   const update = useUpdateAccount(accountId);
   const research = useReResearch(accountId);
+  const rateSignal = useRateSignal(accountId);
   const [tab, setTab] = useState<Tab>("overview");
   const [preset, setPreset] = useState<{
     role_code?: string;
@@ -391,6 +396,10 @@ export function AccountDetailPage() {
         </div>
       </motion.div>
 
+      <motion.div {...fade(0.05)}>
+        <RateLeadCard accountId={a.id} rating={a.feedback} hotelName={a.property_name} />
+      </motion.div>
+
       {/* Next action */}
       {a.next_action.kind !== "none" && (
         <motion.button
@@ -576,6 +585,34 @@ export function AccountDetailPage() {
                       </span>
                     ))}
                     <SourceLink s={s.source} className="ml-auto" />
+                  </div>
+                  <div className="mt-3 flex items-center gap-1 border-t border-border pt-3 text-xs text-muted-foreground">
+                    <span className="mr-auto">Is this signal right?</span>
+                    {(
+                      [
+                        ["correct", "Right", ThumbsUp, "text-teal bg-teal/15"],
+                        ["wrong", "Wrong", ThumbsDown, "text-coral bg-coral/15"],
+                      ] as const
+                    ).map(([v, label, Icon, on]) => (
+                      <button
+                        key={v}
+                        type="button"
+                        aria-pressed={s.feedback === v}
+                        disabled={rateSignal.isPending}
+                        onClick={() =>
+                          rateSignal.mutate(
+                            { id: s.id, verdict: s.feedback === v ? null : v },
+                            { onError: onErr },
+                          )
+                        }
+                        className={`inline-flex items-center gap-1 rounded-md px-2 py-1 transition-colors ${
+                          s.feedback === v ? on : "hover:bg-surface-2 hover:text-foreground"
+                        }`}
+                      >
+                        <Icon className="size-3.5" fill={s.feedback === v ? "currentColor" : "none"} />
+                        {label}
+                      </button>
+                    ))}
                   </div>
                 </div>
               ))}

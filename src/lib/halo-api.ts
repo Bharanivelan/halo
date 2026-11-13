@@ -37,6 +37,12 @@ import type {
   UsageRow,
   CsvImport,
   Offering,
+  AgentVersion,
+  LabSummary,
+  LeadFeedback,
+  LeadVerdict,
+  RatingsImport,
+  SignalVerdict,
 } from "./halo-types";
 
 // Demo tunnel to the Halo API (Cloudflare quick tunnel; changes on restart, so update here or via Connection settings).
@@ -181,6 +187,8 @@ async function request<T>(
 const get = <T>(p: string, q?: Query) => request<T>(p, { query: q });
 const post = <T>(p: string, b?: unknown) => request<T>(p, { method: "POST", body: b ?? {} });
 const patch = <T>(p: string, b: unknown) => request<T>(p, { method: "PATCH", body: b });
+const put = <T>(p: string, b: unknown) => request<T>(p, { method: "PUT", body: b });
+const del = (p: string) => request<void>(p, { method: "DELETE" });
 
 export type AccountFilters = {
   q?: string;
@@ -340,6 +348,29 @@ export const halo = {
     accountId: string,
     b: { type: "note" | "call" | "meeting" | "email_sent"; body: string; opportunity_id?: string },
   ) => post<Activity>(`/accounts/${accountId}/activities`, b),
+
+  /* Halo Lab (D-47) */
+  rateProspect: (id: string, b: { verdict: LeadVerdict; reason?: string | null; note?: string | null }) =>
+    put<LeadFeedback>(`/accounts/${id}/feedback`, b),
+  clearRating: (id: string) => del(`/accounts/${id}/feedback`),
+  rateSignal: (id: string, verdict: SignalVerdict) =>
+    put<{ signal_id: string; verdict: SignalVerdict }>(`/signals/${id}/feedback`, { verdict }),
+  clearSignalRating: (id: string) => del(`/signals/${id}/feedback`),
+  labSummary: () => get<LabSummary>("/lab/summary"),
+  labVersions: () => get<AgentVersion[]>("/lab/versions"),
+  importRatings: (propertyId: string, file: File) => {
+    const f = new FormData();
+    f.append("file", file);
+    return request<RatingsImport>(`/lab/ratings/import`, {
+      method: "POST",
+      form: f,
+      query: { property_id: propertyId },
+    });
+  },
+  startLabRun: (propertyId: string) => post<{ job_id: string }>("/lab/runs", { property_id: propertyId }),
+  approveVersion: (id: string) => post<AgentVersion>(`/lab/versions/${id}/approve`),
+  rejectVersion: (id: string) => post<AgentVersion>(`/lab/versions/${id}/reject`),
+  activateVersion: (id: string) => post<AgentVersion>(`/lab/versions/${id}/activate`),
 
   /* Usage */
   usage: (group_by: "step" | "model" | "job" = "step", days = 30) =>

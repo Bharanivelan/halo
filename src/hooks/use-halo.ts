@@ -10,6 +10,8 @@ import type {
   OpportunityInput,
   PropertyInput,
   ContactInput,
+  LeadVerdict,
+  SignalVerdict,
 } from "@/lib/halo-types";
 
 export const ACTIVE_JOB: JobStatus[] = ["queued", "running", "cancelling"];
@@ -324,3 +326,79 @@ export const useAddActivity = (accountId: string) =>
 /* ── Usage ── */
 export const useUsage = (group_by: "step" | "model" | "job") =>
   useQuery({ queryKey: ["usage", group_by], queryFn: () => halo.usage(group_by) });
+
+
+/* ── Halo Lab (D-47) ── */
+function useLabMutation<A, R>(fn: (a: A) => Promise<R>, accountId?: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: fn,
+    onSuccess: () => {
+      if (accountId) qc.invalidateQueries({ queryKey: ["account", accountId] });
+      qc.invalidateQueries({ queryKey: ["accounts"] });
+      qc.invalidateQueries({ queryKey: ["lab"] });
+    },
+  });
+}
+/** Rate a prospect 👍/👎. Pass verdict null to clear the rating. */
+export function useRateProspect() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      verdict,
+      reason,
+    }: {
+      id: string;
+      verdict: LeadVerdict | null;
+      reason?: string | null | undefined;
+    }) => {
+      if (verdict) await halo.rateProspect(id, { verdict, reason: reason ?? null });
+      else await halo.clearRating(id);
+    },
+    onSuccess: (_r, v) => {
+      qc.invalidateQueries({ queryKey: ["account", v.id] });
+      qc.invalidateQueries({ queryKey: ["accounts"] });
+      qc.invalidateQueries({ queryKey: ["lab"] });
+    },
+  });
+}
+export const useRateSignal = (accountId: string) =>
+  useLabMutation(
+    async ({ id, verdict }: { id: string; verdict: SignalVerdict | null }) => {
+      if (verdict) await halo.rateSignal(id, verdict);
+      else await halo.clearSignalRating(id);
+    },
+    accountId,
+  );
+export const useLabSummary = (opts: { live?: boolean } = {}) =>
+  useQuery({
+    queryKey: ["lab", "summary"],
+    queryFn: halo.labSummary,
+    refetchInterval: opts.live ? 3000 : false,
+  });
+export const useLabVersions = () =>
+  useQuery({ queryKey: ["lab", "versions"], queryFn: halo.labVersions });
+export const useImportRatings = (propertyId: string) =>
+  useLabMutation((file: File) => halo.importRatings(propertyId, file));
+export const useStartLabRun = () => useLabMutation((propertyId: string) => halo.startLabRun(propertyId));
+export function useDecideVersion() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, action }: { id: string; action: "approve" | "reject" | "activate" }) =>
+      action === "approve"
+        ? halo.approveVersion(id)
+        : action === "reject"
+          ? halo.rejectVersion(id)
+          : halo.activateVersion(id),
+    onSuccess: () => {
+      // Approving or rolling back re-scores every prospect.
+      qc.invalidateQueries({ queryKey: ["lab"] });
+      qc.invalidateQueries({ queryKey: ["accounts"] });
+      qc.invalidateQueries({ queryKey: ["accounts-map"] });
+      qc.invalidateQueries({ queryKey: ["account"] });
+      qc.invalidateQueries({ queryKey: ["overview"] });
+      qc.invalidateQueries({ queryKey: ["properties"] });
+    },
+  });
+}
