@@ -72,8 +72,11 @@ class PlanStep(Step):
             providers.append("discover_csv")
         if not providers:
             raise PermanentError("No discovery sources selected")
-        ctx.event(f"Searching {cfg['radius_km']:g} km around {prop.name} ({lat:.4f}, {lng:.4f}) "
-                  f"for {len(cfg.get('industries') or [])} industries.")
+        r = region(prop.country)
+        dist = (f"{cfg['radius_km'] / 1.609344:.1f} miles" if r["distance_unit"] == "mi" else f"{cfg['radius_km']:g} km")
+        n_ind = len(cfg.get("industries") or [])
+        ctx.event(f"Searching {dist} around {prop.name} for "
+                  + (f"{n_ind} {'industry' if n_ind == 1 else 'industries'}." if n_ind else "businesses in every industry."))
         if ctx.settings.llm_configured and not llm.ai_available():
             ctx.event("The AI's daily allowance is used up. This run will use map data, websites and keyword rules "
                       "instead of AI.", level="warning")
@@ -472,7 +475,7 @@ class ResearchStep(Step):
         if not company.website:
             company.research_status, company.research_note = "researched", "No website found; profile based on map data only."
             company.last_researched_at = datetime.now(timezone.utc)
-            ctx.event(f"{company.name}: no website found, using map data only.", level="warning")
+            ctx.event(f"{company.name}: no website listed, so we used map data.")
             return stats
 
         # 3) Homepage.
@@ -484,7 +487,9 @@ class ResearchStep(Step):
                 raise
             company.research_status, company.research_note = "researched", f"Website unavailable: {e}"
             company.last_researched_at = datetime.now(timezone.utc)
-            ctx.event(f"{company.name}: website unavailable ({e}).", level="warning")
+            # Plain wording for the live log (D-45); the technical reason stays in research_note.
+            ctx.event(f"{company.name}: couldn't read their website (some sites block automated visits), "
+                      "so we used map data.")
             return stats
         sources: dict[str, Source] = {}
         texts: dict[str, str] = {}

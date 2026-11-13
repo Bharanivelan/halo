@@ -215,7 +215,11 @@ def parse_request(body: ParseIn, ctx: CtxDep):
     from app.llm import prompts
     pid, ver, system = prompts.PARSE_REQUEST
     cur = body.current_config.model_dump(mode="json")
-    user = f"Hotel: {prop.name}, {prop.locality or ''} {prop.city or ''}\nCurrent config: {json.dumps(cur)}\nRequest: {body.text}"
+    from app.core.regions import region
+    unit_note = ("The user thinks in miles; radius_km is kilometres (1 mile = 1.609 km)."
+                 if region(prop.country)["distance_unit"] == "mi" else "Distances are in kilometres.")
+    user = (f"Hotel: {prop.name}, {prop.locality or ''} {prop.city or ''}\n{unit_note}\n"
+            f"Current config: {json.dumps(cur)}\nRequest: {body.text}")
     out = llm.call_json(ctx=llm.CallContext(workspace_id=ctx.p.workspace_id, step="parse_request"),
                         prompt_id=pid, version=ver, system=system, user=user, tier="fast", max_output_tokens=3000)
     new = dict(cur)

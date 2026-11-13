@@ -50,7 +50,7 @@ def generate(db: Session, *, workspace_id: UUID, user_id: UUID, account: Account
              "lifecycle": prop.lifecycle, "opening_date": prop.opening_date.isoformat() if prop.opening_date else None,
              "rooms": prop.rooms_count, "meeting_rooms": prop.meeting_rooms_count,
              "largest_meeting_capacity": prop.largest_meeting_capacity, "banquet_capacity": prop.banquet_capacity,
-             "facilities": prop.facilities, "distance_km": account.distance_km}
+             "facilities": prop.facilities, "distance": _distance(account.distance_km, prop.country)}
     recipient = {"name": contact.full_name, "title": contact.title} if contact else {"role": role_code}
     version = (db.execute(select(func.max(CopilotOutput.version)).where(CopilotOutput.account_id == account.id)).scalar() or 0) + 1
 
@@ -83,12 +83,26 @@ def generate(db: Session, *, workspace_id: UUID, user_id: UUID, account: Account
     return row
 
 
+def _distance(km: float | None, country: str | None) -> str | None:
+    """Distance in the hotel's own unit, so drafts for US hotels say miles (D-39)."""
+    if km is None:
+        return None
+    from app.core.regions import region
+    if region(country)["distance_unit"] == "mi":
+        return f"{km / 1.609344:.1f} miles"
+    return f"{km:.1f} km"
+
+
+_REF_IDS = re.compile(r"\s*[\(\[]\s*[FG]\d+(?:\s*[,;]\s*[FG]\d+)*\s*[\)\]]")
+
+
 def _blocks(items, ref, allow_inference: bool) -> list[dict]:
     out = []
     for b in items or []:
         if isinstance(b, str):
             b = {"text": b, "claims": []}
-        text = str(b.get("text", "")).strip()
+        # The model sometimes echoes our internal fact ids ("(F1)", "[G2]") into prose; citations are shown separately.
+        text = _REF_IDS.sub("", str(b.get("text", ""))).strip()
         if not text:
             continue
         ids = [ref[x] for x in (b.get("claims") or []) if x in ref]

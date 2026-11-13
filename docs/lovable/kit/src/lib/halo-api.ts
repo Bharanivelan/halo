@@ -40,7 +40,7 @@ import type {
 } from "./halo-types";
 
 // Demo tunnel to the Halo API (localhost.run; rotates, so update here or via Connection settings).
-export const DEFAULT_API_URL = "https://2df60e2d2dd9cf.lhr.life";
+export const DEFAULT_API_URL = "https://2a1d7eee9290ff.lhr.life";
 const URL_KEY = "halo.apiUrl";
 const TOKEN_KEY = "halo.token";
 
@@ -124,6 +124,8 @@ async function request<T>(
     ...(opts.headers ?? {}),
   };
   const token = getToken();
+  // Signed out: don't call the server at all (screens still mounted during sign-out would loop on 401s).
+  if (!token && path !== "/auth/login") throw new ApiError(401, { detail: "Please sign in." });
   if (token) headers["Authorization"] = `Bearer ${token}`;
   let body: BodyInit | null = null;
   if (opts.form) body = opts.form;
