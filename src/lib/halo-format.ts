@@ -59,9 +59,15 @@ export const dateTime = (iso?: string | null) =>
         minute: "2-digit",
       })
     : DASH;
+/** Date-only values ("2026-12-01") are calendar dates: format in UTC so US time zones don't show the day before. */
 export const date = (iso?: string | null) =>
   iso
-    ? new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })
+    ? new Date(iso).toLocaleDateString(undefined, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        ...(/^\d{4}-\d{2}-\d{2}$/.test(iso) ? { timeZone: "UTC" } : {}),
+      })
     : DASH;
 
 export function duration(start?: string | null, end?: string | null) {

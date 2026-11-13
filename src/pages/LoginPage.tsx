@@ -156,7 +156,11 @@ export function LoginPage() {
   const [server, setServer] = useState<string | null>(null);
   const login = useLogin();
   const busy = login.isPending;
-  const err = login.error ? errorText(login.error) : null;
+  const err = login.error
+    ? login.error instanceof ApiError && login.error.status === 401
+      ? { title: "Couldn't sign you in", detail: "That email and password don't match. Please try again." }
+      : errorText(login.error)
+    : null;
 
   useEffect(() => {
     if (halo.isSignedIn()) void navigate({ to: "/", replace: true });

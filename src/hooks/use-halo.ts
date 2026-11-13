@@ -61,7 +61,8 @@ export const useOverview = (id?: string) =>
     queryKey: ["overview", id],
     queryFn: () => halo.overview(id!),
     enabled: !!id,
-    refetchInterval: (q) => (q.state.data?.running_jobs?.length ? 5000 : false),
+    refetchInterval: (q) =>
+      q.state.data?.running_jobs?.some((j) => isJobActive(j.status)) ? 5000 : false,
   });
 export const useGeocode = (q: string, country?: string) =>
   useQuery({
@@ -130,19 +131,45 @@ export function useStartRun() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["runs"] }),
   });
 }
-export const useRuns = (propertyId?: string) =>
-  useQuery({
+/** Data that changes while the agent works: refreshed on every live poll and once more when a run ends. */
+const LIVE_KEYS = [["accounts-map"], ["properties"], ["overview"], ["accounts"]] as const;
+function refreshLive(qc: ReturnType<typeof useQueryClient>) {
+  for (const k of LIVE_KEYS) void qc.invalidateQueries({ queryKey: [...k] });
+}
+
+export function useRuns(propertyId?: string) {
+  const qc = useQueryClient();
+  return useQuery({
     queryKey: ["runs", propertyId],
-    queryFn: () => halo.runs(propertyId),
+    queryFn: async () => {
+      const prev = qc.getQueryData<{ id: string; status: JobStatus }[]>(["runs", propertyId]);
+      const next = await halo.runs(propertyId);
+      const wasActive = prev?.some((j) => isJobActive(j.status)) ?? false;
+      if (wasActive || next.some((j) => isJobActive(j.status))) refreshLive(qc);
+      return next;
+    },
     refetchInterval: (q) => (q.state.data?.some((j) => isJobActive(j.status)) ? 4000 : false),
   });
-export const useRun = (id?: string) =>
-  useQuery({
+}
+export function useRun(id?: string) {
+  const qc = useQueryClient();
+  return useQuery({
     queryKey: ["run", id],
-    queryFn: () => halo.run(id!),
+    queryFn: async () => {
+      const prev = qc.getQueryData<{ status: JobStatus }>(["run", id]);
+      const next = await halo.run(id!);
+      if (isJobActive(prev?.status) && !isJobActive(next.status)) {
+        refreshLive(qc);
+        void qc.invalidateQueries({ queryKey: ["runs"] });
+      }
+      return next;
+    },
     enabled: !!id,
-    refetchInterval: (q) => (isJobActive(q.state.data?.status) || !q.state.data ? 2000 : false),
+    // Poll while the run is live; stop on errors (e.g. 404) instead of retrying forever.
+    refetchInterval: (q) =>
+      q.state.status === "error" ? false : isJobActive(q.state.data?.status) || !q.state.data ? 2000 : false,
   });
+}
 function useRunAction<A, R>(fn: (a: A) => Promise<R>) {
   const qc = useQueryClient();
   return useMutation({
@@ -177,8 +204,19 @@ export const useAccountsMap = (propertyId?: string) =>
     queryFn: () => halo.accountsMap(propertyId!),
     enabled: !!propertyId,
   });
+/** After "Re-research", keep the dossier fresh for a few minutes so new evidence appears without a reload. */
+const refreshUntil = new Map<string, number>();
 export const useAccount = (id?: string) =>
-  useQuery({ queryKey: ["account", id], queryFn: () => halo.account(id!), enabled: !!id });
+  useQuery({
+    queryKey: ["account", id],
+    queryFn: () => halo.account(id!),
+    enabled: !!id,
+    refetchInterval: (q) =>
+      q.state.data?.company.research_status === "researching" ||
+      (id && (refreshUntil.get(id) ?? 0) > Date.now())
+        ? 4000
+        : false,
+  });
 
 function useAccountMutation<A, R>(fn: (a: A) => Promise<R>, accountId?: string) {
   const qc = useQueryClient();
@@ -196,7 +234,11 @@ export const useUpdateAccount = (id: string) =>
     (b: Parameters<typeof halo.updateAccount>[1]) => halo.updateAccount(id, b),
     id,
   );
-export const useReResearch = (id: string) => useAccountMutation(() => halo.reResearch(id), id);
+export const useReResearch = (id: string) =>
+  useAccountMutation(() => {
+    refreshUntil.set(id, Date.now() + 3 * 60_000);
+    return halo.reResearch(id);
+  }, id);
 export const useBulk = (propertyId: string) =>
   useAccountMutation((b: Parameters<typeof halo.bulk>[1]) => halo.bulk(propertyId, b));
 

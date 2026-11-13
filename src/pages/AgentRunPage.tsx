@@ -189,10 +189,10 @@ export function AgentRunPage() {
   const logRef = useRef<HTMLDivElement>(null);
   const events = j?.events ?? [];
 
-  // Refresh the radar as companies get scored.
+  // Refresh the radar as companies get scored, including the final poll when the run finishes.
   useEffect(() => {
-    if (active) void refetchMap();
-  }, [j?.counts.scored, active, refetchMap]);
+    void refetchMap();
+  }, [j?.counts.scored, j?.status, refetchMap]);
   useEffect(() => {
     const el = logRef.current;
     if (el) el.scrollTop = el.scrollHeight;

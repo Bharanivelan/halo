@@ -58,6 +58,7 @@ export function CommandCenterPage() {
   const o = ov.data;
   const p = o?.property;
   const run = o?.running_jobs[0];
+  const paused = run?.status === "paused_budget";
   const tiers = o?.tier_counts ?? { A: 0, B: 0, C: 0 };
   const scored = tiers.A + tiers.B + tiers.C;
   const funnelMax = Math.max(1, ...FUNNEL.map((s) => o?.funnel[s] ?? 0));
@@ -123,8 +124,14 @@ export function CommandCenterPage() {
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 font-semibold">
-                <AgentPulse />
-                The agent is working on this hotel
+                {paused ? (
+                  "The agent paused at its spending cap. Open the run to continue"
+                ) : (
+                  <>
+                    <AgentPulse />
+                    The agent is working on this hotel
+                  </>
+                )}
               </div>
               <div className="mt-0.5 font-mono text-xs text-muted-foreground">
                 {run.counts.found} found · {run.counts.researched} researched · {run.counts.scored}{" "}
@@ -217,7 +224,7 @@ export function CommandCenterPage() {
                 sub={`${openPipeline} open · ${o.opportunities.won} won`}
               />
               <KpiTile
-                label="AI spend · 30 days"
+                label="AI spend · 30 days, all hotels"
                 value={o.usage_30d.cost_usd}
                 format={(n) => usd(n)}
                 icon={

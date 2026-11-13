@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -73,7 +73,7 @@ function statusLine(p: PropertySummary, run: JobSummary | undefined) {
     case "cancelled":
       return { text: "The last search was stopped", live: false };
     default:
-      return { text: "Starting up…", live: true };
+      return { text: "The agent is working…", live: true };
   }
 }
 
@@ -164,7 +164,8 @@ function ProjectCard({
         </div>
       </Link>
       {canDelete && (
-        <DropdownMenu>
+        // modal={false}: opening the delete dialog from this menu must not leave the page unclickable.
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger
             className="absolute right-3 top-3 grid size-8 place-items-center rounded-lg border border-border bg-surface/80 text-muted-foreground backdrop-blur hover:text-foreground"
             aria-label={`Options for ${p.name}`}
@@ -172,7 +173,10 @@ function ProjectCard({
             <MoreHorizontal className="size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="text-coral" onSelect={() => onDelete(p)}>
+            <DropdownMenuItem
+              className="text-coral"
+              onSelect={() => setTimeout(() => onDelete(p), 0)}
+            >
               <Trash2 className="size-4" />
               Delete project
             </DropdownMenuItem>
@@ -244,12 +248,13 @@ export function ProjectsPage() {
   const canManage = me?.role === "admin" || me?.role === "manager";
   const runFor = (id: string) => activeRuns.find((r) => r.property_id === id);
 
-  // First visit with no hotels yet: go straight to setup.
+  // First visit with no hotels yet: go straight to setup. Only on arrival, not after deleting the last one.
+  const checkedFirstVisit = useRef(false);
   useEffect(() => {
-    if (props.isSuccess && list.length === 0 && canManage) {
-      void navigate({ to: "/new", replace: true });
-    }
-  }, [props.isSuccess, list.length, canManage, navigate]);
+    if (!props.isSuccess || !me || checkedFirstVisit.current) return;
+    checkedFirstVisit.current = true;
+    if (list.length === 0 && canManage) void navigate({ to: "/new", replace: true });
+  }, [props.isSuccess, me, list.length, canManage, navigate]);
 
   const lastId = getLastProject();
   const last =

@@ -25,7 +25,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useAddActivity, useCreateOpportunity, useReference } from "@/hooks/use-halo";
+import {
+  useAddActivity,
+  useCreateOpportunity,
+  useProjectUnits,
+  useReference,
+} from "@/hooks/use-halo";
 import { ago, date, dateTime, money, OFFERING_LABEL } from "@/lib/halo-format";
 import type { AccountDetail, ActivityType, Offering } from "@/lib/halo-types";
 import { cn } from "@/lib/utils";
@@ -48,6 +53,7 @@ const LOG_TYPES = [
 ] as const;
 
 export function ActivityPanel({ account }: { account: AccountDetail }) {
+  const { currency } = useProjectUnits(account.property_id);
   const { data: ref } = useReference();
   const log = useAddActivity(account.id);
   const createOpp = useCreateOpportunity(account.id);
@@ -206,7 +212,7 @@ export function ActivityPanel({ account }: { account: AccountDetail }) {
             </div>
             <div className="grid grid-cols-3 gap-2">
               <div className="space-y-1">
-                <Label htmlFor="o-val">Value ₹</Label>
+                <Label htmlFor="o-val">Value ({currency})</Label>
                 <Input
                   id="o-val"
                   type="number"

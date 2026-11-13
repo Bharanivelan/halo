@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Clock,
   Coins,
+  FileSpreadsheet,
   Loader2,
   Rocket,
   Sparkles,
@@ -13,6 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { halo } from "@/lib/halo-api";
 import {
   AgentPulse,
   CardSkeleton,
@@ -134,6 +136,40 @@ export function AgentNewPage() {
   const [cfg, setCfg] = useState<DiscoveryConfig | null>(null);
   const [brief, setBrief] = useState("");
   const [patch, setPatch] = useState<ParseResult["patch"] | null>(null);
+  const [csv, setCsv] = useState<{ name: string; rows: number } | null>(null);
+  const [csvBusy, setCsvBusy] = useState(false);
+
+  /** Upload a list of known companies; the run then researches them alongside the map search. */
+  const uploadCsv = async (file: File) => {
+    if (!cfg) return;
+    setCsvBusy(true);
+    try {
+      const imp = await halo.importCsv(propertyId, file);
+      if (imp.status !== "parsed" || imp.row_count === 0) {
+        toast.error("Couldn't read that file", {
+          description: imp.errors[0]?.message ?? "Use a CSV with a 'Company' column.",
+        });
+        return;
+      }
+      setCsv({ name: imp.file_name, rows: imp.row_count });
+      setCfg({
+        ...cfg,
+        csv_import_id: imp.id,
+        sources: cfg.sources.includes("csv") ? cfg.sources : [...cfg.sources, "csv"],
+      });
+      toast.success(`${imp.row_count} companies added from ${imp.file_name}`);
+    } catch (e) {
+      const t = errorText(e);
+      toast.error(t.title, { description: t.detail });
+    } finally {
+      setCsvBusy(false);
+    }
+  };
+  const removeCsv = () => {
+    if (!cfg) return;
+    setCsv(null);
+    setCfg({ ...cfg, csv_import_id: null, sources: cfg.sources.filter((s) => s !== "csv") });
+  };
 
   // Seed the config from the location's saved target profile.
   useEffect(() => {
@@ -437,6 +473,44 @@ export function AgentNewPage() {
                       </Chip>
                     ))}
                 </div>
+                <div className="flex flex-wrap items-center gap-2 pt-1 text-sm">
+                  {csv ? (
+                    <span className="inline-flex items-center gap-2 rounded-full border border-teal/40 bg-teal/10 px-3 py-1 text-teal">
+                      <FileSpreadsheet className="size-4" />
+                      {csv.name} · {csv.rows} companies
+                      <button
+                        type="button"
+                        className="text-xs underline-offset-2 hover:underline"
+                        onClick={removeCsv}
+                      >
+                        Remove
+                      </button>
+                    </span>
+                  ) : (
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-dashed border-border px-3 py-1 text-muted-foreground hover:border-gold/50 hover:text-foreground">
+                      {csvBusy ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <FileSpreadsheet className="size-4" />
+                      )}
+                      Add your own list (CSV)
+                      <input
+                        type="file"
+                        accept=".csv,text/csv"
+                        className="sr-only"
+                        disabled={csvBusy}
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          e.target.value = "";
+                          if (f) void uploadCsv(f);
+                        }}
+                      />
+                    </label>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    A spreadsheet with a Company column (website optional).
+                  </span>
+                </div>
               </div>
               <div className="grid gap-6 sm:grid-cols-2">
                 <div className="space-y-2">
@@ -543,6 +617,11 @@ export function AgentNewPage() {
                     fmt={(n) => `${Math.max(1, Math.round(n))}m`}
                   />
                 </div>
+                {est.error && (
+                  <p className="rounded-xl border border-coral/30 bg-coral/10 p-2.5 text-xs text-coral">
+                    Couldn't estimate this run: {errorText(est.error).detail}
+                  </p>
+                )}
                 {est.data?.warnings.map((w) => (
                   <p
                     key={w}

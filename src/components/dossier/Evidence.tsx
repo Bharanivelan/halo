@@ -87,9 +87,12 @@ export function ClaimCard({ c }: { c: Claim }) {
   );
 }
 
-/** Inline evidence marker for copilot text blocks: hover to see the claims behind it. */
-export function EvidenceMarker({ ids, claims }: { ids: string[]; claims: Map<string, Claim> }) {
-  const found = ids.map((i) => claims.get(i)).filter((c): c is Claim => !!c);
+/** Anything a pitch line can cite: a verified fact (claim) or a buying signal. */
+export type EvidenceRef = Pick<Claim, "id" | "field_label" | "display_value" | "source">;
+
+/** Inline evidence marker for copilot text blocks: hover to see the facts and signals behind it. */
+export function EvidenceMarker({ ids, claims }: { ids: string[]; claims: Map<string, EvidenceRef> }) {
+  const found = ids.map((i) => claims.get(i)).filter((c): c is EvidenceRef => !!c);
   if (!found.length) return null;
   return (
     <HoverCard openDelay={100}>

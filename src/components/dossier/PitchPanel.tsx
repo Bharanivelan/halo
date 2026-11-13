@@ -32,16 +32,16 @@ import {
   useReference,
 } from "@/hooks/use-halo";
 import { ago, OFFERING_LABEL } from "@/lib/halo-format";
-import type { AccountDetail, Claim, CopilotBlock, CopilotOutput, Offering } from "@/lib/halo-types";
+import type { AccountDetail, CopilotBlock, CopilotOutput, Offering } from "@/lib/halo-types";
 import { cn } from "@/lib/utils";
-import { EvidenceMarker } from "./Evidence";
+import { EvidenceMarker, type EvidenceRef } from "./Evidence";
 
 const NONE = "__none";
 const bodyOf = (p: CopilotOutput) =>
   p.edited?.body ?? p.content.email.body_blocks.map((b) => b.text).join("\n\n");
 const subjectOf = (p: CopilotOutput) => p.edited?.subject ?? p.content.email.subject;
 
-function Blocks({ blocks, claims }: { blocks: CopilotBlock[]; claims: Map<string, Claim> }) {
+function Blocks({ blocks, claims }: { blocks: CopilotBlock[]; claims: Map<string, EvidenceRef> }) {
   return (
     <div className="space-y-2">
       {blocks.map((b, i) => (
@@ -75,7 +75,17 @@ export function PitchPanel({
   const edit = useEditPitch(account.id);
   const copied = usePitchCopied(account.id);
   const sent = usePitchSent(account.id);
-  const claims = useMemo(() => new Map(account.claims.map((c) => [c.id, c])), [account.claims]);
+  const claims = useMemo(
+    () =>
+      new Map<string, EvidenceRef>([
+        ...account.claims.map((c): [string, EvidenceRef] => [c.id, c]),
+        ...account.signals.map((s): [string, EvidenceRef] => [
+          s.id,
+          { id: s.id, field_label: "Buying signal", display_value: s.title, source: s.source },
+        ]),
+      ]),
+    [account.claims, account.signals],
+  );
 
   const [offering, setOffering] = useState<Offering>(
     account.roles[0]?.offering ?? "corporate_rate",
@@ -102,7 +112,9 @@ export function PitchPanel({
       setSubject(subjectOf(current));
       setBody(bodyOf(current));
     }
-  }, [current]);
+    // Reset only when a different draft is shown, so "Copy" / "I sent it" don't wipe unsaved edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current?.id]);
   const dirty = !!current && (subject !== subjectOf(current) || body !== bodyOf(current));
 
   const onErr = (e: unknown) => {
