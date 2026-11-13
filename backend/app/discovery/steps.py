@@ -27,6 +27,7 @@ from app.models import (Account, AccountScore, Claim, Company, CompanyIdentifier
                         TargetRoleRecommendation, WorkflowTask)
 from app.providers import fetcher, gdelt, geocoder, osm, search
 from app.providers.http import record_provider_call
+from app.lab import harness as lab_harness
 from app.scoring.engine import ClaimIn, ScoreInput, SignalIn, recommend_roles, score
 from app.workflow.engine import NewTask, Step, StepContext, all_terminal, lock_job, step
 from app.workflow.errors import AIQuotaExhausted, PermanentError, TransientError
@@ -296,6 +297,7 @@ class ClassifyStep(Step):
         decisions: dict[UUID, dict] = {}
 
         ai_skipped = 0
+        guidance, agent_v = lab_harness.classify_guidance(db, ctx.workspace_id)
         if llm.ai_available() and by_company:
             items = list(by_company.items())
             for i in range(0, len(items), 25):
@@ -303,7 +305,7 @@ class ClassifyStep(Step):
                 payload = [{"id": str(cid), "name": r.name, "tags": {k: v for k, v in (r.raw.get("tags") or {}).items()
                                                                      if not k.startswith(("addr:", "contact:phone", "phone"))},
                             "website": r.raw.get("website"), "notes": r.raw.get("notes")} for cid, r in batch]
-                pid, ver, system = prompts.CLASSIFY
+                pid, ver, system = prompts.classify_prompt(guidance, agent_v)
                 user = (f"Hotel target industries: {sorted(targets) or 'any'}.\nCandidates:\n"
                         + json.dumps(payload, ensure_ascii=False))
                 # D-44: one busy batch must not sink the run. Wait and retry once; then fall back to map tags
@@ -794,13 +796,11 @@ class SignalsStep(Step):
 
 
 # ───────── score ─────────
-def compute_and_store_score(db: Session, workspace_id: UUID, account: Account, task_id: UUID | None = None) -> AccountScore:
+def build_score_input(db: Session, account: Account) -> tuple[ScoreInput, list[dict], Company]:
+    """Everything the scorer needs for one prospect (also used by Halo Lab to re-score offline)."""
     company = db.get(Company, account.company_id)
     prop = db.get(Property, account.property_id)
     target = db.execute(select(PropertyTargetProfile).where(PropertyTargetProfile.property_id == prop.id)).scalar_one_or_none()
-    model = db.execute(select(ScoringModel).where(ScoringModel.is_active.is_(True)).order_by(ScoringModel.version.desc())).scalars().first()
-    if model is None:
-        raise PermanentError("No active scoring model in this workspace")
     offerings = _offerings(db, prop.id)
     claims = db.execute(select(Claim, Source).outerjoin(Source, Source.id == Claim.source_id)
                         .where(Claim.company_id == company.id, Claim.is_current.is_(True))).all()
@@ -813,9 +813,18 @@ def compute_and_store_score(db: Session, workspace_id: UUID, account: Account, t
         Contact.company_id == company.id, Contact.do_not_contact.is_(False), Contact.archived_at.is_(None),
         (Contact.email.is_not(None)) | (Contact.phone.is_not(None)))).scalar_one() > 0
     roles = recommend_roles(company.employee_range, offerings, company.industry_code)
-    result = score(ScoreInput(industry_code=company.industry_code, offerings=offerings, property_city=prop.city,
-                              distance_km=account.distance_km, radius_km=target.radius_km if target else 15,
-                              claims=cin, signals=sin, has_contact=has_contact, has_roles=bool(roles)), {"weights": model.weights, "params": model.params})
+    inp = ScoreInput(industry_code=company.industry_code, offerings=offerings, property_city=prop.city,
+                     distance_km=account.distance_km, radius_km=target.radius_km if target else 15,
+                     claims=cin, signals=sin, has_contact=has_contact, has_roles=bool(roles))
+    return inp, roles, company
+
+
+def compute_and_store_score(db: Session, workspace_id: UUID, account: Account, task_id: UUID | None = None) -> AccountScore:
+    model = db.execute(select(ScoringModel).where(ScoringModel.is_active.is_(True)).order_by(ScoringModel.version.desc())).scalars().first()
+    if model is None:
+        raise PermanentError("No active scoring model in this workspace")
+    inp, roles, _company = build_score_input(db, account)
+    result = score(inp, {"weights": model.weights, "params": model.params})
     sc = AccountScore(workspace_id=workspace_id, account_id=account.id, scoring_model_id=model.id, model_version=model.version,
                       fit=result["fit"], intent=result["intent"], confidence=result["confidence"],
                       actionability=result["actionability"], priority=result["priority"], tier=result["tier"],

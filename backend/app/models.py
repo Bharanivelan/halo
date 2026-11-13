@@ -52,6 +52,7 @@ TENANT_TABLES = [
     "scoring_models", "account_scores", "target_role_recommendations", "contacts",
     "discovery_jobs", "discovery_results", "workflow_tasks", "job_events", "llm_calls",
     "provider_calls", "copilot_outputs", "opportunities", "activities", "csv_imports", "audit_logs",
+    "agent_versions", "lead_feedback", "signal_feedback", "lab_lessons",
 ]
 DATA_ORIGIN = ["real", "mock", "manual"]
 
@@ -612,4 +613,83 @@ class AuditLog(Base):
     before: Mapped[dict | None] = mapped_column(JSONB)
     after: Mapped[dict | None] = mapped_column(JSONB)
     request_id: Mapped[str | None] = mapped_column(String(80))
+    created_at: Mapped[datetime] = created()
+
+
+# ───────── Halo Lab (D-47): ratings, agent versions, lessons ─────────
+LEAD_VERDICTS = ["good_fit", "not_fit"]
+AGENT_VERSION_STATUSES = ["active", "candidate", "retired", "rejected"]
+
+
+class LeadFeedback(Base):
+    """A team rating of one prospect: the Lab's answer key. One current rating per prospect (latest wins)."""
+    __tablename__ = "lead_feedback"
+    __table_args__ = (
+        UniqueConstraint("account_id", name="uq_lead_feedback_account"),
+        check_in("verdict", LEAD_VERDICTS, "ck_lead_feedback_verdict"),
+        check_in("source", ["app", "csv"], "ck_lead_feedback_source"),
+    )
+    id: Mapped[uuid.UUID] = pk()
+    workspace_id: Mapped[uuid.UUID] = ws_fk()
+    account_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("accounts.id", ondelete="CASCADE"))
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("properties.id", ondelete="CASCADE"), index=True)
+    company_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("companies.id", ondelete="CASCADE"))
+    verdict: Mapped[str] = mapped_column(String(20))
+    reason: Mapped[str | None] = mapped_column(String(40))
+    note: Mapped[str | None] = mapped_column(Text)
+    source: Mapped[str] = mapped_column(String(10), default="app")
+    created_by_membership_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("memberships.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = created()
+    updated_at: Mapped[datetime] = updated()
+
+
+class SignalFeedback(Base):
+    __tablename__ = "signal_feedback"
+    __table_args__ = (
+        UniqueConstraint("signal_id", name="uq_signal_feedback_signal"),
+        check_in("verdict", ["correct", "wrong"], "ck_signal_feedback_verdict"),
+    )
+    id: Mapped[uuid.UUID] = pk()
+    workspace_id: Mapped[uuid.UUID] = ws_fk()
+    signal_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("signals.id", ondelete="CASCADE"))
+    company_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("companies.id", ondelete="CASCADE"), index=True)
+    verdict: Mapped[str] = mapped_column(String(10))
+    note: Mapped[str | None] = mapped_column(Text)
+    created_by_membership_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("memberships.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = created()
+    updated_at: Mapped[datetime] = updated()
+
+
+class AgentVersion(Base):
+    """One numbered version of the agent's tunable parts (the "harness"): scoring rules + sorting guidance."""
+    __tablename__ = "agent_versions"
+    __table_args__ = (
+        UniqueConstraint("workspace_id", "version", name="uq_agent_versions_ws_version"),
+        check_in("status", AGENT_VERSION_STATUSES, "ck_agent_version_status"),
+    )
+    id: Mapped[uuid.UUID] = pk()
+    workspace_id: Mapped[uuid.UUID] = ws_fk()
+    version: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(20), default="candidate")
+    parent_version: Mapped[int | None] = mapped_column(Integer)
+    harness: Mapped[dict] = mapped_column(JSONB)
+    changes: Mapped[list] = mapped_column(JSONB, default=list)
+    metrics: Mapped[dict] = mapped_column(JSONB, default=dict)
+    summary: Mapped[str | None] = mapped_column(Text)
+    lab_job_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("discovery_jobs.id", ondelete="SET NULL"))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    decided_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = created()
+
+
+class LabLesson(Base):
+    """What the Lab learned from ratings (the Reflect step). Fed into the next improvement round."""
+    __tablename__ = "lab_lessons"
+    id: Mapped[uuid.UUID] = pk()
+    workspace_id: Mapped[uuid.UUID] = ws_fk()
+    text: Mapped[str] = mapped_column(Text)
+    evidence: Mapped[dict] = mapped_column(JSONB, default=dict)
+    lab_job_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("discovery_jobs.id", ondelete="SET NULL"))
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = created()

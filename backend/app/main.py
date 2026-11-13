@@ -6,7 +6,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
-from app.api import accounts, auth, discovery, engagement, properties
+from app.api import accounts, auth, discovery, engagement, lab, properties
 from app.core.config import get_settings
 from app.core.db import engine
 from app.core.errors import (AppError, app_error_handler, permanent_error_handler, transient_error_handler,
@@ -46,7 +46,7 @@ app.add_exception_handler(TransientError, transient_error_handler)
 app.add_exception_handler(PermanentError, permanent_error_handler)
 app.add_exception_handler(Exception, unhandled_error_handler)
 
-for r in (auth.router, properties.router, discovery.router, accounts.router, engagement.router):
+for r in (auth.router, properties.router, discovery.router, accounts.router, engagement.router, lab.router):
     app.include_router(r, prefix="/api/v1")
 
 

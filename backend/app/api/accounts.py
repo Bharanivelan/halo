@@ -14,12 +14,14 @@ from pydantic import BaseModel, Field
 from sqlalchemy import and_, exists, func, or_, select
 
 from app.api.deps import CtxDep
+from app.api.lab import feedback_out
 from app.api.serializers import (account_items, activity_out, claim_out, contact_out, iso, opportunity_out, point,
                                  role_label, signal_out, source_ref)
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.core.vocab import DISMISS_REASONS, INDUSTRIES
 from app.models import (Account, AccountScore, ActivityRow, Claim, Company, CompanyLocation, Contact, CopilotOutput,
-                        DiscoveryJob, DiscoveryResult, Membership, Opportunity, Property, Signal, Source, TargetRoleRecommendation)
+                        DiscoveryJob, DiscoveryResult, LeadFeedback, Membership, Opportunity, Property, Signal, SignalFeedback,
+                        Source, TargetRoleRecommendation)
 from app.workflow import engine
 from app.workflow.engine import NewTask
 
@@ -226,6 +228,8 @@ def account_detail(ctx, a: Account) -> dict:
                          .where(Account.company_id == company.id, Account.id != a.id)).all()
     has_draft = db.execute(select(func.count()).select_from(CopilotOutput).where(CopilotOutput.account_id == a.id)).scalar_one() > 0
     web = next((c for c, _ in claims if c.field == "website" and c.kind == "fact"), None)
+    sig_fb = {sid: v for sid, v in db.execute(select(SignalFeedback.signal_id, SignalFeedback.verdict).where(
+        SignalFeedback.signal_id.in_([s.id for s, _ in sigs]))).all()} if sigs else {}
 
     if company.research_status in ("not_researched", "failed"):
         na = {"kind": "research", "title": "Research this company",
@@ -262,7 +266,8 @@ def account_detail(ctx, a: Account) -> dict:
                    "tier": score.tier, "actionability": score.actionability, "model_version": score.model_version,
                    "computed_at": iso(score.computed_at), "breakdown": score.breakdown} if score else None),
         "claims": [claim_out(c, s) for c, s in claims],
-        "signals": [signal_out(s, src) for s, src in sigs],
+        "signals": [{**signal_out(s, src), "feedback": sig_fb.get(s.id)} for s, src in sigs],
+        "feedback": feedback_out(db.execute(select(LeadFeedback).where(LeadFeedback.account_id == a.id)).scalar_one_or_none()),
         "sources": [source_ref(s) for s in sources],
         "roles": [{"role_code": r.role_code, "label": role_label(r.role_code), "offering": r.offering, "rank": r.rank,
                    "rationale": r.rationale} for r in roles],

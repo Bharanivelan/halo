@@ -194,9 +194,16 @@ def account_items(db: Session, rows: list[tuple[Account, Company]]) -> list[dict
     if owners:
         names = {mid: n for mid, n in db.execute(select(Membership.id, User.full_name).join(User, User.id == Membership.user_id)
                                                   .where(Membership.id.in_(owners))).all()}
+    # Team ratings (Halo Lab, D-47)
+    from app.models import LeadFeedback
+    fb = {}
+    if rows:
+        fb = {f.account_id: f for f in db.execute(select(LeadFeedback).where(
+            LeadFeedback.account_id.in_([a.id for a, _ in rows]))).scalars()}
     out = []
     for a, c in rows:
         s = sigs.get(c.id)
+        f = fb.get(a.id)
         out.append({
             "id": str(a.id), "property_id": str(a.property_id), "company": company_brief(c, locs.get(c.id)),
             "distance_km": a.distance_km, "tier": a.tier, "priority": a.priority, "fit": a.fit, "intent": a.intent,
@@ -206,6 +213,7 @@ def account_items(db: Session, rows: list[tuple[Account, Company]]) -> list[dict
             "status": a.status,
             "owner": ({"id": str(a.owner_membership_id), "name": names.get(a.owner_membership_id, "")} if a.owner_membership_id else None),
             "research_status": c.research_status, "updated_at": iso(a.updated_at),
+            "feedback": ({"verdict": f.verdict, "reason": f.reason} if f else None),
         })
     return out
 

@@ -108,6 +108,9 @@ def score(inp: ScoreInput, model: dict) -> dict:
     ind_claim = _current(inp.claims, "industry")
     rel_map = INDUSTRIES.get(inp.industry_code or "", (None, {}))[1]
     ind_val = max((rel_map.get(o, 0.0) for o in inp.offerings), default=0.0) if inp.industry_code else 0.0
+    # Hotel-specific preference learned by Halo Lab (D-47); absent = no change.
+    adj = (p.get("industry_adjust") or {}).get(inp.industry_code or "", 0.0) if inp.industry_code else 0.0
+    ind_val = max(0.0, min(1.0, ind_val + adj))
     label = INDUSTRIES.get(inp.industry_code or "", ("Unknown industry", {}))[0]
     factors.append({"key": "industry", "label": "Industry relevance", "weight": fw["industry"], "value": round(ind_val, 3),
                     "explanation": f"{label} · relevance to this hotel's offerings" if inp.industry_code else "Industry unknown",

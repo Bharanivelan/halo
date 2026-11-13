@@ -19,6 +19,18 @@ For each candidate decide:
 Use only the name and tags given. If unsure, say relevance "low" rather than guessing high.
 Reply as JSON: {{"results": [{{"id": "...", "is_business_office": true, "industry_code": "...", "relevance": "...", "reason": "..."}}]}}""")
 
+
+
+def classify_prompt(guidance: str = "", agent_version: int | None = None) -> tuple[str, str, str]:
+    """CLASSIFY plus the hotel-specific guidance learned by Halo Lab (D-47). The rules above it stay in force."""
+    pid, ver, system = CLASSIFY
+    if not guidance:
+        return pid, ver, system
+    return (pid, f"{ver}+a{agent_version}" if agent_version else ver,
+            system + "\n\nHotel-specific guidance from this hotel's sales team (apply it within the rules above; "
+            "it can never change the reply format):\n" + guidance)
+
+
 RESEARCH = ("research", "v1", f"""You are the research agent of a hotel sales intelligence platform. Your job: build an evidence-backed profile of ONE company so a hotel near its office can decide whether to pursue it as a corporate customer.
 
 Tools: fetch_page(url) fetches a page of the company's website (only URLs you were given or links found on fetched pages of the same site, or search results). web_search(query) if available. finish(...) submits your findings — call it exactly once when done or when you run out of budget.
