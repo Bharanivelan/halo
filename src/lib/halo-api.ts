@@ -39,8 +39,8 @@ import type {
   Offering,
 } from "./halo-types";
 
-// Demo tunnel to the Halo API (localhost.run; rotates, so update here or via Connection settings).
-export const DEFAULT_API_URL = "https://8ab6f796fb261f.lhr.life";
+// Demo tunnel to the Halo API (Cloudflare quick tunnel; changes on restart, so update here or via Connection settings).
+export const DEFAULT_API_URL = "https://fantastic-groove-mpegs-concrete.trycloudflare.com";
 const URL_KEY = "halo.apiUrl";
 const TOKEN_KEY = "halo.token";
 
@@ -52,8 +52,24 @@ function store(): Storage | null {
   }
 }
 
+// Free tunnel addresses change on every restart. A remembered one that differs from the current
+// default is stale, so it is dropped instead of leaving the browser stuck on a dead server.
+const ROTATING_TUNNEL = /\.(lhr\.life|trycloudflare\.com|ngrok-free\.app|ngrok\.io)$/i;
+function isStaleTunnel(url: string): boolean {
+  try {
+    const host = new URL(url).host;
+    return ROTATING_TUNNEL.test(host) && host !== new URL(DEFAULT_API_URL).host;
+  } catch {
+    return true;
+  }
+}
+
 export function getApiUrl(): string {
-  const saved = store()?.getItem(URL_KEY);
+  let saved = store()?.getItem(URL_KEY);
+  if (saved && isStaleTunnel(saved)) {
+    store()?.removeItem(URL_KEY);
+    saved = null;
+  }
   const env = (import.meta as { env?: Record<string, string | undefined> }).env?.[
     "VITE_HALO_API_URL"
   ];
