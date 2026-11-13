@@ -263,7 +263,8 @@ def start_discovery(ctx, cfg: DiscoveryConfig, nl_request: str | None = None) ->
     if not ({"osm", "csv"} & set(cfg.sources)):
         raise ValidationFailed("Select at least one discovery source: OpenStreetMap or a CSV import.")
     active = ctx.db.execute(select(func.count()).select_from(DiscoveryJob).where(
-        DiscoveryJob.property_id == cfg.property_id, DiscoveryJob.status.in_(("queued", "running", "cancelling")))).scalar_one()
+        DiscoveryJob.property_id == cfg.property_id, DiscoveryJob.kind == "discovery",
+        DiscoveryJob.status.in_(("queued", "running", "cancelling")))).scalar_one()
     if active:
         raise Conflict("A discovery job is already running for this property. Wait for it to finish or cancel it.")
     est = estimate(ctx.db, cfg)
@@ -282,7 +283,8 @@ def start_discovery(ctx, cfg: DiscoveryConfig, nl_request: str | None = None) ->
 def list_jobs(ctx: CtxDep, property_id: UUID | None = None):
     # Only runs of live projects the caller can see (deleted projects and, for reps, unshared ones are hidden).
     q = (select(DiscoveryJob).join(Property, Property.id == DiscoveryJob.property_id)
-         .where(Property.archived_at.is_(None)).order_by(DiscoveryJob.created_at.desc()).limit(100))
+         .where(Property.archived_at.is_(None), DiscoveryJob.kind == "discovery")
+         .order_by(DiscoveryJob.created_at.desc()).limit(100))
     ids = ctx.accessible_property_ids()
     if ids is not None:
         q = q.where(DiscoveryJob.property_id.in_(ids))

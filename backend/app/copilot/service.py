@@ -19,6 +19,7 @@ from app.core.vocab import CLAIM_FIELDS, OFFERING_LABELS, SIGNAL_TYPES
 from app.llm import gateway as llm
 from app.llm import prompts
 from app.models import Account, Claim, Company, Contact, CopilotOutput, Property, Signal
+from app.workflow.errors import AIQuotaExhausted, PermanentError, TransientError
 from app.api.serializers import display_value
 
 
@@ -53,17 +54,29 @@ def generate(db: Session, *, workspace_id: UUID, user_id: UUID, account: Account
     recipient = {"name": contact.full_name, "title": contact.title} if contact else {"role": role_code}
     version = (db.execute(select(func.max(CopilotOutput.version)).where(CopilotOutput.account_id == account.id)).scalar() or 0) + 1
 
-    if get_settings().llm_configured:
+    content, by, pv = None, "template", "template-v1"
+    note = "AI drafting is off; this is a template. Personalise it before sending."
+    if llm.ai_available():
         pid, ver, system = prompts.COPILOT
         user = (f"Hotel: {json.dumps(hotel, ensure_ascii=False)}\nOffering to propose: {OFFERING_LABELS[offering]} ({offering})\n"
                 f"Recipient: {json.dumps(recipient)}\nTone: {tone}\nCompany: {company.name}\nFacts:\n{json.dumps(facts, ensure_ascii=False)}")
-        out = llm.call_json(ctx=llm.CallContext(workspace_id=workspace_id, step="copilot"), prompt_id=pid, version=ver,
-                            system=system, user=user, tier="standard", max_output_tokens=6000)
-        content = _validate(out, ref, offering)
-        by, pv = "llm", ver
-    else:
+        try:
+            out = llm.call_json(ctx=llm.CallContext(workspace_id=workspace_id, step="copilot"), prompt_id=pid, version=ver,
+                                system=system, user=user, tier="standard", max_output_tokens=6000)
+            content, by, pv = _validate(out, ref, offering), "llm", ver
+        except (TransientError, PermanentError, ValidationFailed) as e:
+            # D-45: the Pitch button always produces a draft. Busy / out-of-allowance AI or an ungroundable draft
+            # falls back to the fact-based template and the brief says why. A rejected API key is still an error.
+            if isinstance(e, PermanentError) and not isinstance(e, AIQuotaExhausted) and "API key" in str(e):
+                raise
+            note = ("The AI couldn't write this draft right now, so this is a template built from verified facts. "
+                    "Personalise it before sending.")
+    elif get_settings().llm_configured:
+        note = ("The AI's daily allowance is used up, so this is a template built from verified facts. "
+                "Personalise it before sending.")
+    if content is None:
         content = _template(company, prop, offering, facts, ref, recipient)
-        by, pv = "template", "template-v1"
+        content["brief"]["approach"] = note
     row = CopilotOutput(workspace_id=workspace_id, account_id=account.id, contact_id=contact_id, offering=offering,
                         version=version, content=content, generated_by=by, prompt_version=pv, created_by=user_id)
     db.add(row)

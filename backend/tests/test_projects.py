@@ -141,3 +141,73 @@ def test_reference_lists_both_markets(ws):
     assert ref["default_country"] == "US"
     codes = [r["code"] for r in ref["regions"]]
     assert codes[:2] == ["US", "IN"] and len(codes) > 190 and "FR" in codes
+
+
+LOVABLE = "https://id-preview--abc.lovable.app"
+
+
+def test_busy_upstream_returns_readable_503_with_cors(ws, monkeypatch):
+    from app.providers import geocoder
+    from app.workflow.errors import AIQuotaExhausted, TransientError
+
+    _, c, h = ws
+
+    def busy(q, limit=6, country=None):
+        raise TransientError("Geocoder is busy (HTTP 429)")
+
+    monkeypatch.setattr(geocoder, "geocode", busy)
+    r = c.get("/api/v1/geocode", params={"q": "Austin"}, headers={**h["manager"], "Origin": LOVABLE})
+    assert r.status_code == 503 and "Address search is busy" in r.json()["detail"]
+    assert r.headers.get("access-control-allow-origin") == LOVABLE
+
+    def spent(q, limit=6, country=None):
+        raise AIQuotaExhausted("x")
+
+    monkeypatch.setattr(geocoder, "geocode", spent)
+    r = c.get("/api/v1/geocode", params={"q": "Austin"}, headers={**h["manager"], "Origin": LOVABLE})
+    assert r.status_code == 503 and "daily allowance" in r.json()["detail"]
+
+
+def test_unexpected_error_is_readable_by_the_browser(ws, monkeypatch):
+    from app.providers import geocoder
+
+    _, c, h = ws
+
+    def crash(q, limit=6, country=None):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(geocoder, "geocode", crash)
+    c2 = TestClient(app, raise_server_exceptions=False)
+    r = c2.get("/api/v1/geocode", params={"q": "Austin"}, headers={**h["manager"], "Origin": LOVABLE})
+    assert r.status_code == 500 and r.headers.get("access-control-allow-origin") == LOVABLE
+    assert "try again" in r.json()["detail"]
+
+
+def test_pitch_falls_back_to_template_when_ai_is_out(ws, monkeypatch):
+    from uuid import UUID as _U
+
+    from app.llm import gateway
+    from app.models import Account, Company
+    from app.workflow.errors import AIQuotaExhausted
+
+    ws_id, c, h = ws
+    pid = c.post("/api/v1/properties", json=HOTEL, headers=h["manager"]).json()["id"]
+    with tenant_session(ws_id) as db:
+        co = Company(workspace_id=ws_id, name="Acme Logistics", normalized_name="acme logistics")
+        db.add(co)
+        db.flush()
+        acc = Account(workspace_id=ws_id, property_id=_U(pid), company_id=co.id, distance_km=1.2)
+        db.add(acc)
+        db.flush()
+        aid = str(acc.id)
+
+    def spent(**kw):
+        raise AIQuotaExhausted("x")
+
+    monkeypatch.setattr(gateway, "ai_available", lambda: True)
+    monkeypatch.setattr(gateway, "call_json", spent)
+    r = c.post(f"/api/v1/accounts/{aid}/copilot", json={"offering": "corporate_rate", "tone": "warm"}, headers=h["manager"])
+    assert r.status_code in (200, 201), r.text
+    out = r.json()
+    assert out["generated_by"] == "template" and out["content"]["email"]["body_blocks"]
+    assert "couldn't write this draft" in out["content"]["brief"]["approach"]

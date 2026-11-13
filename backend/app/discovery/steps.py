@@ -16,6 +16,7 @@ from geoalchemy2.shape import to_shape
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
+from app.core.regions import region
 from app.core.vocab import CLAIM_FIELDS, EMPLOYEE_RANGES, INDUSTRIES, OFFERING_LABELS, SIGNAL_TYPES
 from app.discovery.common import (add_claim, haversine_km, normalize_name, osm_tags_text, parse_date, point_wkt,
                                   save_source, supersede_auto_claims)
@@ -477,7 +478,10 @@ class ResearchStep(Step):
         # 3) Homepage.
         try:
             home = fetcher.fetch(company.website)
-        except PermanentError as e:
+        except (PermanentError, TransientError) as e:
+            # A slow or down website gets one retry; after that, continue on map data (D-45) instead of failing the step.
+            if isinstance(e, TransientError) and ctx.task.attempt < ctx.task.max_attempts:
+                raise
             company.research_status, company.research_note = "researched", f"Website unavailable: {e}"
             company.last_researched_at = datetime.now(timezone.utc)
             ctx.event(f"{company.name}: website unavailable ({e}).", level="warning")
@@ -664,6 +668,7 @@ class ResearchStep(Step):
 
 
 # ───────── signals ─────────
+_news_notice_jobs: set = set()
 SIGNAL_KEYWORDS = [
     (re.compile(r"\b(inaugurat|opens?|opened|launch(es|ed)?) (a |its )?(new )?(office|centre|center|campus|facility|hub)", re.I), "new_office_or_center"),
     (re.compile(r"\b(expan(d|ds|sion)|new plant|capacity addition|invest(s|ment) of)", re.I), "facility_expansion"),
@@ -683,14 +688,16 @@ class SignalsStep(Step):
         company = db.get(Company, UUID(inp["company_id"]))
         prop = db.get(Property, ctx.job.property_id)
         items: list[dict] = []
-        # News from GDELT (free, strictly rate-limited). Best effort: retry a couple of times, then continue without news.
+        # News from GDELT (free, strictly rate-limited). Best effort, single try: if it's busy, continue with website
+        # signals and say so once per run (D-45), rather than retrying every company and flooding the activity log.
         try:
-            news = gdelt.search(company.name, prop.city)[:10]
+            news = gdelt.search(company.name, prop.city, region(prop.country)["label"])[:10]
         except TransientError:
-            if ctx.task.attempt < 3:
-                raise
             news = []
-            ctx.event(f"{company.name}: news search unavailable (rate-limited); continuing with website signals.", level="warning")
+            if ctx.job.id not in _news_notice_jobs:
+                _news_notice_jobs.add(ctx.job.id)
+                ctx.event("The free news service is busy, so some companies were checked for signals on their own "
+                          "websites only.", level="warning")
         for a in news:
             items.append({"id": f"N{len(items) + 1}", "kind": "news", "title": a["title"], "text": a["title"], "url": a["url"],
                           "published_at": a["published_at"].date().isoformat() if a["published_at"] else None})

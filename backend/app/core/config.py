@@ -29,7 +29,9 @@ class Settings(BaseSettings):
     login_rate_limit_per_min: int = 5
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:8080"]
     # Separate frontend (D-35/D-36): Lovable-hosted previews and apps may call the API from these origins.
-    cors_origin_regex: str | None = r"https://([a-z0-9-]+\.)*(lovable\.app|lovableproject\.com|lovable\.dev)"
+    # Plus any localhost port, so the app can also be run (or a demo recorded) on this machine without a tunnel.
+    cors_origin_regex: str | None = (r"https://([a-z0-9-]+\.)*(lovable\.app|lovableproject\.com|lovable\.dev)"
+                                     r"|http://(localhost|127\.0\.0\.1)(:\d+)?")
     # Bearer-token sessions for a frontend on another site (cookies are blocked cross-site by many browsers).
     token_auth_enabled: bool = True
 

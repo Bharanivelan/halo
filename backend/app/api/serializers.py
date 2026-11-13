@@ -82,7 +82,7 @@ def _target(db: Session, prop_id: UUID) -> PropertyTargetProfile | None:
 def property_summary(db: Session, p: Property) -> dict:
     t = _target(db, p.id)
     count = db.execute(select(func.count()).select_from(Account).where(Account.property_id == p.id)).scalar_one()
-    job = db.execute(select(DiscoveryJob).where(DiscoveryJob.property_id == p.id)
+    job = db.execute(select(DiscoveryJob).where(DiscoveryJob.property_id == p.id, DiscoveryJob.kind == "discovery")
                      .order_by(DiscoveryJob.created_at.desc()).limit(1)).scalar_one_or_none()
     r = region(p.country)
     return {"id": str(p.id), "name": p.name, "brand": p.brand, "locality": p.locality, "city": p.city,

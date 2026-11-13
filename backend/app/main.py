@@ -9,7 +9,9 @@ from sqlalchemy import text
 from app.api import accounts, auth, discovery, engagement, properties
 from app.core.config import get_settings
 from app.core.db import engine
-from app.core.errors import AppError, app_error_handler, unhandled_error_handler, validation_error_handler
+from app.core.errors import (AppError, app_error_handler, permanent_error_handler, transient_error_handler,
+                             unhandled_error_handler, validation_error_handler)
+from app.workflow.errors import PermanentError, TransientError
 from app.core.logging import configure_logging
 from app.discovery import steps  # noqa: F401 — registers workflow steps
 
@@ -40,6 +42,8 @@ async def request_id(request: Request, call_next):
 
 app.add_exception_handler(AppError, app_error_handler)
 app.add_exception_handler(RequestValidationError, validation_error_handler)
+app.add_exception_handler(TransientError, transient_error_handler)
+app.add_exception_handler(PermanentError, permanent_error_handler)
 app.add_exception_handler(Exception, unhandled_error_handler)
 
 for r in (auth.router, properties.router, discovery.router, accounts.router, engagement.router):

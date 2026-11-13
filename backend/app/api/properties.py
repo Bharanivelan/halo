@@ -270,7 +270,7 @@ def overview(property_id: UUID, ctx: CtxDep):
                      .where(Account.property_id == prop.id, Account.status.in_(("discovered", "qualified", "outreach_prepared")),
                             Account.tier.in_(("A", "B")))
                      .order_by(Account.tier, Account.priority.desc().nullslast()).limit(5)).all()
-    jobs = db.execute(select(DiscoveryJob).where(DiscoveryJob.property_id == prop.id,
+    jobs = db.execute(select(DiscoveryJob).where(DiscoveryJob.property_id == prop.id, DiscoveryJob.kind == "discovery",
                                                  DiscoveryJob.status.in_(("queued", "running", "paused_budget", "cancelling")))
                       .order_by(DiscoveryJob.created_at.desc())).scalars().all()
     from app.api.discovery import job_summary
