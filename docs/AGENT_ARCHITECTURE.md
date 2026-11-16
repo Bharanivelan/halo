@@ -325,7 +325,10 @@ Validator: every referenced id exists for this account; email blocks may referen
 - **Model tiers** (configured, not hard-coded): `fast` (classification, extraction), `standard` (research, copilot). Model per tier chosen from eval results (DECISION_LOG open item).
 - **Prompt registry:** `llm/prompts/<prompt_id>/v<N>.yaml` (system, user template, schema ref, model tier, max tokens). Version recorded on every call. Changing a prompt = new version file; eval compares versions.
 - **Structured outputs:** provider-native JSON-schema mode where available + Pydantic validation; one repair retry.
-- **Provider abstraction:** `OpenAIProvider` first; others implement `LLMProvider`.
+- **Provider abstraction:** callers always send OpenAI-style messages and tools; providers implement `LLMProvider.chat` (`backend/app/llm/gateway.py`):
+  - `OpenAICompatibleProvider`: OpenAI, Gemini (Google's OpenAI endpoint, D-32) and any OpenAI-compatible server (`LLM_PROVIDER=openai_compatible`, D-49).
+  - `BedrockProvider`: Amazon Bedrock via the Converse API (`LLM_PROVIDER=bedrock`, D-49). Messages and tools are translated (`to_converse` / `from_converse`); per-model gaps (forced tool choice, system prompts, output limits) are retried automatically; JSON is requested in the prompt and extracted by `parse_json_reply`.
+  - Budget guard, cost log (`llm_calls.provider`), pacing and the no-AI fallbacks are the same for every provider.
 - **Caching:** identical `(prompt_id, version, variables_hash, model)` within 7 days may reuse response for classification/extraction (configurable; off for copilot).
 
 ---
