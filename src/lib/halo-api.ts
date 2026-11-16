@@ -46,7 +46,7 @@ import type {
 } from "./halo-types";
 
 // Demo tunnel to the Halo API (Cloudflare quick tunnel; changes on restart, so update here or via Connection settings).
-export const DEFAULT_API_URL = "https://fantastic-groove-mpegs-concrete.trycloudflare.com";
+export const DEFAULT_API_URL = "https://pillow-picks-textiles-interim.trycloudflare.com";
 const URL_KEY = "halo.apiUrl";
 const TOKEN_KEY = "halo.token";
 
