@@ -6,13 +6,19 @@ Starting with pre-opening hotels in India.
 
 > Status: **working MVP**. Real discovery, research, scoring, copilot and pipeline on live public data.
 
-## Repositories (D-35)
+## What's in this repository (D-48)
 
-| Repo | What | Where |
-|---|---|---|
-| **halo-api** (this repo) | FastAPI API, background agent worker, Postgres/PostGIS, docs | here |
-| **halo-web** | The Halo web app, built in Lovable (React + Tailwind + shadcn), talks to this API with a bearer token | Lovable → GitHub |
-| halo-web-classic | The first React UI (CSS Modules). Kept as a fallback; uses cookie auth via a Vite proxy | sibling folder `../halo-web-classic` |
+| Folder | What |
+|---|---|
+| [`backend/`](backend) | FastAPI API, background agent worker, Postgres/PostGIS migrations, tests |
+| [`web/`](web) | The Halo web app (React + TanStack + Tailwind + shadcn, built in Lovable). Talks to the API with a bearer token |
+| [`docs/`](docs) | Architecture, API documentation, decision log, Lovable prompt pack |
+| [`infra/`](infra), [`scripts/`](scripts), `docker-compose.yml` | Local database, tunnel and helper scripts |
+
+Day-to-day development happens in two working repos, combined here with their full history:
+`halo-api` (everything except `web/`) and the Lovable-owned app repo (`web/`, added with `git subtree`).
+
+Run the web app: `cd web && npm install && npm run dev`, then open the app and set the API URL to `http://localhost:8000`.
 
 Building the Lovable UI: [docs/lovable/README.md](docs/lovable/README.md).
 
