@@ -124,6 +124,7 @@ Start here: [docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)
 | [System architecture](docs/SYSTEM_ARCHITECTURE.md) | Components, workflow engine, providers, security, deployment |
 | [Agent architecture](docs/AGENT_ARCHITECTURE.md) | Pipeline, research agent, evidence grounding, scoring, budgets |
 | [Database schema](docs/DATABASE_SCHEMA.md) | ER diagram & tables |
+| [Deployment](docs/DEPLOYMENT.md) | Host it: Supabase (database) + Railway (API, worker) |
 | [API](docs/API_DOCUMENTATION.md) | REST contract (live OpenAPI at `/api/v1/docs`) |
 | [Design system](docs/DESIGN_SYSTEM.md) | Tokens, components, CSS rules |
 | [Roadmap](docs/DEVELOPMENT_ROADMAP.md) | Phases & exit criteria |
