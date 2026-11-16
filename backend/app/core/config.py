@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     app_env: str = "dev"
     database_url: str = "postgresql+psycopg://inhabitr_app:inhabitr_app_dev@localhost:5433/inhabitr"
     database_owner_url: str = "postgresql+psycopg://inhabitr_owner:inhabitr_owner_dev@localhost:5433/inhabitr"
+    # Connections per process (API and worker each have a pool). Hosted poolers cap connections per user
+    # (Supabase free session pooler: about 15), so the cloud deployment sets these lower (D-50).
+    db_pool_size: int = 10
+    db_max_overflow: int = 10
+    db_pool_recycle_s: int = 1800  # poolers drop idle connections; recycle before they do
 
     # Security (DD-17)
     secret_key: str = "dev-secret-change-me"

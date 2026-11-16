@@ -212,6 +212,11 @@ LLM_MODEL_FAST=the-model-name                                # used for both siz
 The research agent needs a model that supports **tool calling** (function calling). Small local models without it
 still sort and score companies, but website research will be weak.
 
+## Put it online
+
+To run Halo without your own computer (permanent address, database in the cloud), follow
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md): database on Supabase, API and worker on Railway.
+
 ## Show it to someone outside your network (optional)
 
 The Lovable-hosted copy of the web app needs a public address for your local API:
@@ -245,6 +250,7 @@ Start here: [docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)
 | [System architecture](docs/SYSTEM_ARCHITECTURE.md) | Components, workflow engine, providers, security, deployment |
 | [Agent architecture](docs/AGENT_ARCHITECTURE.md) | Pipeline, research agent, evidence grounding, scoring, budgets |
 | [Database schema](docs/DATABASE_SCHEMA.md) | ER diagram and tables |
+| [Deployment](docs/DEPLOYMENT.md) | Host it: Supabase (database) + Railway (API, worker) |
 | [API](docs/API_DOCUMENTATION.md) | REST contract (live OpenAPI at `/api/v1/docs`) |
 | [Web app (Lovable)](docs/lovable/README.md) | How the web app was built and its typed API kit |
 | [Roadmap](docs/DEVELOPMENT_ROADMAP.md) | Phases and exit criteria |
