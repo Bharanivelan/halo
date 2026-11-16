@@ -43,7 +43,9 @@ cd halo
 cp .env.example .env          # Windows PowerShell: Copy-Item .env.example .env
 ```
 
-Open `.env` and, if you have one, add an AI key. Everything works without a key (see [what a key adds](#api-keys-and-what-they-unlock)).
+Open `.env` and connect an AI provider if you have one: Gemini (default, free tier), OpenAI, **Amazon Bedrock**, or any
+OpenAI-compatible server such as OpenRouter or Ollama (see [Choose an AI provider](#choose-an-ai-provider)).
+Everything also works without AI (see [what AI adds](#api-keys-and-what-they-unlock)).
 
 ```ini
 GEMINI_API_KEY=your-key-here      # free key: https://aistudio.google.com/apikey
@@ -151,11 +153,64 @@ Web app checks: `cd web && bun run lint && bunx tsc --noEmit`.
 
 | Key (in `.env`) | Without it | With it |
 |---|---|---|
-| `GEMINI_API_KEY` (or `OPENAI_API_KEY` with `LLM_PROVIDER=openai`) | Companies found and scored from map data and rules; websites fetched but not analysed; template pitches | AI sorting of relevant companies, website research agent, AI buying-signal extraction, written pitches |
+| An AI provider: Gemini, OpenAI, **Amazon Bedrock** or any OpenAI-compatible server ([choose one](#choose-an-ai-provider)) | Companies found and scored from map data and rules; websites fetched but not analysed; template pitches | AI sorting of relevant companies, website research agent, AI buying-signal extraction, written pitches |
 | `TAVILY_API_KEY` | Websites only from map / CSV data; news from GDELT only | Finds websites for companies that lack one; more news coverage |
 
 AI spend is capped per run and every AI call is logged with its tokens and cost. The free Gemini tier allows only about
 20 requests a day; Halo slows down and falls back to rules when it runs out (set `LLM_MAX_RPM=8` in `.env` for a free key).
+
+## Choose an AI provider
+
+Halo works with four kinds of AI provider. Pick one with `LLM_PROVIDER` in `.env` and restart the API and worker.
+Without any AI, Halo still runs on map data and rules.
+
+| `LLM_PROVIDER` | Use it for | What to set in `.env` | Default models |
+|---|---|---|---|
+| `gemini` (default) | Google Gemini; has a free tier | `GEMINI_API_KEY` | `gemini-2.5-flash` |
+| `openai` | OpenAI | `OPENAI_API_KEY` | `gpt-5-mini` |
+| `bedrock` | **Amazon Bedrock**: Claude, Nova, Llama, Mistral and other models in your AWS account | AWS credentials (below) and `AWS_REGION` | `amazon.nova-lite-v1:0` (fast), `amazon.nova-pro-v1:0` (standard) |
+| `openai_compatible` | Any OpenAI-style server: OpenRouter, Groq, Together, Azure OpenAI, Ollama, LM Studio, vLLM | `OPENAI_COMPATIBLE_BASE_URL`, `OPENAI_COMPATIBLE_API_KEY` (empty for local servers), `LLM_MODEL_FAST` | none: you choose |
+
+Halo uses two model sizes: `LLM_MODEL_FAST` sorts and extracts, `LLM_MODEL_STANDARD` researches websites and writes.
+Leave them empty to use the defaults above, or set your own.
+
+### Amazon Bedrock
+
+1. In the AWS console, open **Amazon Bedrock → Model access** in your region and enable the models you want.
+2. Give Halo credentials in **one** of these ways:
+   - an AWS profile or SSO login on this machine: `AWS_PROFILE=my-profile` (run `aws sso login` first if you use SSO);
+   - access keys: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (plus `AWS_SESSION_TOKEN` for temporary keys);
+   - a Bedrock API key (Bedrock console → API keys): `AWS_BEARER_TOKEN_BEDROCK`;
+   - nothing at all when Halo runs on AWS with an IAM role (EC2, ECS, Lambda).
+   The identity needs the `bedrock:InvokeModel` permission.
+3. Set the region and, optionally, the models:
+
+```ini
+LLM_PROVIDER=bedrock
+AWS_REGION=us-east-1
+AWS_PROFILE=my-profile
+# Optional: any Bedrock chat model or inference profile ID from the Bedrock model catalog, e.g.
+# LLM_MODEL_FAST=amazon.nova-lite-v1:0
+# LLM_MODEL_STANDARD=<a Claude model or inference profile ID from your Bedrock console>
+```
+
+Some models can only be called through a cross-region **inference profile** (an ID that starts with `us.`, `eu.` or
+`apac.`). If Halo says so, use the profile ID from the console. Halo adapts to models that can't force a tool, take no
+system prompt or have a smaller output limit. AI cost is estimated from `LLM_PRICING`; models not listed there are
+estimated at $1 / $4 per million input / output tokens. To make the cost figures exact, set your model's prices (this replaces the built-in price list):
+`LLM_PRICING={"us.anthropic.your-model-id": [3.0, 15.0]}`.
+
+### OpenAI-compatible servers
+
+```ini
+LLM_PROVIDER=openai_compatible
+OPENAI_COMPATIBLE_BASE_URL=https://openrouter.ai/api/v1      # Ollama: http://localhost:11434/v1
+OPENAI_COMPATIBLE_API_KEY=your-key                           # empty for Ollama / LM Studio
+LLM_MODEL_FAST=the-model-name                                # used for both sizes if LLM_MODEL_STANDARD is empty
+```
+
+The research agent needs a model that supports **tool calling** (function calling). Small local models without it
+still sort and score companies, but website research will be weak.
 
 ## Show it to someone outside your network (optional)
 
@@ -176,6 +231,7 @@ Details: D-37 and D-46 in the [decision log](docs/DECISION_LOG.md).
 | Sign-in says **"Can't reach the Halo server"** | The API isn't running, or the app points elsewhere: check **Connection settings** on the sign-in page (should be `http://localhost:8000`) |
 | `bun run dev` says the port is in use | Pick another port, e.g. `--port 5174`, and allow it in `.env`: `CORS_ORIGINS=["http://localhost:5173","http://localhost:5174"]`, then restart the API |
 | `npm install` fails in `web/` | Use `bun install` |
+| Bedrock: `AccessDeniedException` or "model not found" | Enable the model under **Bedrock → Model access** in `AWS_REGION`, and check the identity has `bedrock:InvokeModel` |
 | The agent runs but nothing is researched by AI | No AI key, or the free daily allowance is used up. The run still finishes using rules; add a key or wait for the reset |
 | Tests fail because jobs were already taken | Stop the worker before running tests |
 
