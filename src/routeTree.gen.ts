@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShellRouteImport } from './routes/_shell'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ShellIndexRouteImport } from './routes/_shell.index'
 import { Route as ShellConnectorsRouteImport } from './routes/_shell.connectors'
 import { Route as ShellHowItWorksRouteImport } from './routes/_shell.how-it-works'
@@ -31,6 +32,11 @@ const ShellRoute = ShellRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShellIndexRoute = ShellIndexRouteImport.update({
@@ -102,6 +108,7 @@ const ShellPPropertyIdAgentNewRoute =
 export interface FileRoutesByFullPath {
   '/': typeof ShellIndexRoute
   '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/connectors': typeof ShellConnectorsRoute
   '/how-it-works': typeof ShellHowItWorksRoute
   '/lab': typeof ShellLabRoute
@@ -116,6 +123,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/connectors': typeof ShellConnectorsRoute
   '/how-it-works': typeof ShellHowItWorksRoute
   '/lab': typeof ShellLabRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_shell': typeof ShellRouteWithChildren
   '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
   '/_shell/connectors': typeof ShellConnectorsRoute
   '/_shell/how-it-works': typeof ShellHowItWorksRoute
   '/_shell/lab': typeof ShellLabRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/signup'
     | '/connectors'
     | '/how-it-works'
     | '/lab'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
+    | '/signup'
     | '/connectors'
     | '/how-it-works'
     | '/lab'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_shell'
     | '/login'
+    | '/signup'
     | '/_shell/connectors'
     | '/_shell/how-it-works'
     | '/_shell/lab'
@@ -198,6 +210,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   ShellRoute: typeof ShellRouteWithChildren
   LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_shell/': {
@@ -339,6 +359,7 @@ const ShellRouteWithChildren = ShellRoute._addFileChildren(ShellRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   ShellRoute: ShellRouteWithChildren,
   LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
