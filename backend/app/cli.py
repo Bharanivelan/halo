@@ -29,23 +29,13 @@ def _password(arg: str | None) -> str:
 
 
 def bootstrap(a) -> None:
-    slug = re.sub(r"[^a-z0-9]+", "-", a.workspace.lower()).strip("-")
+    from app.core.accounts import EmailTaken, create_workspace_with_admin
+
     pw = _password(a.password)
-    with plain_session() as db:
-        if db.execute(select(User).where(User.email == a.email.lower())).first():
-            sys.exit("A user with that email already exists.")
-    ws_id = uuid7()
-    with tenant_session(ws_id) as db:  # RLS: a workspace row is only writable inside its own tenant context
-        db.add(Workspace(id=ws_id, name=a.workspace, slug=slug, is_demo=a.demo,
-                         settings={"currency": "USD", "timezone": "America/New_York"}))
-    with tenant_session(ws_id) as db:
-        db.add(ScoringModel(workspace_id=ws_id, version=1, weights=DEFAULT_MODEL["weights"], params=DEFAULT_MODEL["params"],
-                            notes="Initial hypothesis weights (DD-09…DD-11)"))
-    with plain_session() as db:
-        u = User(email=a.email.lower(), full_name=a.name, password_hash=hash_password(pw))
-        db.add(u)
-        db.flush()
-        db.add(Membership(workspace_id=ws_id, user_id=u.id, role="admin"))
+    try:
+        create_workspace_with_admin(workspace_name=a.workspace, email=a.email, full_name=a.name, password=pw, is_demo=a.demo)
+    except EmailTaken:
+        sys.exit("A user with that email already exists.")
     print(f"Created workspace '{a.workspace}' and admin {a.email}.")
 
 

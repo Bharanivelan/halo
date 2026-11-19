@@ -50,6 +50,10 @@ cd ../halo-web-classic && npm install && npm run dev                            
 powershell -ExecutionPolicy Bypass -File scripts/tunnel.ps1
 ```
 
+Accounts: `bootstrap` creates the first admin from the command line. People can also create their own account in the app
+(**Create an account** on the sign-in page, `/signup`); each sign-up gets its own workspace. Set `SIGNUP_ENABLED=false` for an
+invite-only server and add people with `python -m app.cli add-user --email … --name … --role rep|manager|admin`.
+
 Tests: `cd backend && .venv/Scripts/python -m pytest -q` (unit tests + row-level-security isolation tests against the dev DB).
 
 ### API keys and what they unlock

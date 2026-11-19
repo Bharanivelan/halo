@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     session_idle_days: int = 7
     session_absolute_days: int = 30
     login_rate_limit_per_min: int = 5
+    # Self-service sign-up (D-51): anyone can create an account with its own workspace. Turn off for invite-only
+    # servers (then accounts come from `python -m app.cli add-user`). Limited per IP address per hour.
+    signup_enabled: bool = True
+    signup_rate_limit_per_hour: int = 10
+    password_min_length: int = 10
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:8080"]
     # Separate frontend (D-35/D-36): Lovable-hosted previews and apps may call the API from these origins.
     # Plus any localhost port, so the app can also be run (or a demo recorded) on this machine without a tunnel.

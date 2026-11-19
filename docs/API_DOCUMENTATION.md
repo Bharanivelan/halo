@@ -54,6 +54,8 @@
 | Method | Path | Description |
 |---|---|---|
 | POST | `/auth/login` | `{email, password}` → sets cookie; returns `Me` |
+| GET | `/auth/options` | Public. `{signup_enabled, password_min_length, google_enabled}`: which sign-in options this server offers (D-51) |
+| POST | `/auth/signup` | Public, if `SIGNUP_ENABLED`. `{full_name, email, password, company?}` → creates a workspace (named after `company`, else "<first name>'s workspace") with the user as admin, signs in like `/auth/login` (201). 409 if the email exists, 422 for a short password, 403 when sign-up is off, 429 after `SIGNUP_RATE_LIMIT_PER_HOUR` per IP |
 | POST | `/auth/logout` | revokes session |
 | GET | `/auth/me` | current user, workspace, role, accessible properties, `csrf_token` |
 | POST | `/auth/invites/accept` | `{token, full_name, password}` → creates user/membership, logs in |
