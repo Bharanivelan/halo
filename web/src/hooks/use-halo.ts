@@ -49,6 +49,24 @@ export function useLogin() {
     },
   });
 }
+export function useSignup() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: halo.signup,
+    onSuccess: (me) => {
+      qc.clear();
+      qc.setQueryData(["me"], me);
+    },
+  });
+}
+/** Public: which sign-in options this server offers (sign-up on/off; Google later). */
+export const useAuthOptions = () =>
+  useQuery({
+    queryKey: ["auth-options"],
+    queryFn: halo.authOptions,
+    retry: false,
+    staleTime: 5 * 60_000,
+  });
 export function useLogout() {
   const qc = useQueryClient();
   return useMutation({ mutationFn: halo.logout, onSettled: () => qc.clear() });
@@ -169,7 +187,11 @@ export function useRun(id?: string) {
     enabled: !!id,
     // Poll while the run is live; stop on errors (e.g. 404) instead of retrying forever.
     refetchInterval: (q) =>
-      q.state.status === "error" ? false : isJobActive(q.state.data?.status) || !q.state.data ? 2000 : false,
+      q.state.status === "error"
+        ? false
+        : isJobActive(q.state.data?.status) || !q.state.data
+          ? 2000
+          : false,
   });
 }
 function useRunAction<A, R>(fn: (a: A) => Promise<R>) {
@@ -327,7 +349,6 @@ export const useAddActivity = (accountId: string) =>
 export const useUsage = (group_by: "step" | "model" | "job") =>
   useQuery({ queryKey: ["usage", group_by], queryFn: () => halo.usage(group_by) });
 
-
 /* ── Halo Lab (D-47) ── */
 function useLabMutation<A, R>(fn: (a: A) => Promise<R>, accountId?: string) {
   const qc = useQueryClient();
@@ -364,13 +385,10 @@ export function useRateProspect() {
   });
 }
 export const useRateSignal = (accountId: string) =>
-  useLabMutation(
-    async ({ id, verdict }: { id: string; verdict: SignalVerdict | null }) => {
-      if (verdict) await halo.rateSignal(id, verdict);
-      else await halo.clearSignalRating(id);
-    },
-    accountId,
-  );
+  useLabMutation(async ({ id, verdict }: { id: string; verdict: SignalVerdict | null }) => {
+    if (verdict) await halo.rateSignal(id, verdict);
+    else await halo.clearSignalRating(id);
+  }, accountId);
 export const useLabSummary = (opts: { live?: boolean } = {}) =>
   useQuery({
     queryKey: ["lab", "summary"],
@@ -381,7 +399,8 @@ export const useLabVersions = () =>
   useQuery({ queryKey: ["lab", "versions"], queryFn: halo.labVersions });
 export const useImportRatings = (propertyId: string) =>
   useLabMutation((file: File) => halo.importRatings(propertyId, file));
-export const useStartLabRun = () => useLabMutation((propertyId: string) => halo.startLabRun(propertyId));
+export const useStartLabRun = () =>
+  useLabMutation((propertyId: string) => halo.startLabRun(propertyId));
 export function useDecideVersion() {
   const qc = useQueryClient();
   return useMutation({

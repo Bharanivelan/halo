@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ApiError, getApiUrl, halo } from "@/lib/halo-api";
-import { useLogin } from "@/hooks/use-halo";
+import { useAuthOptions, useLogin, useSignup } from "@/hooks/use-halo";
 import { errorText } from "@/components/halo";
 import { Loader2, Server } from "lucide-react";
 import { Logo } from "@/components/halo";
@@ -147,13 +147,43 @@ function HaloMap() {
   );
 }
 
-export function LoginPage() {
-  const reduce = useReducedMotion();
-  const navigate = useNavigate();
-  const [conn, setConn] = useState(false);
-  const [email, setEmail] = useState("");
+type Mode = "signin" | "signup";
+
+// Survives the switch between /login and /signup (each route mounts its own page).
+let typedEmail = "";
+
+const fieldClass = "h-11 rounded-xl bg-surface-2";
+
+function ErrorBox({
+  title,
+  detail,
+  action,
+}: {
+  title: string;
+  detail: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div role="alert" className="rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm">
+      <p className="font-medium text-coral">{title}</p>
+      <p className="mt-0.5 text-muted-foreground">{detail}</p>
+      {action}
+    </div>
+  );
+}
+
+function SignInForm({
+  email,
+  setEmail,
+  onDone,
+  onChangeServer,
+}: {
+  email: string;
+  setEmail: (v: string) => void;
+  onDone: () => void;
+  onChangeServer: () => void;
+}) {
   const [password, setPassword] = useState("");
-  const [server, setServer] = useState<string | null>(null);
   const login = useLogin();
   const busy = login.isPending;
   const err = login.error
@@ -164,6 +194,230 @@ export function LoginPage() {
         }
       : errorText(login.error)
     : null;
+  return (
+    <form
+      className="mt-6 space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        login.mutate({ email, password }, { onSuccess: onDone });
+      }}
+    >
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          autoComplete="email"
+          required
+          placeholder="you@company.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={fieldClass}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={fieldClass}
+        />
+      </div>
+      {err && (
+        <ErrorBox
+          title={err.title}
+          detail={err.detail}
+          action={
+            login.error instanceof ApiError && login.error.status === 0 ? (
+              <button
+                type="button"
+                onClick={onChangeServer}
+                className="mt-1 font-medium text-gold hover:underline"
+              >
+                Change server
+              </button>
+            ) : undefined
+          }
+        />
+      )}
+      <Button type="submit" variant="signature" className="h-11 w-full rounded-xl" disabled={busy}>
+        {busy && <Loader2 className="animate-spin" />}Sign in
+      </Button>
+    </form>
+  );
+}
+
+function SignUpForm({
+  email,
+  setEmail,
+  minLength,
+  onDone,
+  onSignIn,
+}: {
+  email: string;
+  setEmail: (v: string) => void;
+  minLength: number;
+  onDone: () => void;
+  onSignIn: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [local, setLocal] = useState<string | null>(null);
+  const signup = useSignup();
+  const busy = signup.isPending;
+  const taken = signup.error instanceof ApiError && signup.error.status === 409;
+  const err = local
+    ? { title: "Check your password", detail: local }
+    : taken
+      ? {
+          title: "You already have an account",
+          detail: "An account with this email already exists. Sign in instead.",
+        }
+      : signup.error
+        ? errorText(signup.error)
+        : null;
+  return (
+    <form
+      className="mt-6 space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (password.length < minLength) {
+          setLocal(`Use at least ${minLength} characters.`);
+          return;
+        }
+        if (password !== confirm) {
+          setLocal("The two passwords don't match.");
+          return;
+        }
+        setLocal(null);
+        const input = {
+          full_name: name.trim(),
+          email: email.trim(),
+          password,
+          ...(company.trim() ? { company: company.trim() } : {}),
+        };
+        signup.mutate(input, { onSuccess: onDone });
+      }}
+    >
+      <div className="space-y-2">
+        <Label htmlFor="su-name">Your name</Label>
+        <Input
+          id="su-name"
+          autoComplete="name"
+          required
+          maxLength={200}
+          placeholder="Asha Rao"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className={fieldClass}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="su-company">
+          Hotel or company <span className="font-normal text-muted-foreground">(optional)</span>
+        </Label>
+        <Input
+          id="su-company"
+          autoComplete="organization"
+          maxLength={200}
+          placeholder="Seaside Hotels"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          className={fieldClass}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="su-email">Work email</Label>
+        <Input
+          id="su-email"
+          type="email"
+          autoComplete="email"
+          required
+          placeholder="you@company.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={fieldClass}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="su-password">Password</Label>
+        <Input
+          id="su-password"
+          type="password"
+          autoComplete="new-password"
+          required
+          minLength={minLength}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          aria-describedby="su-password-hint"
+          className={fieldClass}
+        />
+        <p id="su-password-hint" className="text-xs text-muted-foreground">
+          At least {minLength} characters.
+        </p>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="su-confirm">Confirm password</Label>
+        <Input
+          id="su-confirm"
+          type="password"
+          autoComplete="new-password"
+          required
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          className={fieldClass}
+        />
+      </div>
+      {err && (
+        <ErrorBox
+          title={err.title}
+          detail={err.detail}
+          action={
+            taken ? (
+              <button
+                type="button"
+                onClick={onSignIn}
+                className="mt-1 font-medium text-gold hover:underline"
+              >
+                Sign in
+              </button>
+            ) : undefined
+          }
+        />
+      )}
+      <Button type="submit" variant="signature" className="h-11 w-full rounded-xl" disabled={busy}>
+        {busy && <Loader2 className="animate-spin" />}Create account
+      </Button>
+    </form>
+  );
+}
+
+export function LoginPage({ initialMode = "signin" }: { initialMode?: Mode }) {
+  const reduce = useReducedMotion();
+  const navigate = useNavigate();
+  const [conn, setConn] = useState(false);
+  const [email, setEmailState] = useState(typedEmail);
+  const setEmail = (v: string) => {
+    typedEmail = v;
+    setEmailState(v);
+  };
+  const [server, setServer] = useState<string | null>(null);
+  const options = useAuthOptions();
+  const signupEnabled = options.data?.signup_enabled ?? false;
+  const minLength = options.data?.password_min_length ?? 10;
+  const [mode, setMode] = useState<Mode>(initialMode);
+  const showSignup = mode === "signup" && signupEnabled;
+  const switchTo = (m: Mode) => {
+    setMode(m);
+    void navigate({ to: m === "signup" ? "/signup" : "/login", replace: true });
+  };
+  const done = () => void navigate({ to: "/" });
 
   useEffect(() => {
     if (halo.isSignedIn()) void navigate({ to: "/", replace: true });
@@ -201,69 +455,45 @@ export function LoginPage() {
       <section className="flex items-center justify-center p-6 md:p-12">
         <motion.div {...fade(0.15)} className="w-full max-w-sm">
           <div className="card-halo p-7 md:p-8">
-            <h2 className="text-2xl font-bold">Sign in</h2>
+            <h2 className="text-2xl font-bold">{showSignup ? "Create your account" : "Sign in"}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              Pick up where you left off, or list a new hotel.
+              {showSignup
+                ? "Set up Halo for your hotel in a few minutes."
+                : "Pick up where you left off, or list a new hotel."}
             </p>
-            <form
-              className="mt-6 space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                login.mutate({ email, password }, { onSuccess: () => void navigate({ to: "/" }) });
-              }}
-            >
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  placeholder="you@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="h-11 rounded-xl bg-surface-2"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 rounded-xl bg-surface-2"
-                />
-              </div>
-              {err && (
-                <div
-                  role="alert"
-                  className="rounded-xl border border-coral/30 bg-coral/10 p-3 text-sm"
+            {showSignup ? (
+              <SignUpForm
+                email={email}
+                setEmail={setEmail}
+                minLength={minLength}
+                onDone={done}
+                onSignIn={() => switchTo("signin")}
+              />
+            ) : (
+              <SignInForm
+                email={email}
+                setEmail={setEmail}
+                onDone={done}
+                onChangeServer={() => setConn(true)}
+              />
+            )}
+            {mode === "signup" && options.data && !signupEnabled && (
+              <p className="mt-4 text-sm text-muted-foreground">
+                Sign-up is turned off on this server. Ask your Halo admin for an account.
+              </p>
+            )}
+            {signupEnabled && (
+              <p className="mt-5 border-t border-border pt-4 text-center text-sm text-muted-foreground">
+                {showSignup ? "Already have an account? " : "New to Halo? "}
+                <button
+                  type="button"
+                  onClick={() => switchTo(showSignup ? "signin" : "signup")}
+                  className="font-medium text-gold hover:underline"
                 >
-                  <p className="font-medium text-coral">{err.title}</p>
-                  <p className="mt-0.5 text-muted-foreground">{err.detail}</p>
-                  {login.error instanceof ApiError && login.error.status === 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setConn(true)}
-                      className="mt-1 font-medium text-gold hover:underline"
-                    >
-                      Change server
-                    </button>
-                  )}
-                </div>
-              )}
-              <Button
-                type="submit"
-                variant="signature"
-                className="h-11 w-full rounded-xl"
-                disabled={busy}
-              >
-                {busy && <Loader2 className="animate-spin" />}Sign in
-              </Button>
-            </form>
+                  {showSignup ? "Sign in" : "Create an account"}
+                </button>
+              </p>
+            )}
           </div>
           <button
             onClick={() => setConn(true)}

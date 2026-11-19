@@ -141,6 +141,18 @@ export interface Me {
   properties: PropertySummary[];
 }
 // POST /auth/login (header X-Auth-Mode: token) -> LoginResponse ; POST /auth/logout -> 204 ; GET /auth/me -> Me (401 if not signed in)
+// GET /auth/options (public) -> AuthOptions ; POST /auth/signup (header X-Auth-Mode: token) -> LoginResponse (D-51)
+export interface AuthOptions {
+  signup_enabled: boolean;
+  password_min_length: number;
+  google_enabled: boolean;
+}
+export interface SignupInput {
+  full_name: string;
+  email: string;
+  password: string;
+  company?: string;
+}
 
 /* ───────── Members: GET /members ───────── */
 export interface Member {
@@ -179,7 +191,12 @@ export interface PropertySummary {
   distance_unit: DistanceUnit;
   created_at: ISODate;
   /** Most recent agent run for this project, if any. */
-  latest_job: { id: UUID; status: JobStatus; created_at: ISODate; finished_at: ISODate | null } | null;
+  latest_job: {
+    id: UUID;
+    status: JobStatus;
+    created_at: ISODate;
+    finished_at: ISODate | null;
+  } | null;
 }
 export interface Property extends PropertySummary {
   address_line: string | null;
@@ -653,7 +670,6 @@ export interface LlmCall {
   error: string | null;
   created_at: ISODate;
 }
-
 
 /* ───────── Halo Lab (D-47): ratings, agent versions, improvement runs ───────── */
 export type LeadVerdict = "good_fit" | "not_fit";

@@ -19,6 +19,8 @@ import type {
   JobDetail,
   JobSummary,
   LoginResponse,
+  AuthOptions,
+  SignupInput,
   MapPoint,
   Me,
   Member,
@@ -128,6 +130,9 @@ function buildUrl(path: string, query?: Query) {
   return `${getApiUrl()}/api/v1${path}${qs ? `?${qs}` : ""}`;
 }
 
+// Endpoints that work without signing in.
+const PUBLIC_PATHS = new Set(["/auth/login", "/auth/signup", "/auth/options"]);
+
 async function request<T>(
   path: string,
   opts: {
@@ -147,7 +152,7 @@ async function request<T>(
   };
   const token = getToken();
   // Signed out: don't call the server at all (screens still mounted during sign-out would loop on 401s).
-  if (!token && path !== "/auth/login") throw new ApiError(401, { detail: "Please sign in." });
+  if (!token && !PUBLIC_PATHS.has(path)) throw new ApiError(401, { detail: "Please sign in." });
   if (token) headers["Authorization"] = `Bearer ${token}`;
   let body: BodyInit | null = null;
   if (opts.form) body = opts.form;
@@ -164,7 +169,7 @@ async function request<T>(
       detail: `Check the server URL (${getApiUrl()}) and that the Halo API is running.`,
     });
   }
-  if (res.status === 401 && path !== "/auth/login") {
+  if (res.status === 401 && !PUBLIC_PATHS.has(path)) {
     setToken(null);
     window.dispatchEvent(new Event("halo:signed-out"));
   }
@@ -225,6 +230,16 @@ export const halo = {
       setToken(null);
     }
   },
+  async signup(input: SignupInput): Promise<Me> {
+    const r = await request<LoginResponse>("/auth/signup", {
+      method: "POST",
+      body: input,
+      headers: { "X-Auth-Mode": "token" },
+    });
+    setToken(r.access_token);
+    return r;
+  },
+  authOptions: () => get<AuthOptions>("/auth/options"),
   me: () => get<Me>("/auth/me"),
   isSignedIn: () => !!getToken(),
 
@@ -350,8 +365,10 @@ export const halo = {
   ) => post<Activity>(`/accounts/${accountId}/activities`, b),
 
   /* Halo Lab (D-47) */
-  rateProspect: (id: string, b: { verdict: LeadVerdict; reason?: string | null; note?: string | null }) =>
-    put<LeadFeedback>(`/accounts/${id}/feedback`, b),
+  rateProspect: (
+    id: string,
+    b: { verdict: LeadVerdict; reason?: string | null; note?: string | null },
+  ) => put<LeadFeedback>(`/accounts/${id}/feedback`, b),
   clearRating: (id: string) => del(`/accounts/${id}/feedback`),
   rateSignal: (id: string, verdict: SignalVerdict) =>
     put<{ signal_id: string; verdict: SignalVerdict }>(`/signals/${id}/feedback`, { verdict }),
@@ -367,7 +384,8 @@ export const halo = {
       query: { property_id: propertyId },
     });
   },
-  startLabRun: (propertyId: string) => post<{ job_id: string }>("/lab/runs", { property_id: propertyId }),
+  startLabRun: (propertyId: string) =>
+    post<{ job_id: string }>("/lab/runs", { property_id: propertyId }),
   approveVersion: (id: string) => post<AgentVersion>(`/lab/versions/${id}/approve`),
   rejectVersion: (id: string) => post<AgentVersion>(`/lab/versions/${id}/reject`),
   activateVersion: (id: string) => post<AgentVersion>(`/lab/versions/${id}/activate`),
