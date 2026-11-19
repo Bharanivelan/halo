@@ -80,6 +80,8 @@ python3.12 -m venv .venv
 ```
 
 `bootstrap` asks for a password (at least 10 characters) and creates your workspace and your admin login.
+You can also skip `bootstrap` and use **Create an account** on the sign-in page (`/signup`) once the app is running:
+each sign-up gets its own workspace with that person as admin. For an invite-only server set `SIGNUP_ENABLED=false` in `.env`.
 Add teammates later with `python -m app.cli add-user --email them@company.com --name "Name" --role manager`.
 
 ### 5. Start the API and the worker
@@ -114,7 +116,7 @@ $env:VITE_HALO_API_URL = "http://localhost:8000"; bun run dev --port 5173
 VITE_HALO_API_URL=http://localhost:8000 bun run dev --port 5173
 ```
 
-Open <http://localhost:5173> and sign in with the email and password from step 4.
+Open <http://localhost:5173> and sign in with the email and password from step 4, or click **Create an account**.
 
 > To make the API address permanent, put `VITE_HALO_API_URL=http://localhost:8000` in `web/.env.local` (git-ignored).
 > You can also change it any time on the sign-in page under **Connection settings**.
